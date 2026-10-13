@@ -27,6 +27,34 @@ static BOOL BRMethodMatches(Method method, char returnType, unsigned int count) 
     }
     return YES;
 }
+static void BRInstallSandboxGroupFallback(void) {
+    // The Ad Hoc variant cannot claim the original developer's App Group.
+    // Keep root-app storage inside this app's sandbox; never grant cross-app access.
+    if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.ayato.bereal493"]) return;
+    SEL containerSelector=@selector(containerURLForSecurityApplicationGroupIdentifier:);
+    Method containerMethod=class_getInstanceMethod(NSFileManager.class,containerSelector);
+    if (BRMethodMatches(containerMethod,'@',3)) {
+        NSURL *(*original)(id,SEL,NSString *)=(void *)method_getImplementation(containerMethod);
+        IMP replacement=imp_implementationWithBlock(^NSURL *(NSFileManager *manager,NSString *group) {
+            NSURL *result=original(manager,containerSelector,group);
+            if (result || ![group isEqualToString:@"group.BeReal"]) return result;
+            NSURL *support=[manager URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
+            NSURL *local=[support URLByAppendingPathComponent:@"BeRealShared" isDirectory:YES];
+            if (![manager createDirectoryAtURL:local withIntermediateDirectories:YES attributes:nil error:nil]) return nil;
+            return local;
+        });
+        method_setImplementation(containerMethod,replacement);
+    }
+    SEL defaultsSelector=@selector(initWithSuiteName:);
+    Method defaultsMethod=class_getInstanceMethod(NSUserDefaults.class,defaultsSelector);
+    if (BRMethodMatches(defaultsMethod,'@',3)) {
+        id (*original)(id,SEL,NSString *)=(void *)method_getImplementation(defaultsMethod);
+        IMP replacement=imp_implementationWithBlock(^id(id defaults,NSString *suite) {
+            return original(defaults,defaultsSelector,[suite isEqualToString:@"group.BeReal"]?@"com.ayato.bereal493.shared":suite);
+        });
+        method_setImplementation(defaultsMethod,replacement);
+    }
+}
 static BOOL BRKnownDelegate(Class cls) {
     NSString *name = NSStringFromClass(cls);
     // Both classes and their ObjC ABI are verified in the supplied 4.93.0 binary.
@@ -271,6 +299,7 @@ static NSData *BRJPEG(UIImage *image) {
 __attribute__((constructor)) static void BRCameraRollInit(void) {
     NSDictionary *info=NSBundle.mainBundle.infoDictionary;
     if (![info[@"CFBundleShortVersionString"] isEqual:@"4.93.0"] || ![info[@"CFBundleVersion"] isEqual:@"23026"]) return;
+    BRInstallSandboxGroupFallback();
     BRState=[BRPairState new]; BRHookLock=[NSObject new]; BRHookedDelegates=[NSMutableSet new]; BRHookedPhotos=[NSMutableSet new];
     if (!BRInstallCaptureHook()) return;
     dispatch_async(dispatch_get_main_queue(),^{
