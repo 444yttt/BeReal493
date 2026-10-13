@@ -4,12 +4,14 @@ umask 077
 [[ "$(uname -s)" == Darwin ]] || { echo 'macOS is required' >&2; exit 1; }
 mkdir -p output
 xcodebuild -version
+xcrun --sdk macosx clang -fobjc-arc -framework Foundation BRPairState.m tests/pair_state.m -o "$RUNNER_TEMP/bereal493-pair-tests"
+"$RUNNER_TEMP/bereal493-pair-tests"
 sdk_path="$(xcrun --sdk iphoneos --show-sdk-path)"
 xcrun --sdk iphoneos clang -dynamiclib -arch arm64 -isysroot "$sdk_path" \
   -miphoneos-version-min=17.0 -fobjc-arc -fmodules -O2 \
-  -framework UIKit -framework PhotosUI -framework UniformTypeIdentifiers \
-  -install_name '@executable_path/Frameworks/CameraRollPrototype.dylib' \
-  Tweak.m -o output/CameraRollPrototype.dylib
+  -framework UIKit -framework PhotosUI -framework AVFoundation \
+  -install_name '@executable_path/Frameworks/CameraRollAdapter.dylib' \
+  CameraRollAdapter.m BRPairState.m -o output/CameraRollAdapter.dylib
 temporary_directory="$(mktemp -d "$RUNNER_TEMP/bereal493.XXXXXX")"
 trap 'rm -rf "$temporary_directory"' EXIT
 export BR_TEMP_DIRECTORY="$temporary_directory"
@@ -40,7 +42,7 @@ with zipfile.ZipFile(ipa) as archive:
     archive.extractall(root / 'app')
 PY
 if [[ ! -f "$temporary_directory/source.ipa" ]]; then
-  shasum -a 256 output/CameraRollPrototype.dylib > output/SHA256SUMS
+  shasum -a 256 output/CameraRollAdapter.dylib > output/SHA256SUMS
   exit 0
 fi
 python3 scripts/inspect_ipa.py "$temporary_directory/source.ipa" > output/input-verification.json
@@ -54,5 +56,5 @@ for framework_name in Entities Camera; do
     xcrun otool -ov "$framework_binary" | gzip > "output/$framework_name-objc.txt.gz"
   fi
 done
-shasum -a 256 output/CameraRollPrototype.dylib > output/SHA256SUMS
+shasum -a 256 output/CameraRollAdapter.dylib > output/SHA256SUMS
 echo 'Native library built. Posting adapter and installable IPA remain incomplete.'
