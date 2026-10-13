@@ -14,8 +14,8 @@ temporary_directory="$(mktemp -d "$RUNNER_TEMP/bereal493.XXXXXX")"
 trap 'rm -rf "$temporary_directory"' EXIT
 export BR_TEMP_DIRECTORY="$temporary_directory"
 python3 - <<'PY'
-import hashlib, os, pathlib, urllib.request, zipfile
-url = os.environ['SOURCE_IPA_URL']
+import hashlib, json, os, pathlib, urllib.request, zipfile
+url = json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())['inputs']['source_ipa_url']
 if not url.startswith('https://') or any(c in url for c in '\r\n'):
     raise SystemExit('A single HTTPS source URL is required')
 print('::add-mask::' + url)

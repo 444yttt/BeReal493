@@ -21,8 +21,6 @@ jobs:
       - name: Run source and IPA-inspector tests
         run: python3 -m unittest discover -s tests -v
       - name: Build native library and analyze supplied IPA
-        env:
-          SOURCE_IPA_URL: ${{ inputs.source_ipa_url }}
         run: bash scripts/ci-native.sh
       - uses: actions/upload-artifact@v4
         with:
