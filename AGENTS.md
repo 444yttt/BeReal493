@@ -22,6 +22,7 @@ Deliver a **working, user-installable iOS IPA** based on the **user-supplied BeR
 5. User explicitly deprioritized discussion of service/account restrictions; do not keep repeating general warnings.
 
 ## Existing implementation: do not overstate
+- Current continuation: CameraRollAdapter.m now implements verified Objective-C capture hooks and normalized JPEG replacement; native compilation and unsigned IPA packaging completed. See HANDOFF_STATUS.md and CAPTURE_CONTRACT.md for evidence and remaining signing/device boundaries. The following bullets describe the original Tweak.m prototype, retained for provenance only.
 - Tweak.m presents a UIKit PHPicker photo selector; preserves async selection order; emits `BRPrototypeTwoPhotosReady` with 2 UIImages. It does **not** integrate with BeReal's capture/draft/upload pipeline.
 - `scripts/inspect_ipa.py` inspects unsigned structural metadata only. This does NOT prove tweak compatibility, successful injection, successful signing, login or post.
 - Github Actions workflow currently builds just a dylib on macOS runner; no IPA injection or signing steps have been implemented or executed.
