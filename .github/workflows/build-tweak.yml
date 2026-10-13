@@ -4,8 +4,14 @@ on:
     inputs:
       source_ipa_url:
         description: Temporary download URL of the user-supplied IPA
-        required: true
+        required: false
         type: string
+  push:
+    paths:
+      - 'Tweak.m'
+      - 'scripts/**'
+      - 'tests/**'
+      - '.github/workflows/build-tweak.yml'
 permissions:
   contents: read
 jobs:

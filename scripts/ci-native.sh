@@ -15,7 +15,11 @@ trap 'rm -rf "$temporary_directory"' EXIT
 export BR_TEMP_DIRECTORY="$temporary_directory"
 python3 - <<'PY'
 import hashlib, json, os, pathlib, urllib.request, zipfile
-url = json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())['inputs']['source_ipa_url']
+event = json.loads(pathlib.Path(os.environ['GITHUB_EVENT_PATH']).read_text())
+url = event.get('inputs', {}).get('source_ipa_url', '')
+if not url:
+    print('No IPA transfer requested; source-only native compilation completed.')
+    raise SystemExit(0)
 if not url.startswith('https://') or any(c in url for c in '\r\n'):
     raise SystemExit('A single HTTPS source URL is required')
 print('::add-mask::' + url)
@@ -35,6 +39,10 @@ with zipfile.ZipFile(ipa) as archive:
             raise SystemExit('Invalid archive path')
     archive.extractall(root / 'app')
 PY
+if [[ ! -f "$temporary_directory/source.ipa" ]]; then
+  shasum -a 256 output/CameraRollPrototype.dylib > output/SHA256SUMS
+  exit 0
+fi
 python3 scripts/inspect_ipa.py "$temporary_directory/source.ipa" > output/input-verification.json
 app_path="$temporary_directory/app/Payload/BeReal.app"
 xcrun otool -ov "$app_path/BeReal" | gzip > output/main-objc.txt.gz
