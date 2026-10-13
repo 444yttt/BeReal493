@@ -40,32 +40,51 @@ class SignedDeliveryTest(unittest.TestCase):
                      '-subj', '/OU=' + TEAM + '/CN=Apple Distribution: Synthetic Fixture',
                      '-keyout', str(cls.key), '-out', str(cls.cert)])
         cls.der = cls.openssl(['x509', '-in', str(cls.cert), '-outform', 'DER'])
-        cls.payload, cls.profile_receipts = {}, []
+        cls.payload, cls.profile_receipts = cls.make_payload()
+
+    @classmethod
+    def make_payload(cls, grant=None, signed_wildcards=False):
+        payload, profile_receipts = {}, []
         now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None, microsecond=0)
+        common_uuid = str(uuid.uuid4()) if grant is not None else None
+        common_raw = None
         for suffix in module.SUFFIXES:
             identifier = module.ROOT_ID + suffix
             bundle = 'Payload/BeReal.app' + ('' if not suffix else '/PlugIns/' + suffix[1:] + '.appex')
             info = plistlib.dumps({'CFBundleIdentifier': identifier, 'CFBundleExecutable': 'Executable',
                                    'CFBundleShortVersionString': '4.93.0', 'CFBundleVersion': '23026'})
             resources = plistlib.dumps({'files': {}})
-            entitlements = {'application-identifier': TEAM + '.' + identifier,
+            entitlements = {'application-identifier': TEAM + '.' + (identifier if grant is None else grant),
                             'com.apple.developer.team-identifier': TEAM, 'get-task-allow': False,
                             'keychain-access-groups': [TEAM + '.*']}
-            profile = {'UUID': str(uuid.uuid4()), 'Entitlements': entitlements,
+            profile = {'UUID': common_uuid or str(uuid.uuid4()), 'Entitlements': entitlements,
                        'TeamIdentifier': [TEAM], 'ApplicationIdentifierPrefix': [TEAM],
                        'ProvisionedDevices': [DEVICE], 'DeveloperCertificates': [cls.der],
                        'CreationDate': now - dt.timedelta(days=1),
                        'ExpirationDate': now + dt.timedelta(days=1)}
-            concrete = module.concrete_entitlements(profile, identifier)
-            cls.payload[bundle + '/Info.plist'] = info
-            cls.payload[bundle + '/_CodeSignature/CodeResources'] = resources
-            cls.payload[bundle + '/embedded.mobileprovision'] = cls.cms(plistlib.dumps(profile), attached=True)
-            cls.payload[bundle + '/Executable'] = cls.executable(
-                identifier, concrete, info, resources, adapter=not suffix)
-            cls.profile_receipts.append({'bundle_identifier': identifier, 'profile_uuid': profile['UUID'],
-                                         'expiration_date': profile['ExpirationDate'].isoformat() + 'Z',
-                                         'entitlement_keys': sorted(concrete)})
-        cls.payload['Payload/BeReal.app/Frameworks/CameraRollAdapter.dylib'] = cls.executable('CameraRollAdapter')
+            # Construct fixture rights independently of the verifier, so an
+            # incorrect profile-grant implementation cannot bless itself.
+            concrete = dict(entitlements)
+            concrete['application-identifier'] = TEAM + '.' + identifier
+            concrete['keychain-access-groups'] = [TEAM + '.' + identifier]
+            payload[bundle + '/Info.plist'] = info
+            payload[bundle + '/_CodeSignature/CodeResources'] = resources
+            if grant is not None and common_raw is not None:
+                raw = common_raw
+            else:
+                raw = cls.cms(plistlib.dumps(profile), attached=True)
+                if grant is not None:
+                    common_raw = raw
+            payload[bundle + '/embedded.mobileprovision'] = raw
+            payload[bundle + '/Executable'] = cls.executable(
+                identifier, entitlements if signed_wildcards else concrete, info, resources, adapter=not suffix)
+            profile_receipts.append({'bundle_identifier': identifier, 'profile_uuid': profile['UUID'],
+                                     'expiration_date': profile['ExpirationDate'].isoformat() + 'Z',
+                                     'entitlement_keys': sorted(concrete),
+                                     'certificate_sha256': hashlib.sha256(cls.der).hexdigest(),
+                                     'provisioned_device_count': 1})
+        payload['Payload/BeReal.app/Frameworks/CameraRollAdapter.dylib'] = cls.executable('CameraRollAdapter')
+        return payload, profile_receipts
 
     @classmethod
     def openssl(cls, arguments, data=None):
@@ -142,9 +161,9 @@ class SignedDeliveryTest(unittest.TestCase):
         self.ipa = delivery / 'BeReal493-CameraRoll-SIGNED.ipa'
         self.receipt = delivery / 'verification.json'
 
-    def save_delivery(self, changed=None, extra=None):
+    def save_delivery(self, changed=None, extra=None, payload=None, profiles=None, wildcard=False):
         with zipfile.ZipFile(self.ipa, 'w') as archive:
-            for name, value in self.payload.items():
+            for name, value in (self.payload if payload is None else payload).items():
                 archive.writestr(name, (changed or {}).get(name, value))
             if extra:
                 archive.writestr(*extra)
@@ -156,7 +175,10 @@ class SignedDeliveryTest(unittest.TestCase):
                                               'concrete profile entitlements and the approved certificate'),
                    'device_installation': 'not tested', 'posting': 'not tested',
                    'certificate_sha256': hashlib.sha256(self.der).hexdigest(),
-                   'profiles': self.profile_receipts}
+                   'profiles': self.profile_receipts if profiles is None else profiles}
+        if wildcard:
+            receipt['profile_selection'] = 'existing_wildcard_read_only'
+            receipt['distinct_profile_count'] = 1
         self.receipt.write_text(json.dumps(receipt))
 
     def test_signed_delivery_validates_without_publishing_device_identifier(self):
@@ -190,6 +212,46 @@ class SignedDeliveryTest(unittest.TestCase):
         receipt['sha256'] = '0' * 64
         self.receipt.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, 'SHA256 differs'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_shared_wildcard_profile_is_concretized_for_all_five_bundles(self):
+        for grant in ('*', 'com.ayato.*'):
+            with self.subTest(grant=grant):
+                payload, profiles = self.make_payload(grant=grant)
+                self.save_delivery(payload=payload, profiles=profiles, wildcard=True)
+                result = module.verify(self.ipa, self.receipt)
+                verified = result['independently_verified']
+                self.assertEqual(verified['distinct_profile_count'], 1)
+                self.assertTrue(all(profile['application_identifier_kind'] == 'wildcard'
+                                    for profile in verified['profiles']))
+                self.assertTrue(all(profile['xml_entitlements_match_concrete_profile']
+                                    for profile in verified['profiles']))
+                self.assertNotIn(DEVICE, json.dumps(result))
+
+    def test_wildcard_profile_cannot_grant_another_scope_or_embedded_wildcard(self):
+        for grant in ('com.another.*', 'com.*.bereal493'):
+            with self.subTest(grant=grant):
+                payload, profiles = self.make_payload(grant=grant)
+                self.save_delivery(payload=payload, profiles=profiles, wildcard=True)
+                with self.assertRaisesRegex(ValueError, 'Profile application identity mismatch'):
+                    module.verify(self.ipa, self.receipt)
+
+    def test_actual_signed_wildcard_entitlements_are_rejected(self):
+        payload, profiles = self.make_payload(grant='com.ayato.*', signed_wildcards=True)
+        self.save_delivery(payload=payload, profiles=profiles, wildcard=True)
+        with self.assertRaisesRegex(ValueError, 'Signed XML entitlements differ'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_wildcard_profile_requires_matching_ci_selection_and_profile_count(self):
+        payload, profiles = self.make_payload(grant='com.ayato.*')
+        self.save_delivery(payload=payload, profiles=profiles)
+        with self.assertRaisesRegex(ValueError, 'Wildcard profile selection differs'):
+            module.verify(self.ipa, self.receipt)
+        self.save_delivery(payload=payload, profiles=profiles, wildcard=True)
+        receipt = json.loads(self.receipt.read_text())
+        receipt['distinct_profile_count'] = 5
+        self.receipt.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'distinct profile count mismatch'):
             module.verify(self.ipa, self.receipt)
 
 

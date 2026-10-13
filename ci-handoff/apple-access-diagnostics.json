@@ -1,0 +1,170 @@
+{
+  "mode": "read_only_apple_access_diagnostics",
+  "schema_version": 3,
+  "distribution_certificate_validated": true,
+  "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "registered_enabled_ios_device_count": 1,
+  "apple_resources_created_or_modified": false,
+  "signed_ipa_created": false,
+  "post_permission_verified": false,
+  "profile_cms_check": "embedded-signature integrity; Apple certificate-chain trust not evaluated by this diagnostic",
+  "device_installation": "not tested",
+  "posting": "not tested",
+  "scoped_bundle_registration_checks": [
+    {
+      "target_bundle_identifier": "com.ayato.bereal493",
+      "read_allowed": true,
+      "exact_registration_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.iMessageExtension",
+      "read_allowed": true,
+      "exact_registration_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
+      "read_allowed": true,
+      "exact_registration_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
+      "read_allowed": true,
+      "exact_registration_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.Widgets",
+      "read_allowed": true,
+      "exact_registration_count": 0
+    }
+  ],
+  "profile_catalog_read_allowed": true,
+  "catalog_profile_count": 16,
+  "catalog_distribution_types": {
+    "IOS_APP_STORE": 5,
+    "IOS_APP_ADHOC": 9,
+    "IOS_APP_DEVELOPMENT": 2
+  },
+  "active_ios_adhoc_profile_count": 9,
+  "profile_cms_or_structure_rejection_count": 0,
+  "cms_decoded_profile_count": 9,
+  "scoped_profile_count": 1,
+  "unrelated_identifier_profile_count": 8,
+  "wildcard_grant_profile_count": 1,
+  "compatible_current_device_included_profile_count": 0,
+  "compatible_current_device_only_profile_count": 0,
+  "compatible_current_device_only_wildcard_all_targets_profile_count": 0,
+  "decoded_profile_check_pass_counts": {
+    "all_devices_provisioning_disabled": 9,
+    "application_prefix_matches": 9,
+    "concrete_scoped_entitlements_available": 1,
+    "current_device_included": 9,
+    "debugging_disabled": 9,
+    "identity_structure_valid": 9,
+    "metadata_expiry_valid": 9,
+    "only_current_device": 9,
+    "profile_expiry_valid": 9,
+    "target_identifier_grant_present": 1,
+    "team_matches": 9,
+    "uuid_matches_metadata": 9
+  },
+  "decoded_profile_check_failure_counts": {
+    "certificate_matches": 9,
+    "concrete_scoped_entitlements_available": 8,
+    "target_identifier_grant_present": 8
+  },
+  "scoped_profile_check_pass_counts": {
+    "all_devices_provisioning_disabled": 1,
+    "application_prefix_matches": 1,
+    "concrete_scoped_entitlements_available": 1,
+    "current_device_included": 1,
+    "debugging_disabled": 1,
+    "identity_structure_valid": 1,
+    "metadata_expiry_valid": 1,
+    "only_current_device": 1,
+    "profile_expiry_valid": 1,
+    "target_identifier_grant_present": 1,
+    "team_matches": 1,
+    "uuid_matches_metadata": 1
+  },
+  "scoped_profile_check_failure_counts": {
+    "certificate_matches": 1
+  },
+  "target_coverage": [
+    {
+      "target_bundle_identifier": "com.ayato.bereal493",
+      "identity_grant_profile_count": 1,
+      "wildcard_grant_profile_count": 1,
+      "compatible_current_device_included_profile_count": 0,
+      "compatible_current_device_only_profile_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.iMessageExtension",
+      "identity_grant_profile_count": 1,
+      "wildcard_grant_profile_count": 1,
+      "compatible_current_device_included_profile_count": 0,
+      "compatible_current_device_only_profile_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
+      "identity_grant_profile_count": 1,
+      "wildcard_grant_profile_count": 1,
+      "compatible_current_device_included_profile_count": 0,
+      "compatible_current_device_only_profile_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
+      "identity_grant_profile_count": 1,
+      "wildcard_grant_profile_count": 1,
+      "compatible_current_device_included_profile_count": 0,
+      "compatible_current_device_only_profile_count": 0
+    },
+    {
+      "target_bundle_identifier": "com.ayato.bereal493.Widgets",
+      "identity_grant_profile_count": 1,
+      "wildcard_grant_profile_count": 1,
+      "compatible_current_device_included_profile_count": 0,
+      "compatible_current_device_only_profile_count": 0
+    }
+  ],
+  "all_targets_covered_with_current_device_included": false,
+  "all_targets_covered_with_current_device_only": false,
+  "alternate_identity": {
+    "configured": false,
+    "certificate_decode_valid": false,
+    "certificate_team_valid": false,
+    "certificate_expiry_valid": false,
+    "api_distribution_certificate_validated": false,
+    "private_key_exported": false,
+    "alternate_password_configured": false,
+    "primary_password_fallback_used": false,
+    "same_certificate_as_primary": false,
+    "fits_existing_wildcard_profile_for_all_five_targets_and_only_current_device": false
+  },
+  "scoped_profile_certificate_public_key_probe": {
+    "mode": "public_certificate_spki_comparison",
+    "private_key_exported": false,
+    "apple_resources_created_or_modified": false,
+    "primary_ci_key_can_be_rebound_to_valid_existing_scoped_profile_certificate": false,
+    "counts": {
+      "apple_certificate_catalog_decode_rejection_count": 0,
+      "scoped_wildcard_all_targets_profile_count": 1,
+      "profile_certificate_structure_rejection_count": 0,
+      "profile_decode_or_analysis_rejection_count": 0,
+      "unique_scoped_profile_certificate_count": 1,
+      "certificate_missing_from_current_apple_catalog_count": 0,
+      "ambiguous_apple_certificate_match_count": 0,
+      "profile_public_certificate_decode_rejection_count": 0,
+      "valid_scoped_profile_certificate_matching_primary_public_key_count": 0,
+      "primary_public_key_matches_pass_count": 0,
+      "primary_public_key_matches_failure_count": 1,
+      "certificate_current_validity_pass_count": 1,
+      "certificate_current_validity_failure_count": 0,
+      "certificate_team_matches_pass_count": 1,
+      "certificate_team_matches_failure_count": 0,
+      "apple_active_distribution_certificate_matches_pass_count": 1,
+      "apple_active_distribution_certificate_matches_failure_count": 0,
+      "profile_all_targets_current_device_only_pass_count": 1,
+      "profile_all_targets_current_device_only_failure_count": 0
+    }
+  }
+}

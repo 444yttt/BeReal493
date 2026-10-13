@@ -1,16 +1,15 @@
-# Verified execution status (2026-10-13)
+# Verified execution status (2026-10-13 UTC)
 
-- User authorized public repository `444yttt/BeReal493`, IPA-only delivery, and transfer of the original IPA/access URL to GitHub Actions.
-- Original input recovered; SHA256 `e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc` matched. Identity `AlexisBarreyat.BeReal`, version `4.93.0`, build `23026`, iOS 17.0, ARM64.
-- Original main executable has cryptid=0. Concrete callback metadata and image-data-read sites verified; see CAPTURE_CONTRACT.md.
-- `CameraRollAdapter.m` and `BRPairState.m` implement a version-guarded Objective-C photo adapter, explicit front/back assignment, capture snapshots by uniqueID, normalized JPEG replacement, expiry, and automatic pair reset.
-- Native adapter compiled with Xcode 16.4 (16F6); Foundation pair-state tests passed in Actions run `38407306722`, build commit `945cd4bc230d6205d34923c0bcf82fa2d4f1cb45`.
-- Eight local Python tests passed, including Mach-O packaging failure/preservation checks.
-- Generated `BeReal493-CameraRoll-UNSIGNED.ipa`; SHA256 `66dbd05ea861c6213e8b795aa8e446b1d84eeceb30dc336742c7591471f5d4ef`.
-- IPA ZIP CRCs, unique adapter dependency, removal of the invalid root signature command, and unchanged executable payload bytes verified.
-- No device signing/provisioning, installation, launch, draft verification, or live posting test was performed. IPA is unsigned and requires full nested-code re-signing for a non-jailbroken iPhone.
-- Existing Y3POSClient/FORM signing secrets were not accessed or reused. Their App Store profiles are not directly installable provisioning for this modified app.
+**Adapter implemented and rebuilt; exact input preserved; unsigned IPA verified. Apple authentication/provisioning is pending. No signed IPA has been created or delivered.**
 
-## Continuation
+- Existing authorization covers the public repository, IPA-only delivery, original input/access-URL transfer to Actions, and Y3POSClient signing-asset reuse. Keep credentials/private keys in scoped CI; no public app Release is authorized.
+- Exact original: `AlexisBarreyat.BeReal_4.93.0_und3fined.ipa`, 142120475 bytes, SHA256 `e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc`. Bundle `AlexisBarreyat.BeReal`, version `4.93.0`, build `23026`, minimum iOS `17.0`, ARM64. Original main executable cryptid is 0.
+- `CameraRollAdapter.m` and `BRPairState.m` implement verified Objective-C capture hooks, explicit front/back assignment, snapshots by uniqueID, normalized JPEG replacement, expiry, and pair reset; see `CAPTURE_CONTRACT.md`. Pinned source is `1f749cd1b2433d2a32694d5c91849d22f84f429f`, including the different-team sandbox group fallback. Posting behavior has not been device-tested.
+- Restore/rebuild [Y3 run 38439756854](https://github.com/444yttt/Y3POSClient/actions/runs/38439756854) succeeded. Current unsigned IPA SHA256 is `ff4cd37f4e15fa045209ad5dcc6a6b4cfd2f21b67d117a4d995ec45ee6548577`; safe receipt is `ci-handoff/unsigned-verification.json`. Earlier unsigned hashes are historical.
+- Complete encrypted input is preserved in Y3 artifact `11834521871`; ZIP SHA256 `95102a46d3a1ca547e6bc058ac2dbffc522da195cce06e25385194eb89a52db6`. The v3 envelope is `ci-handoff/input-envelope-v3.json`; [run 38441402362](https://github.com/444yttt/Y3POSClient/actions/runs/38441402362) successfully restored, authenticated, decrypted, and hash-checked it. The old partial 190-chunk transfer is superseded.
+- Encrypted unsigned review artifact is `11833884915`; it is not a signed delivery. Local decryption keys and temporary input URLs must remain private. Recovery must use artifact identifiers/digests, not assumed prior local paths.
+- One enabled iOS device is registered and the primary CI distribution certificate is valid. Bundle-ID registration failed with HTTP 403. The existing scoped wildcard Ad Hoc profile uses a different certificate/public key; [SPKI probe run 38442131445](https://github.com/444yttt/Y3POSClient/actions/runs/38442131445) ruled out reuse with the primary private key. No compatible alternate identity is available. Safe diagnostic: `ci-handoff/apple-access-diagnostics.json`.
+- Temporary encrypted Apple ID relay was published at Y3 commit `e10d9886edc5f49fd8c0a563e6fa29b770532819`; [run 38447570175](https://github.com/444yttt/Y3POSClient/actions/runs/38447570175) passed its 19 Ruby/20 Python offline tests and published phase-0 challenge artifact `11839631214`. Challenge expiry is `2026-10-13T19:13:22Z`; a matching offline form was supplied to the user. Encrypted credentials are pending. No Apple login has occurred. Check run status and expiry before proceeding.
+- No final IPA signing, installation, launch, draft verification, live post, or notification/widget validation is established. Installation/live posting are not acceptance requirements; signed IPA delivery remains outstanding.
 
-Use the signed-IPA delivery method explicitly chosen by the user. Obtain or prepare matching device provisioning and an authorized certificate through a secure path, re-sign every nested executable, validate all signatures/entitlements, and then generate a new signed IPA. Do not call the present unsigned package installable or device-tested.
+Follow `HANDOFF_CODEX.md` for the current artifact recovery, fresh authentication challenge, provisioning, signing, independent validation, and delivery sequence. Never call an unsigned package or an authentication relay a completed delivery.

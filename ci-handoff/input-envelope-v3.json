@@ -1,0 +1,18 @@
+{
+  "version": 3,
+  "mode": "encrypted-local-file",
+  "input_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "encrypted_file": "input-encrypted.bin",
+  "encrypted_bytes": 142120480,
+  "encrypted_sha256": "07dbcb4b10c4a0b0dfb66b35c675c3415ba3fdef95ddc499c2ebbbc715e5eec5",
+  "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "wrapped_keys": "PWXLNOL4IXXSWTWAhxpv8jcv+RPXvoLuI4/b3pezKHs+3r3aj4YlQ4oCKzUsJPhMUJH0Lxs+MQlXu1KZr/0RBpJ9pdna2aTSCeNGJd0cjK8D8HlawuLLtRr1bbiiztsXAc7dUDytQFcPK7RnL3Fo9Bybe/V52JsBpllCXD/LZFiO6rlGuvobBYYPl3MFD+SGZm+b7dm2899PMC3cbJr6/5jvKsjuorEw4hRfiTJXlZg0u9PVdEm59mZPatC7ObvxSqV4SrTFu3vM0IpsE8/A9vLwy64BhsDFzj/tVnYcO7poSshjWJAB35ybWzE3eNcc3ZU+DxzRB4Ioa/65vuiuGQ==",
+  "iv": "3F1fmNpK2yEjBMs+IWR1Kg==",
+  "hmac": "88+cE/5Xg5+aIX0t6/7P+sCYGw2eq2py+/TOOqbA5rY=",
+  "github_artifact": {
+    "repository": "444yttt/Y3POSClient",
+    "artifact_id": 11834521871,
+    "archive_sha256": "95102a46d3a1ca547e6bc058ac2dbffc522da195cce06e25385194eb89a52db6"
+  }
+}

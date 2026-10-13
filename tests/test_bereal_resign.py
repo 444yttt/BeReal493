@@ -195,6 +195,120 @@ class SigningInputTest(unittest.TestCase):
         self.assertNotIn(candidate['attributes']['profileContent'], serialized)
         self.assertNotIn('profileContent', serialized)
 
+    def test_existing_wildcard_profile_is_read_only_and_covers_all_five_bundles(self):
+        decoded = profile('*')
+        api = Mock(); api.collection.return_value = [resource(decoded)]
+        with patch.object(module, 'run', return_value=plistlib.dumps(decoded)):
+            raw, selected = module.select_existing_wildcard_profile(api, CERTIFICATE, TEAM,
+                {'attributes': {'udid': DEVICE}})
+        self.assertTrue(raw); api.request.assert_not_called()
+        receipts = []
+        for suffix in module.SAFE_SUFFIXES:
+            identifier = IDENTIFIER + suffix
+            entitlements = module.existing_wildcard_entitlements(selected, identifier)
+            self.assertEqual(entitlements['application-identifier'], TEAM + '.' + identifier)
+            self.assertEqual(entitlements['keychain-access-groups'], [TEAM + '.' + identifier])
+            self.assertFalse(any('*' in value for value in entitlements['keychain-access-groups']))
+            receipts.append(module.public_profile_receipt(identifier, selected, CERTIFICATE, True))
+        self.assertEqual({receipt['profile_uuid'] for receipt in receipts}, {UUID})
+        self.assertEqual(selected['Entitlements']['application-identifier'], TEAM + '.*')
+        self.assertNotIn(DEVICE, json.dumps(receipts))
+
+    def test_existing_wildcard_mode_rejects_nonmatching_certificate_without_mutation(self):
+        decoded = profile('*'); decoded['DeveloperCertificates'] = [b'another-distribution-cert']
+        api = Mock(); api.collection.return_value = [resource(decoded)]
+        with patch.object(module, 'run', return_value=plistlib.dumps(decoded)), \
+            self.assertRaisesRegex(RuntimeError, 'No existing wildcard'):
+            module.select_existing_wildcard_profile(api, CERTIFICATE, TEAM, {'attributes': {'udid': DEVICE}})
+        api.request.assert_not_called()
+
+    def test_partial_wildcard_scope_cannot_substitute_for_all_five_bundles(self):
+        decoded = profile(IDENTIFIER + '.*')
+        api = Mock(); api.collection.return_value = [resource(decoded)]
+        with patch.object(module, 'run', return_value=plistlib.dumps(decoded)), self.assertRaises(RuntimeError):
+            module.select_existing_wildcard_profile(api, CERTIFICATE, TEAM, {'attributes': {'udid': DEVICE}})
+        api.request.assert_not_called()
+
+    def test_existing_wildcard_never_imports_original_bereal_identity(self):
+        decoded = profile('*')
+        decoded['Entitlements']['com.apple.security.application-groups'] = ['group.' + module.PREFIX]
+        with self.assertRaises(RuntimeError): module.existing_wildcard_entitlements(decoded, IDENTIFIER)
+        with self.assertRaises(RuntimeError): module.existing_wildcard_entitlements(profile('*'), 'com.other.app')
+
+    def test_failed_alternate_identity_proof_stops_before_input_or_provisioning(self):
+        device = {'attributes': {'udid': DEVICE}}
+        with tempfile.TemporaryDirectory() as directory, patch.dict(os.environ, {
+            'GITHUB_REPOSITORY': '444yttt/Y3POSClient', 'GITHUB_REF': 'refs/heads/main',
+            'RUNNER_TEMP': directory, 'APPLE_TEAM_ID': TEAM}), patch.object(module, 'configure_openssl'), \
+            patch.object(module, 'load_helper'), patch.object(module, 'decode_identity') as identity, \
+            patch.object(module, 'signing_readiness', return_value=({}, device)), \
+            patch.object(module, 'select_existing_wildcard_profile', side_effect=RuntimeError('safe compatibility failure')), \
+            patch.object(module, 'decrypt_input') as decrypt, patch.object(module, 'get_profile') as provision, \
+            patch.object(module.Path, 'read_text', return_value='{}'), self.assertRaises(RuntimeError):
+            identity.side_effect = [(Path('current.p12'), b'current-cert', Path('current-key'), Path('asc')),
+                                    (Path('alternate.p12'), b'alternate-cert', None, Path('asc'))]
+            module.main(['--use-existing-wildcard-profiles'])
+        self.assertEqual(identity.call_args.kwargs['certificate_env'], 'DIST_P12_BASE64')
+        self.assertEqual(identity.call_args.kwargs['password_env'], 'DIST_P12_PASSWORD')
+        self.assertFalse(identity.call_args.kwargs['need_private_key'])
+        decrypt.assert_not_called(); provision.assert_not_called()
+
+    def test_wildcard_signing_keeps_input_key_separate_from_alternate_identity(self):
+        # The tools are mocked here to validate orchestration. Actual CMS,
+        # certificate and signed-code checks have separate crypto/CI coverage.
+        decoded = profile('*'); device = {'attributes': {'udid': DEVICE}}
+        captured = {}
+        with tempfile.TemporaryDirectory() as directory:
+            fixture = Path(directory); payload = fixture / 'payload'
+            app = payload / 'Payload/BeReal.app'
+            for suffix in module.SAFE_SUFFIXES:
+                bundle = app if not suffix else app / 'PlugIns' / (suffix[1:] + '.appex')
+                bundle.mkdir(parents=True, exist_ok=True)
+                info = {'CFBundleIdentifier': module.PREFIX + suffix, 'CFBundleExecutable': 'Main'}
+                (bundle / 'Info.plist').write_bytes(plistlib.dumps(info)); (bundle / 'Main').write_bytes(b'fixture-executable')
+            current_key = fixture / 'current-key.pem'; alternate_p12 = fixture / 'alternate.p12'
+            commands = []
+            def tool(args, data=None):
+                commands.append(args)
+                if args[0].endswith('security') and args[1] == 'find-identity':
+                    return module.hashlib.sha1(CERTIFICATE).hexdigest().upper().encode()
+                if args[0].endswith('codesign') and '--extract-certificates' in args:
+                    Path(args[args.index('--extract-certificates') + 1] + '0').write_bytes(CERTIFICATE)
+                if args[0].endswith('codesign') and args[1] == '-d' and '--entitlements' in args:
+                    identifier = plistlib.loads((Path(args[-1]) / 'Info.plist').read_bytes())['CFBundleIdentifier']
+                    signed = copy.deepcopy(decoded['Entitlements'])
+                    signed['application-identifier'] = TEAM + '.' + identifier
+                    signed['keychain-access-groups'] = [TEAM + '.' + identifier]
+                    return plistlib.dumps(signed)
+                return b''
+            def capture_delivery(root, files, output): captured.update(json.loads(files[1].read_bytes()))
+            with patch.dict(os.environ, {'GITHUB_REPOSITORY': '444yttt/Y3POSClient',
+                'GITHUB_REF': 'refs/heads/main', 'RUNNER_TEMP': directory, 'APPLE_TEAM_ID': TEAM,
+                'P12_PASSWORD': 'current-test-password', 'DIST_P12_PASSWORD': 'alternate-test-password'}), \
+                patch.object(module, 'configure_openssl'), patch.object(module, 'load_helper'), \
+                patch.object(module, 'decode_identity') as identity, \
+                patch.object(module, 'signing_readiness', return_value=({}, device)), \
+                patch.object(module, 'select_existing_wildcard_profile', return_value=(b'profile-fixture', decoded)), \
+                patch.object(module, 'decrypt_input', return_value=Path('original.ipa')) as decrypt, \
+                patch.object(module, 'build_adapter', return_value=payload), patch.object(module, 'get_profile') as provision, \
+                patch.object(module.Path, 'read_text', return_value='{}'), patch.object(module, 'run', side_effect=tool), \
+                patch.object(module.subprocess, 'run'), patch.object(module, 'encrypt_delivery', side_effect=capture_delivery), \
+                redirect_stdout(io.StringIO()):
+                identity.side_effect = [(fixture / 'current.p12', b'current-certificate', current_key, Path('asc')),
+                                        (alternate_p12, CERTIFICATE, None, Path('asc'))]
+                module.main(['--use-existing-wildcard-profiles'])
+            self.assertEqual(decrypt.call_args.args[1], current_key)
+            provision.assert_not_called()
+            imports = [args for args in commands if args[0].endswith('security') and args[1] == 'import']
+            self.assertEqual(len(imports), 1)
+            self.assertEqual(imports[0][2], str(alternate_p12))
+            self.assertEqual(imports[0][imports[0].index('-P') + 1], 'alternate-test-password')
+            self.assertEqual(captured['certificate_sha256'], module.hashlib.sha256(CERTIFICATE).hexdigest())
+            self.assertEqual(captured['input_recipient_certificate_sha256'], module.hashlib.sha256(b'current-certificate').hexdigest())
+            self.assertEqual(captured['distinct_profile_count'], 1)
+            self.assertEqual(captured['provisioned_bundle_count'], 5)
+            self.assertEqual(captured['profile_selection'], 'existing_wildcard_read_only')
+
     def test_tool_diagnostics_never_expose_arguments_or_stderr(self):
         result = subprocess.CompletedProcess([], 3, b'', b'test-secret-stderr')
         with patch.object(module.subprocess, 'run', return_value=result), self.assertRaises(RuntimeError) as error:

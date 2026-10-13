@@ -1,0 +1,24 @@
+{
+  "file": "BeReal493-CameraRoll-UNSIGNED.ipa",
+  "sha256": "ff4cd37f4e15fa045209ad5dcc6a6b4cfd2f21b67d117a4d995ec45ee6548577",
+  "input_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "adapter": "implemented; rebuilt from pinned source; not device tested",
+  "archive_inspection": {
+    "bundle_id": "AlexisBarreyat.BeReal",
+    "version": "4.93.0",
+    "build": "23026",
+    "minimum_os": "17.0",
+    "executable": "BeReal",
+    "executable_bytes": 77690240,
+    "mach_o_magic_hex": "cffaedfe",
+    "has_embedded_mobileprovision": false,
+    "framework_count": 84,
+    "ipa_sha256": "ff4cd37f4e15fa045209ad5dcc6a6b4cfd2f21b67d117a4d995ec45ee6548577"
+  },
+  "signature": "unsigned",
+  "apple_resources_created_or_modified": false,
+  "device_installation": "not tested",
+  "posting": "not tested"
+}

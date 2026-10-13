@@ -280,13 +280,29 @@ def verify_macho(data, temporary, certificate_cache, now, expected=None, externa
     return records
 
 
+def identifier_grant_matches(grant, identifier):
+    """Recognize Apple exact IDs, '*' and a single final-segment wildcard."""
+    if not isinstance(grant, str) or not isinstance(identifier, str):
+        return False
+    if '*' not in grant:
+        return grant == identifier
+    if grant == '*':
+        return bool(identifier)
+    return (grant.count('*') == 1 and grant.endswith('.*')
+            and identifier.startswith(grant[:-1]) and len(identifier) > len(grant) - 1)
+
+
 def concrete_entitlements(profile, identifier):
+    require(identifier in EXPECTED_IDS, 'Entitlement target is outside the authorized bundle scope')
     entitlements = plistlib.loads(plistlib.dumps(profile['Entitlements']))
-    application_id = entitlements.get('application-identifier')
-    require(isinstance(application_id, str) and '.' in application_id, 'Missing profile application identifier')
-    prefix, bundle_id = application_id.split('.', 1)
-    require(bundle_id == identifier and prefix in profile.get('ApplicationIdentifierPrefix', []),
+    application_grant = entitlements.get('application-identifier')
+    require(isinstance(application_grant, str) and '.' in application_grant, 'Missing profile application identifier')
+    prefix, bundle_grant = application_grant.split('.', 1)
+    require(identifier_grant_matches(bundle_grant, identifier)
+            and prefix in profile.get('ApplicationIdentifierPrefix', []),
             'Profile application identity mismatch')
+    application_id = prefix + '.' + identifier
+    entitlements['application-identifier'] = application_id
     team = entitlements.get('com.apple.developer.team-identifier')
     require(team in profile.get('TeamIdentifier', []) and entitlements.get('get-task-allow') is False,
             'Profile team or Ad Hoc entitlement mismatch')
@@ -389,11 +405,23 @@ def verify(ipa, receipt_path):
             total_slices += len(records)
             verified_executables.add(executable_path)
             profiles.append({'bundle_identifier': identifier, 'profile_uuid': profile_uuid,
+                             'application_identifier_kind': ('wildcard' if '*' in profile['Entitlements']['application-identifier']
+                                                             else 'explicit'),
                              'expiration_date': iso(profile['ExpirationDate']), 'provisioned_device_count': 1,
                              'certificate_sha256': signer, 'entitlement_keys': sorted(entitlements),
                              'xml_entitlements_match_concrete_profile': True, 'der_entitlements_present': True})
         require(seen_ids == EXPECTED_IDS and len(provisioned_devices) == 1,
                 'Bundles or provisioned device differ across profiles')
+        distinct_profile_count = len({profile['profile_uuid'] for profile in profiles})
+        wildcard_profiles = [profile for profile in profiles if profile['application_identifier_kind'] == 'wildcard']
+        profile_selection = receipt.get('profile_selection')
+        if wildcard_profiles:
+            require(profile_selection == 'existing_wildcard_read_only' and len(wildcard_profiles) == 5
+                    and distinct_profile_count == 1, 'Wildcard profile selection differs from CI evidence')
+        else:
+            require(profile_selection != 'existing_wildcard_read_only', 'CI claimed wildcard selection for explicit profiles')
+        if 'distinct_profile_count' in receipt:
+            require(receipt['distinct_profile_count'] == distinct_profile_count, 'CI distinct profile count mismatch')
         for item in archive.infolist():
             if item.is_dir() or item.filename in verified_executables or item.file_size < 4:
                 continue
@@ -421,6 +449,10 @@ def verify(ipa, receipt_path):
                     require(iso(recorded_date) == profile['expiration_date'], 'CI profile expiration mismatch')
                 if 'entitlement_keys' in recorded:
                     require(sorted(recorded['entitlement_keys']) == profile['entitlement_keys'], 'CI profile entitlement keys mismatch')
+                if 'certificate_sha256' in recorded:
+                    require(recorded['certificate_sha256'] == profile['certificate_sha256'], 'CI profile signer certificate mismatch')
+                if 'provisioned_device_count' in recorded:
+                    require(recorded['provisioned_device_count'] == 1, 'CI profile device count mismatch')
         adapter_path = app + '/Frameworks/CameraRollAdapter.dylib'
         require(adapter_path in names, 'Missing compiled photo adapter')
         root_info = plistlib.loads(archive.read(root_infos[0]))
@@ -439,6 +471,7 @@ def verify(ipa, receipt_path):
             'input_sha256': ORIGINAL_SHA,
             'independently_verified': {'zip_crc_and_safe_unique_paths': True, 'ipa_hash_matches_ci_receipt': True,
                                       'bundle_count': 5, 'same_single_provisioned_device': True,
+                                      'distinct_profile_count': distinct_profile_count,
                                       'distribution_profile_entitlements': 'Ad Hoc; get-task-allow false',
                                       'certificate_sha256': certificate_sha,
                                       'certificate_expiration_date': certificate_cache[certificate_sha]['expiration'],
@@ -446,7 +479,8 @@ def verify(ipa, receipt_path):
                                       'cms_signature_and_code_page_hashes': True,
                                       'xml_entitlement_and_resource_special_slot_hashes': True,
                                       'adapter_dependency_injected_once': True, 'profiles': profiles},
-            'ci_evidence': {'macos_codesign_verification': ci_signature, 'registered_device_count': 1},
+            'ci_evidence': {'macos_codesign_verification': ci_signature, 'registered_device_count': 1,
+                            'profile_selection': profile_selection or 'exact profiles'},
             'limitations': ['Apple certificate-chain trust and codesign are not independently checked on Linux.',
                             'Bundle resource manifests are hash-checked; their individual file seals rely on CI codesign.',
                             'DER entitlement blobs are present and hash-checked; XML entitlements are parsed and compared.',
