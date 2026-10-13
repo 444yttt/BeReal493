@@ -1,0 +1,32 @@
+name: BeReal493 native build
+on:
+  workflow_dispatch:
+    inputs:
+      source_ipa_url:
+        description: Temporary download URL of the user-supplied IPA
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  tweak:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Run source and IPA-inspector tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Build native library and analyze supplied IPA
+        env:
+          SOURCE_IPA_URL: ${{ inputs.source_ipa_url }}
+        run: bash scripts/ci-native.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BeReal493-native-${{ github.sha }}
+          path: output/
+          if-no-files-found: error
+          retention-days: 1
