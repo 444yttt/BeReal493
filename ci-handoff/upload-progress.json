@@ -1,0 +1,16 @@
+{
+  "next_part": 87,
+  "total": 190,
+  "transfer_branch": "ci-input-transfer",
+  "partial_transfer_commit": "4b78a22e883b74197502e91c9cf6773a39fdf12d",
+  "complete": false,
+  "resign_workflow": ".github/workflows/bereal-resign.yml",
+  "resign_repository": "444yttt/Y3POSClient",
+  "y3_workflow_commit": "9428de4dbd26db56a02bc9e33da624c45c7c20f0",
+  "provisioning_attempt_run": 38436216798,
+  "provisioning_attempt_result": "Apple POST /v1/bundleIds: HTTP 403 FORBIDDEN_ERROR; no profiles created",
+  "profile_probe_run": 38436928395,
+  "profile_probe_result": "success; 0 compatible profiles and 0/5 scoped ID coverage",
+  "public_key_artifact_id": 11833576788,
+  "signed_ipa_created": false
+}

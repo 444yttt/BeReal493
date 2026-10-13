@@ -1,0 +1,24 @@
+{
+  "mode": "read_only_existing_profile_probe",
+  "distribution_certificate_validated": true,
+  "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "registered_device_count": 1,
+  "catalog_profile_count": 16,
+  "catalog_distribution_types": {
+    "IOS_APP_STORE": 5,
+    "IOS_APP_ADHOC": 9,
+    "IOS_APP_DEVELOPMENT": 2
+  },
+  "active_ios_adhoc_profile_count": 9,
+  "validated_cert_team_device_profile_count": 0,
+  "rejected_ios_adhoc_profile_count": 9,
+  "compatible_profile_count": 0,
+  "compatible_profiles": [],
+  "covered_scoped_identifiers": [],
+  "all_five_scoped_identifiers_covered": false,
+  "compatibility": "CMS, metadata and concrete-entitlement analysis only; strict signing flow unchanged",
+  "apple_resources_created_or_modified": false,
+  "signed_ipa_created": false,
+  "device_installation": "not tested",
+  "posting": "not tested"
+}
