@@ -11,6 +11,12 @@ static NSMutableSet<NSString *> *BRHookedDelegates;
 static NSMutableSet<NSString *> *BRHookedPhotos;
 static NSObject *BRHookLock;
 static NSString *const BRStatusNote = @"BRCameraRollStatus";
+typedef id (*BRDefaultsInitializer)(id NS_CONSUMED, SEL, NSString *) NS_RETURNS_RETAINED;
+static BRDefaultsInitializer BRDefaultsOriginal;
+static id BRDefaultsInit(id NS_CONSUMED defaults, SEL selector, NSString *suite) NS_RETURNS_RETAINED;
+static id BRDefaultsInit(id NS_CONSUMED defaults, SEL selector, NSString *suite) {
+    return BRDefaultsOriginal(defaults,selector,[suite isEqualToString:@"group.BeReal"]?@"com.ayato.bereal493.shared":suite);
+}
 
 static void BRStatus(NSString *message) {
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -48,11 +54,8 @@ static void BRInstallSandboxGroupFallback(void) {
     SEL defaultsSelector=@selector(initWithSuiteName:);
     Method defaultsMethod=class_getInstanceMethod(NSUserDefaults.class,defaultsSelector);
     if (BRMethodMatches(defaultsMethod,'@',3)) {
-        id (*original)(id,SEL,NSString *)=(void *)method_getImplementation(defaultsMethod);
-        IMP replacement=imp_implementationWithBlock(^id(id defaults,NSString *suite) {
-            return original(defaults,defaultsSelector,[suite isEqualToString:@"group.BeReal"]?@"com.ayato.bereal493.shared":suite);
-        });
-        method_setImplementation(defaultsMethod,replacement);
+        BRDefaultsOriginal=(BRDefaultsInitializer)method_getImplementation(defaultsMethod);
+        method_setImplementation(defaultsMethod,(IMP)BRDefaultsInit);
     }
 }
 static BOOL BRKnownDelegate(Class cls) {
