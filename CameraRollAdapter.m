@@ -11,10 +11,10 @@ static NSMutableSet<NSString *> *BRHookedDelegates;
 static NSMutableSet<NSString *> *BRHookedPhotos;
 static NSObject *BRHookLock;
 static NSString *const BRStatusNote = @"BRCameraRollStatus";
-typedef id (*BRDefaultsInitializer)(id NS_CONSUMED, SEL, NSString *) NS_RETURNS_RETAINED;
+typedef id (*BRDefaultsInitializer)(id object __attribute__((ns_consumed)), SEL, NSString *) __attribute__((ns_returns_retained));
 static BRDefaultsInitializer BRDefaultsOriginal;
-static id BRDefaultsInit(id NS_CONSUMED defaults, SEL selector, NSString *suite) NS_RETURNS_RETAINED;
-static id BRDefaultsInit(id NS_CONSUMED defaults, SEL selector, NSString *suite) {
+static id BRDefaultsInit(id defaults __attribute__((ns_consumed)), SEL selector, NSString *suite) __attribute__((ns_returns_retained));
+static id BRDefaultsInit(id defaults __attribute__((ns_consumed)), SEL selector, NSString *suite) {
     return BRDefaultsOriginal(defaults,selector,[suite isEqualToString:@"group.BeReal"]?@"com.ayato.bereal493.shared":suite);
 }
 
