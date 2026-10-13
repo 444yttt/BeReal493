@@ -2,6 +2,17 @@
 
 **Current status: nonfunctional for posting.** This repository builds an experimental photo-picker library, NOT an installable IPA. No private BeReal posting APIs have been validated or called.
 
+## Current execution status (2026-10-13)
+
+- Public repository: `444yttt/BeReal493`, authorized by the user.
+- Native ARM64 dylib compiled successfully with Xcode 16.4 (16F6) on macOS 15.
+- Build commit: `1da4ccca3752afe777304d784b868ae58417a74d`.
+- Successful build: https://github.com/444yttt/BeReal493/actions/runs/38405245770
+- All four Python tests passed. The build used public source only and did not transfer the original IPA.
+- User acceptance scope is IPA delivery only; live device posting is not required for this delivery.
+- IPA transfer to GitHub Actions remains blocked pending explicit authorization after automatic approval review rejected disclosure of its temporary access URL.
+- No posting adapter, modified IPA, or signed IPA exists yet.
+
 ## Validated against supplied IPA
 
 - Identifier `AlexisBarreyat.BeReal`
@@ -29,7 +40,7 @@ python3 scripts/inspect_ipa.py /path/to/BeReal_4.93.0.ipa
 
 1. Correctly identify BeReal 4.93.0's private capture-to-draft data contract and callback threading. Static string references are **not** sufficient evidence for a safe function hook.
 2. Write/validate a separately gated adapter and test in an authorized development environment; do not upload photos or call unknown endpoints to infer behavior.
-3. Compile on macOS with Theos and iOS SDK. GitHub Actions configuration is prepared, **not executed**.
+3. Native compilation is now verified using Xcode directly. Theos is unnecessary for the current picker-only source.
 4. Inject the resulting library, correctly re-sign the complete modified app (including nested code), and test on iPhone. **No signed IPA was produced**.
 
 Past first-party signing patterns inspected: `444yttt/Y3POSClient` and `444yttt/FORM`. Their signing secrets are not shared with this project. A modified third-party app is not equivalent to a first-party TestFlight upload.
