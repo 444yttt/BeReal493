@@ -65,6 +65,27 @@ class SigningInputTest(unittest.TestCase):
         self.assertEqual(original['Entitlements']['keychain-access-groups'], [TEAM + '.*'])
         self.validate()
 
+    def test_unused_apple_token_allowlist_grant_is_not_claimed(self):
+        decoded = profile()
+        decoded['Entitlements']['keychain-access-groups'].append('com.apple.token')
+        signed = module.concrete_entitlements(decoded, IDENTIFIER)
+        self.assertEqual(signed['keychain-access-groups'], [TEAM + '.' + IDENTIFIER])
+        self.assertEqual(decoded['Entitlements']['keychain-access-groups'], [TEAM + '.*', 'com.apple.token'])
+        self.validate(decoded)
+
+    def test_token_only_profile_has_no_scoped_keychain_grant(self):
+        decoded = profile()
+        decoded['Entitlements']['keychain-access-groups'] = ['com.apple.token']
+        with self.assertRaisesRegex(RuntimeError, 'no scoped app keychain grant'):
+            self.validate(decoded)
+
+    def test_omitting_token_never_accepts_other_foreign_keychain_grants(self):
+        for foreign in ('com.apple.token.child', 'com.apple.other', TEAM + '.com.other.app', 'OTHERTEAM1.*'):
+            with self.subTest(foreign=foreign), self.assertRaisesRegex(RuntimeError, 'Unapproved profile keychain scope'):
+                decoded = profile()
+                decoded['Entitlements']['keychain-access-groups'] += ['com.apple.token', foreign]
+                self.validate(decoded)
+
     def test_rejects_wrong_team_certificate_or_device_permissions(self):
         changes = [
             ('TeamIdentifier', ['OTHERTEAM1']), ('DeveloperCertificates', [b'other-cert']),
@@ -268,12 +289,13 @@ class SigningInputTest(unittest.TestCase):
                 (bundle / 'Info.plist').write_bytes(plistlib.dumps(info)); (bundle / 'Main').write_bytes(b'fixture-executable')
             current_key = fixture / 'current-key.pem'; alternate_p12 = fixture / 'alternate.p12'
             commands = []
-            def tool(args, data=None):
+            def tool(args, data=None, error_stage=None):
                 commands.append(args)
                 if args[0].endswith('security') and args[1] == 'find-identity':
                     return module.hashlib.sha1(CERTIFICATE).hexdigest().upper().encode()
-                if args[0].endswith('codesign') and '--extract-certificates' in args:
-                    Path(args[args.index('--extract-certificates') + 1] + '0').write_bytes(CERTIFICATE)
+                extraction = next((arg.split('=', 1)[1] for arg in args if arg.startswith('--extract-certificates=')), None)
+                if args[0].endswith('codesign') and extraction:
+                    Path(extraction + '0').write_bytes(CERTIFICATE)
                 if args[0].endswith('codesign') and args[1] == '-d' and '--entitlements' in args:
                     identifier = plistlib.loads((Path(args[-1]) / 'Info.plist').read_bytes())['CFBundleIdentifier']
                     signed = copy.deepcopy(decoded['Entitlements'])

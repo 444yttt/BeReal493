@@ -29,6 +29,10 @@ SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension',
             '.NotificationServiceExtension', '.Widgets')
 EXPECTED_IDS = {ROOT_ID + suffix for suffix in SUFFIXES}
 ADAPTER = '@executable_path/Frameworks/CameraRollAdapter.dylib'
+# This non-code marker is inherited byte-for-byte from the SHA-pinned input.
+# No other files outside the root application are permitted.
+INHERITED_OUTSIDE_FILES = {'Payload/decrypt.day': (
+    9, '15218e74cef5d8df7e631ab2a31fdb8bde28976252f984231cf410630410696e')}
 MACH_MAGICS = {b'\xce\xfa\xed\xfe', b'\xcf\xfa\xed\xfe',
                b'\xfe\xed\xfa\xce', b'\xfe\xed\xfa\xcf',
                b'\xca\xfe\xba\xbe', b'\xbe\xba\xfe\xca',
@@ -311,10 +315,15 @@ def concrete_entitlements(profile, identifier):
         require(isinstance(groups, list) and groups, 'Invalid profile keychain grants')
         concrete = []
         for group in groups:
+            # Independently claim only app-scoped rights, leaving this unused
+            # literal system grant in the provisioning allowlist (TN3125).
+            if group == 'com.apple.token':
+                continue
             group = application_id if group == prefix + '.*' else group
             require(group in (application_id, prefix + '.' + ROOT_ID), 'Unexpected keychain entitlement scope')
             if group not in concrete:
                 concrete.append(group)
+        require(concrete, 'Profile has no scoped app keychain grant')
         entitlements['keychain-access-groups'] = concrete
     def wildcard(value):
         if isinstance(value, str):
@@ -354,8 +363,20 @@ def verify(ipa, receipt_path):
                       and name.endswith('.app/Info.plist')]
         require(root_infos == ['Payload/BeReal.app/Info.plist'], 'Expected the single BeReal root application')
         app = 'Payload/BeReal.app'
-        require(all(name in ('Payload/', app + '/') or name.startswith(app + '/') for name in names),
+        outside_files = [name for name in names if name not in ('Payload/', app + '/')
+                         and not name.startswith(app + '/')]
+        require(all(name in INHERITED_OUTSIDE_FILES for name in outside_files),
                 'Unexpected files outside the root application')
+        inherited_files = []
+        for name in outside_files:
+            size, expected_digest = INHERITED_OUTSIDE_FILES[name]
+            item = archive.getinfo(name)
+            require(not item.is_dir() and item.file_size == size, 'Inherited outside-app marker length mismatch')
+            data = archive.read(item)
+            require(len(data) == size, 'Inherited outside-app marker length mismatch')
+            marker_digest = hashlib.sha256(data).hexdigest()
+            require(marker_digest == expected_digest, 'Inherited outside-app marker SHA256 mismatch')
+            inherited_files.append({'path': name, 'bytes': size, 'sha256': marker_digest})
         bundle_infos = [root_infos[0]] + sorted(name for name in names if name.startswith(app + '/PlugIns/')
                                                and name.count('/') == 4 and name.endswith('.appex/Info.plist'))
         nested_infos = [name for name in names if name.endswith(('.appex/Info.plist', '.app/Info.plist'))]
@@ -470,6 +491,7 @@ def verify(ipa, receipt_path):
             'ci_receipt_sha256': digest_file(receipt_path), 'source_commit': SOURCE_COMMIT,
             'input_sha256': ORIGINAL_SHA,
             'independently_verified': {'zip_crc_and_safe_unique_paths': True, 'ipa_hash_matches_ci_receipt': True,
+                                      'inherited_outside_app_files_verified': inherited_files,
                                       'bundle_count': 5, 'same_single_provisioned_device': True,
                                       'distinct_profile_count': distinct_profile_count,
                                       'distribution_profile_entitlements': 'Ad Hoc; get-task-allow false',

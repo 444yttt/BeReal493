@@ -43,7 +43,7 @@ class SignedDeliveryTest(unittest.TestCase):
         cls.payload, cls.profile_receipts = cls.make_payload()
 
     @classmethod
-    def make_payload(cls, grant=None, signed_wildcards=False):
+    def make_payload(cls, grant=None, signed_wildcards=False, profile_keychain=None, signed_token=False):
         payload, profile_receipts = {}, []
         now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None, microsecond=0)
         common_uuid = str(uuid.uuid4()) if grant is not None else None
@@ -56,7 +56,7 @@ class SignedDeliveryTest(unittest.TestCase):
             resources = plistlib.dumps({'files': {}})
             entitlements = {'application-identifier': TEAM + '.' + (identifier if grant is None else grant),
                             'com.apple.developer.team-identifier': TEAM, 'get-task-allow': False,
-                            'keychain-access-groups': [TEAM + '.*']}
+                            'keychain-access-groups': [TEAM + '.*'] if profile_keychain is None else profile_keychain}
             profile = {'UUID': common_uuid or str(uuid.uuid4()), 'Entitlements': entitlements,
                        'TeamIdentifier': [TEAM], 'ApplicationIdentifierPrefix': [TEAM],
                        'ProvisionedDevices': [DEVICE], 'DeveloperCertificates': [cls.der],
@@ -67,6 +67,8 @@ class SignedDeliveryTest(unittest.TestCase):
             concrete = dict(entitlements)
             concrete['application-identifier'] = TEAM + '.' + identifier
             concrete['keychain-access-groups'] = [TEAM + '.' + identifier]
+            if signed_token:
+                concrete['keychain-access-groups'].append('com.apple.token')
             payload[bundle + '/Info.plist'] = info
             payload[bundle + '/_CodeSignature/CodeResources'] = resources
             if grant is not None and common_raw is not None:
@@ -206,6 +208,34 @@ class SignedDeliveryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Unsafe'):
             module.verify(self.ipa, self.receipt)
 
+    def test_exact_inherited_marker_is_allowed_without_altering_signed_code(self):
+        marker = b'und3fined'
+        self.save_delivery(extra=('Payload/decrypt.day', marker))
+        result = module.verify(self.ipa, self.receipt)
+        self.assertEqual(result['independently_verified']['inherited_outside_app_files_verified'], [{
+            'path': 'Payload/decrypt.day', 'bytes': 9,
+            'sha256': '15218e74cef5d8df7e631ab2a31fdb8bde28976252f984231cf410630410696e'}])
+        self.assertEqual(result['independently_verified']['signed_macho_file_count'], 6)
+
+    def test_same_length_inherited_marker_mutation_is_rejected(self):
+        self.save_delivery(extra=('Payload/decrypt.day', b'und3finez'))
+        with self.assertRaisesRegex(ValueError, 'marker SHA256 mismatch'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_inherited_marker_wrong_length_is_rejected(self):
+        for marker in (b'und3fine', b'und3fined\n'):
+            with self.subTest(length=len(marker)):
+                self.save_delivery(extra=('Payload/decrypt.day', marker))
+                with self.assertRaisesRegex(ValueError, 'marker length mismatch'):
+                    module.verify(self.ipa, self.receipt)
+
+    def test_unknown_outside_app_files_remain_rejected(self):
+        for name in ('Payload/decrypt.day.extra', 'Payload/Decrypt.day', 'decrypt.day', 'Payload/other'):
+            with self.subTest(name=name):
+                self.save_delivery(extra=(name, b'und3fined'))
+                with self.assertRaisesRegex(ValueError, 'Unexpected files outside the root application'):
+                    module.verify(self.ipa, self.receipt)
+
     def test_receipt_hash_mismatch_is_rejected(self):
         self.save_delivery()
         receipt = json.loads(self.receipt.read_text())
@@ -241,6 +271,33 @@ class SignedDeliveryTest(unittest.TestCase):
         self.save_delivery(payload=payload, profiles=profiles, wildcard=True)
         with self.assertRaisesRegex(ValueError, 'Signed XML entitlements differ'):
             module.verify(self.ipa, self.receipt)
+
+    def test_profile_only_apple_token_is_omitted_from_valid_signed_rights(self):
+        payload, profiles = self.make_payload(profile_keychain=[TEAM + '.*', 'com.apple.token'])
+        self.save_delivery(payload=payload, profiles=profiles)
+        result = module.verify(self.ipa, self.receipt)
+        self.assertTrue(all(profile['xml_entitlements_match_concrete_profile']
+                            for profile in result['independently_verified']['profiles']))
+
+    def test_cryptographically_signed_apple_token_claim_is_rejected(self):
+        payload, profiles = self.make_payload(profile_keychain=[TEAM + '.*', 'com.apple.token'], signed_token=True)
+        self.save_delivery(payload=payload, profiles=profiles)
+        with self.assertRaisesRegex(ValueError, 'Signed XML entitlements differ'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_profile_with_only_apple_token_is_rejected(self):
+        payload, profiles = self.make_payload(profile_keychain=['com.apple.token'])
+        self.save_delivery(payload=payload, profiles=profiles)
+        with self.assertRaisesRegex(ValueError, 'no scoped app keychain grant'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_profile_other_foreign_keychain_grant_is_still_rejected(self):
+        for foreign in ('com.apple.token.child', TEAM + '.com.other.app'):
+            with self.subTest(foreign=foreign):
+                payload, profiles = self.make_payload(profile_keychain=[TEAM + '.*', 'com.apple.token', foreign])
+                self.save_delivery(payload=payload, profiles=profiles)
+                with self.assertRaisesRegex(ValueError, 'Unexpected keychain entitlement scope'):
+                    module.verify(self.ipa, self.receipt)
 
     def test_wildcard_profile_requires_matching_ci_selection_and_profile_count(self):
         payload, profiles = self.make_payload(grant='com.ayato.*')
