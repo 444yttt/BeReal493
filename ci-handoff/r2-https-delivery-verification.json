@@ -1,0 +1,56 @@
+{
+  "filename": "BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
+  "expected_bytes": 140233684,
+  "expected_sha256": "ca5d073c1bbd2aaabff8ea6956b2ab85f344d51249912981cac9f89d97d2364b",
+  "chunk_size": 20971520,
+  "part_count": 7,
+  "download_path": "/download/BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
+  "unauthorized_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "unauthorized_part": {
+    "status": 403,
+    "rejected": true
+  },
+  "invalid_bearer_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "forged_identity_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "authenticated_part_status": 200,
+  "static_assets_are_owner_gated": true,
+  "attachment_head_verified": true,
+  "head_content_length": "140233684",
+  "download_content_length": "140233684",
+  "complete_download_bytes": 140233684,
+  "sha256": "ca5d073c1bbd2aaabff8ea6956b2ab85f344d51249912981cac9f89d97d2364b",
+  "cross_part_range_verified": true,
+  "single_byte_range_verified": true,
+  "unsatisfiable_range_rejected": true,
+  "head_ignores_range": true,
+  "unauthorized_download_after_owner_cache": {
+    "status": 403,
+    "rejected": true
+  },
+  "unauthorized_part_after_owner_cache": {
+    "status": 403,
+    "rejected": true
+  },
+  "verified_at": "2026-10-14T07:21:31.722614Z",
+  "landing_r2_verified": true,
+  "site_owner_only_readback_verified": true,
+  "site_allowed_owner_count": 1,
+  "site_other_allowed_users_groups_or_external_viewers": 0,
+  "site_source_commit": "0c0ed2d47d32c1ed18df62d1b399a0a68357ca32",
+  "site_deployment_id": "appgdep_6acf2be3de608191b2a6cce75b9e561c",
+  "site_deployment_succeeded_at": "2026-10-14T07:17:18.432162Z",
+  "site_version_number": 11,
+  "source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
+  "device_installation": "not tested",
+  "login_persistence_after_restart": "not tested",
+  "posting": "not tested"
+}

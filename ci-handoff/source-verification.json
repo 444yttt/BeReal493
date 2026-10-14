@@ -13,12 +13,12 @@
     "conclusion": "success",
     "platform": "macOS"
   },
-  "signing_adapter_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "signing_adapter_source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
   "provisioning_complete": true,
   "signed_ipa_created": true,
   "signed_ipa_delivered": false,
-  "device_installation": "not tested",
-  "posting": "not tested",
+  "device_installation": "R2 not tested; initial R1 success user-reported after external re-signing",
+  "posting": "not tested for either revision",
   "follow_ups": [
     {
       "repository": "444yttt/Y3POSClient",
@@ -120,6 +120,29 @@
       "independent_delivery_validation_status": "passed",
       "durable_final_file_saved_rehashed": true,
       "signed_ipa_delivered": false
+    },
+    {
+      "repository": "444yttt/BeReal493",
+      "source_commit": "f10fa3a39f989593999b08d7da3c7a4147d08b4d",
+      "adapter_source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
+      "change": "R2 scoped front inverse-EXIF-5 pixels, root/team-suffix sandbox and exact token-storage factory own-keychain patch; formal verifier checks patched context/writers",
+      "local_tests": {
+        "count": 109,
+        "passed": true
+      },
+      "native_build": {
+        "run_id": 38525626271,
+        "job_id": 115725170886,
+        "conclusion": "success"
+      },
+      "signed_ci_run": 38525572234,
+      "independent_validation_status": "passed",
+      "https_delivery_status": "passed",
+      "device_improvements": "not tested",
+      "posting": "not tested",
+      "signed_ipa_delivered": false,
+      "delivery_ready": true,
+      "user_link_sent": false
     }
   ],
   "auth_transport_observation": {
@@ -286,7 +309,8 @@
     "artifact_expires_at": "2026-11-13T03:00:17Z",
     "artifact_expired": false,
     "local_signed_file_ready": true,
-    "delivery_pending_reason": "verified usable owner-private HTTPS link is ready; final user handoff pending"
+    "delivery_pending_reason": "verified usable owner-private HTTPS link is ready; final user handoff pending",
+    "evidence_scope": "historical initial R1 signed CI snapshot; current R2 is r2_revision"
   },
   "historical_schema7_keychain_classification_evidence": {
     "run_id": 38501943086,
@@ -363,7 +387,8 @@
     "durable_saved_copy_rehashed": true,
     "user_link_handoff_pending": true,
     "installation": "not tested",
-    "posting": "not tested"
+    "posting": "not tested",
+    "evidence_scope": "historical initial R1 formal validation; current R2 is r2_revision.formal_independent_validation"
   },
   "final_auth_cleanup_evidence": {
     "approximate_checked_at": "2026-10-14T03:10:00Z",
@@ -487,6 +512,152 @@
     },
     "usable_replacement_link_sent": false,
     "signed_ipa_delivered": false,
-    "delivery_ready": true
+    "delivery_ready": true,
+    "evidence_scope": "historical R1 HTTPS proof, not R2 delivery",
+    "usable_replacement_link_sent_user_reported_later": true
+  },
+  "initial_signing_adapter_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "input_adapter_provenance_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "current_revision": "R2",
+  "r2_revision": {
+    "revision": "R2",
+    "state": "signed/formally independently verified; full owner-private HTTPS verified; alias saved/rehashed; ready for final link handoff, user receipt pending",
+    "source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
+    "input_adapter_provenance_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+    "original_input_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+    "durable_encrypted_input_artifact_id": 11834521871,
+    "helper_bereal_commit": "f10fa3a39f989593999b08d7da3c7a4147d08b4d",
+    "helper_local_tests": {
+      "count": 109,
+      "passed": true
+    },
+    "signing_y3_commit": "8fdfc5efba3b92f932fa3095b969da46272ba072",
+    "focused_signer_tests": {
+      "count": 24,
+      "passed": true
+    },
+    "native_builds": {
+      "front_only": {
+        "run_id": 38523887484,
+        "job_id": 115719604744,
+        "conclusion": "success"
+      },
+      "combined_source": {
+        "run_id": 38525371444,
+        "job_id": 115724366764,
+        "conclusion": "success"
+      },
+      "helpers": {
+        "run_id": 38525626271,
+        "job_id": 115725170886,
+        "conclusion": "success"
+      }
+    },
+    "changes": {
+      "front_orientation": "inverse EXIF-5 pixel transpose only for physical front input to the two exact CameraPhotoCaptureProcessor names; rear and separate CameraKit routes unchanged",
+      "sandbox_groups": "root and team-suffix handling",
+      "auth_token_storage": "exact two four-byte factory argument-writer replacements set x2/x3 nil, using own permitted default keychain; service and other original bytes retained",
+      "security_api_interception": false,
+      "foreign_keychain_access_granted": false,
+      "evidence_files": [
+        "CAPTURE_CONTRACT.md",
+        "ci-handoff/front-orientation-evidence.json",
+        "ci-handoff/auth-keychain-evidence.json"
+      ]
+    },
+    "signed_ci": {
+      "run_id": 38525572234,
+      "conclusion": "success",
+      "encrypted_artifact_id": 11874744729,
+      "artifact_zip_bytes": 140282553,
+      "artifact_zip_sha256": "22dbc4991834eb16a9e3adfd89ee0eab34f861bf996632dbb23735b8233c0392",
+      "verification_receipt_bytes": 4923,
+      "verification_receipt_sha256": "f92c2e6e78856a8dc0f02620d6296bb6e02174dee1c3265663ea332020e8e2fb",
+      "safe_receipt": "ci-handoff/r2-signed-verification.json"
+    },
+    "formal_independent_validation": {
+      "status": "passed",
+      "receipt_bytes": 8074,
+      "receipt_sha256": "27b1c9544522edc902c2675b02729003364b7376f99f3a748a7ea440953b0e18",
+      "macho_cms_page_special_hash_verified_count": 90,
+      "exact_profile_rights_count": 5,
+      "same_single_device_verified": true,
+      "executable_modes_verified_count": 6,
+      "auth_factory_context_bytes_verified": 80,
+      "both_auth_argument_writers_verified": true,
+      "source_pin_verified": true,
+      "input_provenance_pin_verified": true,
+      "adapter_sha256": "a454173904663a91c2a281541f134215fbb8823197526b004b8e04a9da3524e5",
+      "safe_receipt": "ci-handoff/r2-signed-delivery-validation.json"
+    },
+    "signed_ipa_bytes": 140233684,
+    "signed_ipa_sha256": "ca5d073c1bbd2aaabff8ea6956b2ab85f344d51249912981cac9f89d97d2364b",
+    "safe_receipt_copy_paths_pending": false,
+    "https_delivery": {
+      "status": "passed",
+      "verified_at": "2026-10-14T07:21:31.722614Z",
+      "site_project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+      "site_source_commit": "0c0ed2d47d32c1ed18df62d1b399a0a68357ca32",
+      "site_deployment_id": "appgdep_6acf2be3de608191b2a6cce75b9e561c",
+      "site_deployment_status": "succeeded",
+      "site_deployed_at": "2026-10-14T07:17:18.432162Z",
+      "page_url": "https://bereal493-apple-auth.a-yt.chatgpt.site/?v=ca5d073c1bbd",
+      "download_url": "https://bereal493-apple-auth.a-yt.chatgpt.site/download/BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
+      "download_path": "/download/BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
+      "complete_file_downloaded": true,
+      "downloaded_bytes": 140233684,
+      "sha256_verified": true,
+      "sha256": "ca5d073c1bbd2aaabff8ea6956b2ab85f344d51249912981cac9f89d97d2364b",
+      "landing_new_r2_link_verified": true,
+      "attachment_head_status": 200,
+      "attachment_head_size_verified": true,
+      "cross_part_range_status": 206,
+      "single_byte_range_passed": true,
+      "unsatisfiable_range_status": 416,
+      "head_ignores_range_passed": true,
+      "owner_only_policy_readback_version": 11,
+      "allowed_owner_count": 1,
+      "allowed_group_count": 0,
+      "editor_count": 0,
+      "external_viewer_count": 0,
+      "unauthenticated_download_status": 403,
+      "unauthenticated_part_status": 403,
+      "forged_header_status": 403,
+      "invalid_token_status": 401,
+      "anonymous_cache_after_owner_download_status": 403,
+      "safe_receipt": "ci-handoff/r2-https-delivery-verification.json",
+      "safe_receipt_bytes": 1875,
+      "safe_receipt_sha256": "5a2d230a799066bb67260424f663fa437b38fa4eb239c341d0d64471d6ae726b",
+      "user_link_sent": false,
+      "user_receipt_confirmed": false,
+      "iphone_download_verified": false
+    },
+    "device_validation": {
+      "installation": "not tested",
+      "launch": "not tested",
+      "front_orientation_correction": "not tested",
+      "login_persistence_after_restart": "not tested",
+      "posting": "not tested"
+    },
+    "delivery_ready": true,
+    "signed_ipa_delivered": false,
+    "safe_receipt_copy_hashes_checked": true,
+    "final_file_alias": "BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
+    "final_alias_saved_rehashed": true,
+    "user_link_sent": false,
+    "user_receipt_confirmed": false
+  },
+  "initial_revision_user_report": {
+    "scope": "initial R1 after external re-signing with a sideloading tool",
+    "evidence_kind": "user report",
+    "file_received": true,
+    "installation_succeeded": true,
+    "launch_succeeded": true,
+    "selected_image_injection_succeeded": true,
+    "unchanged_original_delivery_signature_installation_proven": false,
+    "front_image_90_degree_rotation_reported": true,
+    "login_retry_after_restart_reported": true,
+    "ordinary_post_success_reported": false,
+    "raw_device_or_account_identifiers_recorded": false
   }
 }
