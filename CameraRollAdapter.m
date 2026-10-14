@@ -4,6 +4,7 @@
 #import <objc/runtime.h>
 #import "BRPairState.h"
 #import "BRBundleIdentity.h"
+#import "BRFrontOrientation.h"
 
 static BRPairState *BRState;
 static const void *BRReplacementKey = &BRReplacementKey;
@@ -12,6 +13,16 @@ static NSMutableSet<NSString *> *BRHookedDelegates;
 static NSMutableSet<NSString *> *BRHookedPhotos;
 static NSObject *BRHookLock;
 static NSString *const BRStatusNote = @"BRCameraRollStatus";
+static NSData *BRJPEG(UIImage *image);
+
+static NSData *BRFrontProcessorData(NSData *data) {
+    UIImage *image = [UIImage imageWithData:data];
+    CGImageRef pixels = BRCreateLeftMirroredPixels(image.CGImage);
+    if (!pixels) return nil;
+    UIImage *prepared = [UIImage imageWithCGImage:pixels scale:1 orientation:UIImageOrientationUp];
+    CGImageRelease(pixels);
+    return BRJPEG(prepared);
+}
 typedef id (*BRDefaultsInitializer)(id object __attribute__((ns_consumed)), SEL, NSString *) __attribute__((ns_returns_retained));
 static BRDefaultsInitializer BRDefaultsOriginal;
 static id BRDefaultsInit(id defaults __attribute__((ns_consumed)), SEL selector, NSString *suite) __attribute__((ns_returns_retained));
@@ -177,7 +188,13 @@ static BOOL BRInstallCaptureHook(void) {
             if (role && BRInstallDelegate(object_getClass(delegate))) {
                 BRReplacement *selected=[BRReplacement new]; selected.pair=pair; selected.role=role;
                 selected.data=role==BRPhotoRoleBack?pair.back:pair.front;
-                BRRememberCapture(output,settings,selected);
+                // This exact processor applies LeftMirrored to front-camera pixels.
+                // Encode its inverse (the same transpose) only for this verified route.
+                if (BRFrontCaptureNeedsCompensation(role==BRPhotoRoleFront,NSStringFromClass(object_getClass(delegate)).UTF8String)) {
+                    selected.data=BRFrontProcessorData(selected.data);
+                }
+                if (selected.data) BRRememberCapture(output,settings,selected);
+                else { [BRState clear]; BRStatus(@"読み込み失敗"); }
             } else {
                 [BRState clear]; BRStatus(@"未対応のカメラ");
             }

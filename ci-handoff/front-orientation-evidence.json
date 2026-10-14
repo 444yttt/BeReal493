@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "analysis": "read-only static ARM64 analysis of the authorized original IPA",
+  "source_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "offset_kind": "relative offsets within the original BeReal executable; no runtime addresses",
+  "camera_processor": {
+    "delegate_names": ["Camera.CameraPhotoCaptureProcessor", "_TtC6Camera27CameraPhotoCaptureProcessor"],
+    "callback_body": "0x22724a4",
+    "file_data_representation_call": "0x22725d8",
+    "uiimage_init_with_data_call": "0x2272640",
+    "image_processing_helper_call": "0x227267c",
+    "image_processing_helper": "0x22711e8",
+    "camera_role": {
+      "shared_boolean_field_reference": "0x42f56f8",
+      "telemetry_helper": "0x22710a4",
+      "telemetry_string_selection": "0x2271114-0x227113c",
+      "zero": "front",
+      "one": "back",
+      "processing_branch": "0x2271204: tbz w1, #0, front branch 0x227126c"
+    },
+    "front_processing": {
+      "cgimage_selector_reference": "0x40f34e0",
+      "cgimage_getter_call": "0x2271274",
+      "uiimage_initializer_selector_reference": "0x40ff5d8",
+      "uiimage_initializer": "initWithCGImage:scale:orientation:",
+      "scale": 1,
+      "orientation_argument_instruction": "0x22712a4: mov w3, #6",
+      "uiimage_initializer_call": "0x22712a8",
+      "uiimage_orientation_raw_value": 6,
+      "uiimage_orientation": "UIImageOrientationLeftMirrored",
+      "equivalent_exif_orientation": 5,
+      "inverse_pixel_transform": "transpose; EXIF orientation 5 is self-inverse",
+      "photo_metadata_orientation_read_in_this_path": false,
+      "photo_metadata_override_alone_would_fix_this_path": false
+    },
+    "back_processing": "The one/back branch skips the CGImage constructor with forced orientation 6.",
+    "crop_processing": {
+      "helper": "0x22680f4",
+      "unchanged_aspect_branch": "Returns the same retained UIImage, preserving its orientation.",
+      "changed_aspect_helper": "0xff65b0",
+      "context_begin": "0xff6660: UIGraphicsBeginImageContext",
+      "draw_selector_reference": "0x40fbe28: drawInRect:",
+      "uiimage_draw_call": "0xff6680",
+      "context_result": "0xff6684: UIGraphicsGetImageFromCurrentImageContext",
+      "effect": "UIImage draw applies orientation; the forced orientation is rendered into pixels on the crop/resize branch, rather than discarded."
+    }
+  },
+  "camera_kit_delegate": {
+    "delegate_names": ["CameraKitData.PhotoCaptureDelegate", "_TtC13CameraKitData20PhotoCaptureDelegate"],
+    "callback_body": "0x1f95dc4",
+    "file_data_representation_call": "0x1f95fa0",
+    "foundation_data_bridge": "0x1f95fb4",
+    "async_stream_yield": "0x1f96004",
+    "callback_contains_uiimage_or_cgimage_orientation_transform": false,
+    "callback_contains_photo_metadata_orientation_read": false,
+    "all_async_consumers_fully_symbolicated": false,
+    "scope_conclusion": "No forced orientation 6 is established in this callback. Keep its replacement bytes upright; do not extend the processor-specific compensation to this separate route."
+  },
+  "minimal_fix_scope": "Only a physical front-camera replacement sent to one of the two exact CameraPhotoCaptureProcessor names receives inverse EXIF-5 pixel compensation. Back-camera and CameraKitData delegate paths retain their existing bytes.",
+  "validation_needed": "Use a non-square four-corner image, JPEG dimensions and orientation=1, and an independent macOS ImageIO EXIF-5 rendering oracle to prove the compensated pixels return upright. On-device behavior remains a separate check.",
+  "privacy": "No raw crash report, runtime address, device identifier, user identifier, UUID, certificate subject or input access URL is included."
+}

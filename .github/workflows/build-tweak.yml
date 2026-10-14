@@ -12,6 +12,7 @@ on:
       - 'CameraRollAdapter.m'
       - 'BRPairState.*'
       - 'BRBundleIdentity.h'
+      - 'BRFrontOrientation.h'
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/build-tweak.yml'

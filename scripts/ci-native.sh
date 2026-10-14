@@ -6,10 +6,13 @@ mkdir -p output
 xcodebuild -version
 xcrun --sdk macosx clang -fobjc-arc -framework Foundation BRPairState.m tests/pair_state.m -o "$RUNNER_TEMP/bereal493-pair-tests"
 "$RUNNER_TEMP/bereal493-pair-tests"
+xcrun --sdk macosx clang -fobjc-arc -framework Foundation -framework CoreGraphics -framework ImageIO \
+  tests/front_orientation.m -o "$RUNNER_TEMP/bereal493-orientation-tests"
+"$RUNNER_TEMP/bereal493-orientation-tests"
 sdk_path="$(xcrun --sdk iphoneos --show-sdk-path)"
 xcrun --sdk iphoneos clang -dynamiclib -arch arm64 -isysroot "$sdk_path" \
   -miphoneos-version-min=17.0 -fobjc-arc -fmodules -O2 \
-  -framework UIKit -framework PhotosUI -framework AVFoundation \
+  -framework UIKit -framework PhotosUI -framework AVFoundation -framework CoreGraphics \
   -install_name '@executable_path/Frameworks/CameraRollAdapter.dylib' \
   CameraRollAdapter.m BRPairState.m -o output/CameraRollAdapter.dylib
 temporary_directory="$(mktemp -d "$RUNNER_TEMP/bereal493.XXXXXX")"
