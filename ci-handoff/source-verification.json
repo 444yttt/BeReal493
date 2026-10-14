@@ -32,11 +32,47 @@
       "local_bereal_followup": {
         "suite_count": 65,
         "passed": true,
-        "source_commit": null,
-        "native_build_run": null,
-        "state": "source/test copy present locally; future public commit and native CI not recorded"
+        "source_commit": "c95492c4f1b5f7da0052a735300c7250530d3ad8",
+        "native_build_run": 38497716236,
+        "state": "source/test copy published; all 65 tests and native build succeeded",
+        "native_build_conclusion": "success"
       },
       "current_auth_checkout_commit": "4b556155d6286f9c802891941d87f385be8e3c23",
+      "input_only_gate_present": true,
+      "provisioning_complete": false,
+      "signed_ipa_created": false,
+      "signed_ipa_delivered": false
+    },
+    {
+      "repository": "444yttt/Y3POSClient",
+      "source_commit": "0e23fa61a3cde194a0761d30f8ac628c3498f181",
+      "change": "exact IOS/UNIVERSAL registration metadata compatibility with strict iOS Ad Hoc profile/certificate/device/entitlement validation",
+      "focused_tests": {
+        "count": 9,
+        "passed": true
+      },
+      "auth_ci_checks": {
+        "run_id": 38498566044,
+        "count": 82,
+        "python": 32,
+        "ruby": 36,
+        "node": 14,
+        "passed": true
+      },
+      "local_bereal_followup": {
+        "suite_count": 69,
+        "passed": true,
+        "source_commit": null,
+        "native_build_run": null,
+        "state": "UNIVERSAL source/test copy present locally; no future BeReal commit or native result fabricated"
+      },
+      "diagnostic_followup": {
+        "commit": "499740073da9e530986176c57c8bf0094969dcb2",
+        "schema_version": 6,
+        "tests": 8,
+        "passed": true,
+        "five_ios_profiles_required": true
+      },
       "input_only_gate_present": true,
       "provisioning_complete": false,
       "signed_ipa_created": false,
@@ -44,20 +80,19 @@
     }
   ],
   "auth_transport_observation": {
-    "run_id": 38496739496,
+    "run_id": 38498566044,
     "phase": 1,
-    "approximate_received_at": "2026-10-14T01:47:00Z",
-    "chat_otp_explicitly_authorized": true,
-    "internal_encryption_input": "private no-echo TTY stdin; verified phase-1 public key and bound AAD",
+    "phase0_reply_commit": "e2666d2b294626e2056df9b56934ab5e8383b5ef",
+    "existing_voluntary_login_input_reencrypted_under_authorization": true,
+    "credential_resolicitation": false,
     "persistent_plaintext_file_created": false,
     "public_transport": "ciphertext only",
-    "reply_commit": "f27d9b2ec211475888c506d023f5cd21aff01b8b",
-    "input_values_in_public_records": false,
-    "chat_message_deletion_established": false,
-    "next_step": "provisioning or safe result pending",
+    "otp_received": false,
+    "next_step": "current phase-1 user SMS requested and pending",
     "five_exact_profiles_verified": false,
     "signed_ipa_created": false,
-    "signed_ipa_delivered": false
+    "signed_ipa_delivered": false,
+    "chat_message_deletion_established": false
   },
   "auth_historical_phase0_transport_observation": {
     "run_id": 38496739496,
@@ -75,5 +110,71 @@
     "authentication_or_provisioning_success_inferred": false,
     "signed_ipa_created": false,
     "signed_ipa_delivered": false
+  },
+  "latest_auth_result": {
+    "run_id": 38496739496,
+    "phase": 1,
+    "reason": "bundle_mismatch",
+    "auth_stage": "bundle_create",
+    "error_kind": "other",
+    "result_artifact_id": 11864607131,
+    "result_archive_sha256": "fa5e5c4e8fe3994ecbcfdae9b92ac945a93ff7bae72b5e6eeb1634f5aec44be0",
+    "creation_post_may_have_changed_resources": true,
+    "five_exact_profiles_verified": false,
+    "signed_ipa_created": false,
+    "signed_ipa_delivered": false
+  },
+  "completed_auth_transport_observation": {
+    "run_id": 38496739496,
+    "phase": 1,
+    "approximate_received_at": "2026-10-14T01:47:00Z",
+    "chat_otp_explicitly_authorized": true,
+    "internal_encryption_input": "private no-echo TTY stdin; verified phase-1 public key and bound AAD",
+    "persistent_plaintext_file_created": false,
+    "public_transport": "ciphertext only",
+    "reply_commit": "f27d9b2ec211475888c506d023f5cd21aff01b8b",
+    "input_values_in_public_records": false,
+    "chat_message_deletion_established": false,
+    "next_step": "completed with bundle_create bundle_mismatch; GET-only platform evidence/correction pending before new session",
+    "five_exact_profiles_verified": false,
+    "signed_ipa_created": false,
+    "signed_ipa_delivered": false,
+    "status": "completed",
+    "safe_result": "bundle_mismatch",
+    "safe_stage": "bundle_create",
+    "private_cleanup_succeeded": true,
+    "credentials_retained": false,
+    "private_session_retained": false,
+    "public_refs_get_status": 404,
+    "creation_post_may_have_changed_resources": true,
+    "current_resource_state_verified": false
+  },
+  "platform_evidence": {
+    "run_id": 38498244379,
+    "commit": "888944089df0fb38bc50f3ee0e3f9699016da459",
+    "artifact_id": 11864357782,
+    "archive_sha256": "8ee5c09fbc2dca2e8e75a9a522ffb292f2a9c462d8ab9ee4b269566ae4c8a803",
+    "exact_root_registration_count": 1,
+    "root_platform": "UNIVERSAL",
+    "missing_extension_registration_count": 4,
+    "five_exact_ios_profiles_verified": false,
+    "apple_resources_changed_by_audit": false
+  },
+  "current_schema6_readiness_evidence": {
+    "run_id": 38498629408,
+    "commit": "499740073da9e530986176c57c8bf0094969dcb2",
+    "artifact_id": 11865175250,
+    "archive_sha256": "a31c9a45ed2d6d75bafe282de97f61aff4d8b910beb865c92165aa6bb1ae163f",
+    "schema_version": 6,
+    "allowed_exact_registration_platforms": [
+      "IOS",
+      "UNIVERSAL"
+    ],
+    "exact_compatible_root_count": 1,
+    "missing_registration_count": 4,
+    "matching_root_ios_profile_count": 0,
+    "exact_ios_profile_ready_count": 0,
+    "before_current_otp_reply": true,
+    "apple_resources_changed_by_audit": false
   }
 }

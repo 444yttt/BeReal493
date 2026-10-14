@@ -1,13 +1,13 @@
 {
   "version": 1,
   "purpose": "bereal-apple-auth",
-  "run_id": "38495329281",
+  "run_id": "38496739496",
   "status": "failed",
   "phase": 1,
   "credentials_retained": false,
   "private_session_retained": false,
   "signed_ipa_created": false,
-  "reason": "ambiguous_bundle",
-  "auth_stage": "bundle_read",
+  "reason": "bundle_mismatch",
+  "auth_stage": "bundle_create",
   "error_kind": "other"
 }

@@ -1,6 +1,10 @@
 {
   "mode": "read_only_apple_access_diagnostics",
-  "schema_version": 4,
+  "schema_version": 6,
+  "registration_policy_allowed_platforms": [
+    "IOS",
+    "UNIVERSAL"
+  ],
   "distribution_certificate_validated": true,
   "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
   "registered_enabled_ios_device_count": 1,
@@ -14,27 +18,69 @@
     {
       "target_bundle_identifier": "com.ayato.bereal493",
       "read_allowed": true,
-      "exact_registration_count": 0
+      "exact_registration_count": 1,
+      "strict_ios_registration_count": 0,
+      "compatible_registration_count": 1,
+      "registration_policy_allowed_platforms": [
+        "IOS",
+        "UNIVERSAL"
+      ],
+      "exact_registration_platforms": [
+        "UNIVERSAL"
+      ],
+      "universal_registration_count": 1
     },
     {
       "target_bundle_identifier": "com.ayato.bereal493.iMessageExtension",
       "read_allowed": true,
-      "exact_registration_count": 0
+      "exact_registration_count": 0,
+      "strict_ios_registration_count": 0,
+      "compatible_registration_count": 0,
+      "registration_policy_allowed_platforms": [
+        "IOS",
+        "UNIVERSAL"
+      ],
+      "exact_registration_platforms": [],
+      "universal_registration_count": 0
     },
     {
       "target_bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
       "read_allowed": true,
-      "exact_registration_count": 0
+      "exact_registration_count": 0,
+      "strict_ios_registration_count": 0,
+      "compatible_registration_count": 0,
+      "registration_policy_allowed_platforms": [
+        "IOS",
+        "UNIVERSAL"
+      ],
+      "exact_registration_platforms": [],
+      "universal_registration_count": 0
     },
     {
       "target_bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
       "read_allowed": true,
-      "exact_registration_count": 0
+      "exact_registration_count": 0,
+      "strict_ios_registration_count": 0,
+      "compatible_registration_count": 0,
+      "registration_policy_allowed_platforms": [
+        "IOS",
+        "UNIVERSAL"
+      ],
+      "exact_registration_platforms": [],
+      "universal_registration_count": 0
     },
     {
       "target_bundle_identifier": "com.ayato.bereal493.Widgets",
       "read_allowed": true,
-      "exact_registration_count": 0
+      "exact_registration_count": 0,
+      "strict_ios_registration_count": 0,
+      "compatible_registration_count": 0,
+      "registration_policy_allowed_platforms": [
+        "IOS",
+        "UNIVERSAL"
+      ],
+      "exact_registration_platforms": [],
+      "universal_registration_count": 0
     }
   ],
   "profile_catalog_read_allowed": true,
@@ -130,10 +176,14 @@
   "all_targets_covered_with_current_device_only": false,
   "exact_scoped_signing_readiness": {
     "mode": "strict_exact_scoped_profile_get_only_audit",
+    "registration_policy_allowed_platforms": [
+      "IOS",
+      "UNIVERSAL"
+    ],
     "all_five_exact_scoped_profiles_verified": false,
     "exact_scoped_signing_ready_count": 0,
-    "confirmed_missing_registration_count": 5,
-    "confirmed_missing_compatible_profile_count": 0,
+    "confirmed_missing_registration_count": 4,
+    "confirmed_missing_compatible_profile_count": 1,
     "ambiguous_exact_registration_count": 0,
     "unverified_scoped_identifier_count": 5,
     "apple_resources_created_or_modified": false,
@@ -142,14 +192,24 @@
       {
         "target_bundle_identifier": "com.ayato.bereal493",
         "registration_read_allowed": true,
-        "profile_read_allowed": false,
-        "exact_registration_count": 0,
+        "profile_read_allowed": true,
+        "exact_registration_count": 1,
         "active_adhoc_profile_count": 0,
+        "strict_ios_registration_count": 0,
+        "exact_registration_platforms": [
+          "UNIVERSAL"
+        ],
+        "compatible_registration_count": 1,
+        "registration_policy_allowed_platforms": [
+          "IOS",
+          "UNIVERSAL"
+        ],
+        "universal_registration_count": 1,
         "valid_primary_certificate_exact_device_profile_count": 0,
         "invalid_or_incompatible_profile_count": 0,
         "exact_scoped_signing_ready": false,
-        "missing_registration_confirmed": true,
-        "missing_compatible_profile_confirmed": false
+        "missing_registration_confirmed": false,
+        "missing_compatible_profile_confirmed": true
       },
       {
         "target_bundle_identifier": "com.ayato.bereal493.iMessageExtension",
@@ -157,6 +217,14 @@
         "profile_read_allowed": false,
         "exact_registration_count": 0,
         "active_adhoc_profile_count": 0,
+        "strict_ios_registration_count": 0,
+        "exact_registration_platforms": [],
+        "compatible_registration_count": 0,
+        "registration_policy_allowed_platforms": [
+          "IOS",
+          "UNIVERSAL"
+        ],
+        "universal_registration_count": 0,
         "valid_primary_certificate_exact_device_profile_count": 0,
         "invalid_or_incompatible_profile_count": 0,
         "exact_scoped_signing_ready": false,
@@ -169,6 +237,14 @@
         "profile_read_allowed": false,
         "exact_registration_count": 0,
         "active_adhoc_profile_count": 0,
+        "strict_ios_registration_count": 0,
+        "exact_registration_platforms": [],
+        "compatible_registration_count": 0,
+        "registration_policy_allowed_platforms": [
+          "IOS",
+          "UNIVERSAL"
+        ],
+        "universal_registration_count": 0,
         "valid_primary_certificate_exact_device_profile_count": 0,
         "invalid_or_incompatible_profile_count": 0,
         "exact_scoped_signing_ready": false,
@@ -181,6 +257,14 @@
         "profile_read_allowed": false,
         "exact_registration_count": 0,
         "active_adhoc_profile_count": 0,
+        "strict_ios_registration_count": 0,
+        "exact_registration_platforms": [],
+        "compatible_registration_count": 0,
+        "registration_policy_allowed_platforms": [
+          "IOS",
+          "UNIVERSAL"
+        ],
+        "universal_registration_count": 0,
         "valid_primary_certificate_exact_device_profile_count": 0,
         "invalid_or_incompatible_profile_count": 0,
         "exact_scoped_signing_ready": false,
@@ -193,6 +277,14 @@
         "profile_read_allowed": false,
         "exact_registration_count": 0,
         "active_adhoc_profile_count": 0,
+        "strict_ios_registration_count": 0,
+        "exact_registration_platforms": [],
+        "compatible_registration_count": 0,
+        "registration_policy_allowed_platforms": [
+          "IOS",
+          "UNIVERSAL"
+        ],
+        "universal_registration_count": 0,
         "valid_primary_certificate_exact_device_profile_count": 0,
         "invalid_or_incompatible_profile_count": 0,
         "exact_scoped_signing_ready": false,
