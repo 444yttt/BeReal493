@@ -10,6 +10,7 @@ Apple codesign, installation, launch or posting test.
 import argparse
 import datetime as dt
 import hashlib
+import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import plistlib
@@ -24,7 +25,10 @@ import zipfile
 
 ORIGINAL_SHA = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc'
 INPUT_SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
-SOURCE_COMMIT = '2ea872b3db210387ece0c5decf9d06543fe3be38'
+SOURCE_COMMIT = '8e4394e016639fd7e941148796ea0af38d1e8ad0'
+_auth_spec = importlib.util.spec_from_file_location('bereal_auth_patch', Path(__file__).with_name('auth_keychain_patch.py'))
+AUTH_PATCH = importlib.util.module_from_spec(_auth_spec)
+_auth_spec.loader.exec_module(AUTH_PATCH)
 ROOT_ID = 'com.ayato.bereal493'
 SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension',
             '.NotificationServiceExtension', '.Widgets')
@@ -357,6 +361,8 @@ def verify(ipa, receipt_path):
             'Missing macOS codesign verification evidence')
     require(receipt.get('device_installation') == 'not tested' and receipt.get('posting') == 'not tested',
             'CI receipt contains an unexpected device-test claim')
+    require(receipt.get('auth_keychain_patch') == AUTH_PATCH.public_receipt(),
+            'CI receipt authentication storage patch differs from the verified contract')
     certificate_cache, profiles, verified_executables, provisioned_devices = {}, [], set(), set()
     total_macho = total_slices = 0
     with tempfile.TemporaryDirectory(prefix='bereal-delivery-check-') as directory, zipfile.ZipFile(ipa) as archive:
@@ -481,6 +487,7 @@ def verify(ipa, receipt_path):
         require(adapter_path in names, 'Missing compiled photo adapter')
         root_info = plistlib.loads(archive.read(root_infos[0]))
         root_data = archive.read(app + '/' + root_info['CFBundleExecutable'])
+        AUTH_PATCH.verify_patched_main(root_data)
         for piece in macho_slices(root_data):
             endian, _, load_commands = commands(piece)
             dependencies = []
@@ -504,7 +511,8 @@ def verify(ipa, receipt_path):
                                       'signed_macho_file_count': total_macho, 'signed_macho_slice_count': total_slices,
                                       'cms_signature_and_code_page_hashes': True,
                                       'xml_entitlement_and_resource_special_slot_hashes': True,
-                                      'adapter_dependency_injected_once': True, 'profiles': profiles},
+                                      'adapter_dependency_injected_once': True,
+                                      'auth_keychain_patch': AUTH_PATCH.public_receipt(), 'profiles': profiles},
             'ci_evidence': {'macos_codesign_verification': ci_signature, 'registered_device_count': 1,
                             'profile_selection': profile_selection or 'exact profiles'},
             'limitations': ['Apple certificate-chain trust and codesign are not independently checked on Linux.',

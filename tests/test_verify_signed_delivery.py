@@ -11,6 +11,7 @@ import tempfile
 import unittest
 import uuid
 import zipfile
+from unittest.mock import patch
 
 
 spec = importlib.util.spec_from_file_location(
@@ -40,6 +41,21 @@ class SignedDeliveryTest(unittest.TestCase):
                      '-subj', '/OU=' + TEAM + '/CN=Apple Distribution: Synthetic Fixture',
                      '-keyout', str(cls.key), '-out', str(cls.cert)])
         cls.der = cls.openssl(['x509', '-in', str(cls.cert), '-outform', 'DER'])
+        # Keep the real checker and instruction replacements, but place a
+        # synthetic factory in this fixture's single signed code page.
+        cls.auth_original_context = bytearray(bytes.fromhex('1f2003d5') * 20)
+        cls.auth_targets = tuple((512 + offset - module.AUTH_PATCH.FACTORY_CONTEXT_OFFSET,
+                                  expected, replacement, register)
+                                 for offset, expected, replacement, register in module.AUTH_PATCH.PATCHES)
+        for offset, expected, _, _ in cls.auth_targets:
+            cls.auth_original_context[offset - 512:offset - 508] = expected
+        cls.auth_patched_context = bytearray(cls.auth_original_context)
+        for offset, _, replacement, _ in cls.auth_targets:
+            cls.auth_patched_context[offset - 512:offset - 508] = replacement
+        scope = patch.multiple(module.AUTH_PATCH, FACTORY_CONTEXT_OFFSET=512, PATCHES=cls.auth_targets,
+                               ORIGINAL_CONTEXT_SHA256=hashlib.sha256(cls.auth_original_context).hexdigest(),
+                               PATCHED_CONTEXT_SHA256=hashlib.sha256(cls.auth_patched_context).hexdigest())
+        scope.start(); cls.addClassCleanup(scope.stop)
         cls.payload, cls.profile_receipts = cls.make_payload()
 
     @classmethod
@@ -108,7 +124,7 @@ class SignedDeliveryTest(unittest.TestCase):
         return struct.pack('>II', magic, len(data) + 8) + data
 
     @classmethod
-    def executable(cls, identifier, entitlements=None, info=None, resources=None, adapter=False):
+    def executable(cls, identifier, entitlements=None, info=None, resources=None, adapter=False, auth_context=None):
         """Create a minimal ARM64 image with CMS-bound page and metadata hashes.
 
         The DER blob deliberately has no entitlement semantics: the verifier
@@ -125,6 +141,9 @@ class SignedDeliveryTest(unittest.TestCase):
         executable = bytearray(struct.pack('<8I', 0xFEEDFACF, 0x0100000C, 0, 2,
                                            2 if adapter else 1, len(load), 0, 0) + load)
         executable += b'\0' * (4096 - len(executable))
+        if adapter:
+            context = cls.auth_patched_context if auth_context is None else auth_context
+            executable[512:512 + len(context)] = context
 
         def signature():
             ident = identifier.encode() + b'\0'
@@ -172,6 +191,7 @@ class SignedDeliveryTest(unittest.TestCase):
         receipt = {'file': self.ipa.name, 'sha256': module.digest_file(self.ipa),
                    'source_commit': module.SOURCE_COMMIT, 'input_source_commit': module.INPUT_SOURCE_COMMIT,
                    'input_sha256': module.ORIGINAL_SHA,
+                   'auth_keychain_patch': module.AUTH_PATCH.public_receipt(),
                    'bundle_identifier': module.ROOT_ID, 'distribution': 'IOS_APP_ADHOC',
                    'registered_device_count': 1, 'provisioned_bundle_count': 5,
                    'signature_verification': ('codesign deep strict passed; each app/extension matched '
@@ -202,6 +222,37 @@ class SignedDeliveryTest(unittest.TestCase):
         damaged[1000] ^= 1
         self.save_delivery(changed={path: bytes(damaged)})
         with self.assertRaisesRegex(ValueError, 'code-page hash mismatch'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_missing_auth_patch_receipt_is_rejected(self):
+        self.save_delivery()
+        receipt = json.loads(self.receipt.read_text())
+        receipt.pop('auth_keychain_patch')
+        self.receipt.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'authentication storage patch'):
+            module.verify(self.ipa, self.receipt)
+
+    def resign_root_factory(self, context):
+        root = 'Payload/BeReal.app/'
+        old = self.payload[root + 'Executable']
+        records = module.verify_macho(old, self.root, {}, dt.datetime.now(dt.timezone.utc))
+        entitlements = records[0]['xml_entitlements']
+        return self.executable(module.ROOT_ID, entitlements,
+                               self.payload[root + 'Info.plist'], self.payload[root + '_CodeSignature/CodeResources'],
+                               adapter=True, auth_context=context)
+
+    def test_validly_resigned_partial_auth_patch_is_rejected(self):
+        context = bytearray(self.auth_patched_context)
+        offset, expected, _, _ = self.auth_targets[0]
+        context[offset - 512:offset - 508] = expected
+        self.save_delivery(changed={'Payload/BeReal.app/Executable': self.resign_root_factory(context)})
+        with self.assertRaisesRegex(ValueError, 'argument writer'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_validly_resigned_auth_factory_context_change_is_rejected(self):
+        context = bytearray(self.auth_patched_context); context[0] ^= 1
+        self.save_delivery(changed={'Payload/BeReal.app/Executable': self.resign_root_factory(context)})
+        with self.assertRaisesRegex(ValueError, 'factory context'):
             module.verify(self.ipa, self.receipt)
 
     def test_unsafe_zip_path_is_rejected(self):

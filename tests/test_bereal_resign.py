@@ -312,7 +312,7 @@ class SigningInputTest(unittest.TestCase):
                 patch.object(module, 'signing_readiness', return_value=({}, device)), \
                 patch.object(module, 'select_existing_wildcard_profile', return_value=(b'profile-fixture', decoded)), \
                 patch.object(module, 'decrypt_input', return_value=Path('original.ipa')) as decrypt, \
-                patch.object(module, 'build_adapter', return_value=payload), patch.object(module, 'get_profile') as provision, \
+                patch.object(module, 'build_adapter', return_value=(payload, {'synthetic': 'auth-patch'})), patch.object(module, 'get_profile') as provision, \
                 patch.object(module.Path, 'read_text', return_value='{}'), patch.object(module, 'run', side_effect=tool), \
                 patch.object(module.subprocess, 'run'), patch.object(module, 'encrypt_delivery', side_effect=capture_delivery), \
                 redirect_stdout(io.StringIO()):

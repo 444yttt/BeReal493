@@ -31,7 +31,7 @@ ORIGINAL_SHA = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc
 # The existing encrypted original retains its original transfer provenance.
 # SOURCE_COMMIT independently pins the adapter/package source being rebuilt.
 INPUT_SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
-SOURCE_COMMIT = '2ea872b3db210387ece0c5decf9d06543fe3be38'
+SOURCE_COMMIT = '8e4394e016639fd7e941148796ea0af38d1e8ad0'
 ROOT_ID = 'com.ayato.bereal493'
 PREFIX = 'AlexisBarreyat.BeReal'
 SAFE_SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension', '.NotificationServiceExtension', '.Widgets')
@@ -735,11 +735,16 @@ def build_adapter(root, original):
     source = source_root / ('BeReal493-' + SOURCE_COMMIT)
     sdk = run(['xcrun', '--sdk', 'iphoneos', '--show-sdk-path']).decode().strip()
     library = root / 'CameraRollAdapter.dylib'
-    run(['xcrun', '--sdk', 'iphoneos', 'clang', '-dynamiclib', '-arch', 'arm64', '-isysroot', sdk, '-miphoneos-version-min=17.0', '-fobjc-arc', '-fmodules', '-O2', '-framework', 'UIKit', '-framework', 'PhotosUI', '-framework', 'AVFoundation', '-install_name', '@executable_path/Frameworks/CameraRollAdapter.dylib', str(source / 'CameraRollAdapter.m'), str(source / 'BRPairState.m'), '-o', str(library)])
+    run(['xcrun', '--sdk', 'iphoneos', 'clang', '-dynamiclib', '-arch', 'arm64', '-isysroot', sdk, '-miphoneos-version-min=17.0', '-fobjc-arc', '-fmodules', '-O2', '-framework', 'UIKit', '-framework', 'PhotosUI', '-framework', 'AVFoundation', '-framework', 'CoreGraphics', '-install_name', '@executable_path/Frameworks/CameraRollAdapter.dylib', str(source / 'CameraRollAdapter.m'), str(source / 'BRPairState.m'), '-o', str(library)])
     unsigned = root / 'unsigned.ipa'
-    run([sys.executable, str(source / 'scripts/package_ipa.py'), str(original), str(library), str(unsigned)])
+    packaging = json.loads(run([sys.executable, str(source / 'scripts/package_ipa.py'), str(original), str(library), str(unsigned)]))
     payload = root / 'payload'; extract(unsigned, payload)
-    return payload
+    spec = importlib.util.spec_from_file_location('built_auth_patch', source / 'scripts/auth_keychain_patch.py')
+    contract = importlib.util.module_from_spec(spec); spec.loader.exec_module(contract)
+    if packaging.get('auth_keychain_patch') != contract.public_receipt():
+        raise RuntimeError('Packaged authentication storage patch differs from the pinned contract')
+    contract.verify_patched_main((payload / 'Payload/BeReal.app/BeReal').read_bytes())
+    return payload, contract.public_receipt()
 
 
 def encrypt_delivery(root, files, output):
@@ -754,7 +759,7 @@ def prepare_input(root, original, der):
     # Persist the recovered input before compilation, so a toolchain failure
     # cannot force another download from an expiring access URL.
     encrypt_persistent_input(root, original, der)
-    payload = build_adapter(root, original)
+    payload, auth_patch_receipt = build_adapter(root, original)
     unsigned = root / 'unsigned.ipa'
     unsigned.rename(root / 'BeReal493-CameraRoll-UNSIGNED.ipa')
     unsigned = root / 'BeReal493-CameraRoll-UNSIGNED.ipa'
@@ -763,6 +768,7 @@ def prepare_input(root, original, der):
     verification = {'file': unsigned.name, 'sha256': sha256_file(unsigned),
                     'input_sha256': ORIGINAL_SHA, 'input_source_commit': INPUT_SOURCE_COMMIT,
                     'source_commit': SOURCE_COMMIT,
+                    'auth_keychain_patch': auth_patch_receipt,
                     'certificate_sha256': hashlib.sha256(der).hexdigest(),
                     'adapter': 'implemented; rebuilt from pinned source; not device tested',
                     'archive_inspection': inspection, 'signature': 'unsigned',
@@ -830,7 +836,7 @@ def main(argv=None):
         if options.prepare_input:
             prepare_input(root, original, der)
             return
-        payload = build_adapter(root, original)
+        payload, auth_patch_receipt = build_adapter(root, original)
         app = payload / 'Payload/BeReal.app'
         bundles = [app] + sorted((app / 'PlugIns').glob('*.appex'))
         mappings = {}; targets = []
@@ -891,6 +897,7 @@ def main(argv=None):
             if archive.testzip() is not None: raise RuntimeError('Signed IPA archive verification failed')
         digest = sha256_file(ipa)
         verification = {'file':ipa.name,'sha256':digest,'source_commit':SOURCE_COMMIT,'input_source_commit':INPUT_SOURCE_COMMIT,'input_sha256':ORIGINAL_SHA,'bundle_identifier':ROOT_ID,'distribution':'IOS_APP_ADHOC','registered_device_count':1,'provisioned_bundle_count':len(targets),'distinct_profile_count':len({profile['UUID'] for bundle,info,profile,ent in targets}),'profile_selection':'existing_wildcard_read_only' if existing_profile else 'exact_scoped_profiles','signed_macho_count':macho_count,'certificate_sha256':hashlib.sha256(der).hexdigest(),'input_recipient_certificate_sha256':hashlib.sha256(input_recipient_der).hexdigest(),'profiles':[public_profile_receipt(info['CFBundleIdentifier'],profile,der,bool(existing_profile)) for bundle,info,profile,ent in targets],'signature_verification':'codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate','device_installation':'not tested','posting':'not tested'}
+        verification['auth_keychain_patch'] = auth_patch_receipt
         receipt = private(root / 'verification.json', (json.dumps(verification,indent=2)+'\n').encode())
         encrypt_delivery(root, [ipa, receipt], Path('bereal-output/BeReal493-signed-delivery.cms'))
         print('Signed IPA verified and encrypted for the recipient. SHA256: ' + digest)
