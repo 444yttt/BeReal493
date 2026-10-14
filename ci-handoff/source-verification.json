@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "repository": "444yttt/BeReal493",
+  "source_commit": "78db445e01a9f811d7bae8dd9837ab62cd479599",
+  "local_tests": {
+    "count": 60,
+    "passed": true,
+    "scope": "source/native packaging helpers and synthetic authentication encryption checks"
+  },
+  "native_build": {
+    "run_id": 38494967704,
+    "job_id": 115628543203,
+    "conclusion": "success",
+    "platform": "macOS"
+  },
+  "signing_adapter_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "apple_authentication_success_established": false,
+  "provisioning_complete": false,
+  "signed_ipa_created": false,
+  "signed_ipa_delivered": false,
+  "device_installation": "not tested",
+  "posting": "not tested"
+}
