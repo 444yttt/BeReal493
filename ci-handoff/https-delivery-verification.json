@@ -1,0 +1,39 @@
+{
+  "unauthorized_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "unauthorized_part": {
+    "status": 403,
+    "rejected": true
+  },
+  "invalid_bearer_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "forged_identity_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "authenticated_part_status": 200,
+  "static_assets_are_owner_gated": true,
+  "attachment_head_verified": true,
+  "head_content_length": "140232681",
+  "complete_download_bytes": 140232681,
+  "sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+  "cross_part_range_verified": true,
+  "unsatisfiable_range_rejected": true,
+  "head_ignores_range": true,
+  "verified_at": "2026-10-14T04:55:41Z",
+  "site_project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+  "site_source_commit": "2f2995cfcf107f028d0a780a2c5dbb105e62ad48",
+  "site_deployment_id": "appgdep_6acf0a8ae9c48191be36542152338005",
+  "site_deployment_conclusion": "succeeded",
+  "download_page_url": "https://bereal493-apple-auth.a-yt.chatgpt.site",
+  "download_path": "/download/BeReal493-CameraRoll-SIGNED.ipa",
+  "access": "existing owner-only Sites policy; no public IPA release",
+  "same_signed_ipa_verified": true,
+  "device_installation": "not tested",
+  "launch": "not tested",
+  "posting": "not tested"
+}

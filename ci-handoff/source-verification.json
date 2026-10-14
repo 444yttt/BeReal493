@@ -133,7 +133,7 @@
     "user_requested_sms_resend": true,
     "new_sms_request_accepted": true,
     "otp_received": true,
-    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+    "next_step": "none for historical auth; signed IPA and replacement owner-private HTTPS full-file verification passed; usable link ready to send",
     "chat_message_deletion_established": false,
     "approximate_otp_received_at": "2026-10-14T02:26:00Z",
     "internal_otp_input": "private no-echo TTY stdin; no plaintext files",
@@ -166,7 +166,7 @@
     "reply_commit": "d230ed5f085b2d8ada5cb7769627ad57898edad3",
     "input_values_in_public_records": false,
     "chat_message_deletion_established": false,
-    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+    "next_step": "none for historical auth; signed IPA and replacement owner-private HTTPS full-file verification passed; usable link ready to send",
     "authentication_or_provisioning_success_inferred": false,
     "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
     "next_step_at_observation": "Apple phase-1 challenge or safe result pending",
@@ -184,7 +184,7 @@
     "reply_commit": "f27d9b2ec211475888c506d023f5cd21aff01b8b",
     "input_values_in_public_records": false,
     "chat_message_deletion_established": false,
-    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+    "next_step": "none for historical auth; signed IPA and replacement owner-private HTTPS full-file verification passed; usable link ready to send",
     "status": "completed",
     "safe_result": "bundle_mismatch",
     "safe_stage": "bundle_create",
@@ -221,7 +221,7 @@
       "persistent_plaintext_file_created": false,
       "public_transport": "ciphertext only",
       "otp_received": false,
-      "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+      "next_step": "none for historical auth; signed IPA and replacement owner-private HTTPS full-file verification passed; usable link ready to send",
       "chat_message_deletion_established": false,
       "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
       "next_step_at_observation": "current phase-1 user SMS requested and pending",
@@ -284,7 +284,9 @@
     "final_copy_rehashed": true,
     "delivery_ready": true,
     "artifact_expires_at": "2026-11-13T03:00:17Z",
-    "artifact_expired": false
+    "artifact_expired": false,
+    "local_signed_file_ready": true,
+    "delivery_pending_reason": "verified usable owner-private HTTPS link is ready; final user handoff pending"
   },
   "historical_schema7_keychain_classification_evidence": {
     "run_id": 38501943086,
@@ -405,5 +407,86 @@
     "later_signed_ci_succeeded": true,
     "later_formal_independent_delivery_validation": "passed"
   },
-  "current_overall_helper_success_scope": "completed auth helper result only; the later five-profile GET, real signing CI and independent delivery verifier passed"
+  "current_overall_helper_success_scope": "completed auth helper result only; the later five-profile GET, real signing CI and independent delivery verifier passed",
+  "local_signed_file_ready": true,
+  "https_delivery_repair": {
+    "status": "deployment succeeded; formal complete owner-authorized HTTPS download and exact SHA256 check passed; verified replacement link ready to send",
+    "signed_ipa_bytes": 140232681,
+    "signed_ipa_sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+    "signed_ipa_bytes_unchanged": true,
+    "previous_file_links": {
+      "types": [
+        "absolute workspace link",
+        "sandbox URI"
+      ],
+      "iphone_files_error": "link cannot be opened in Files",
+      "successful_delivery_established": false
+    },
+    "personal_drive_attempt": {
+      "user_selected": true,
+      "tool_limit_bytes": 104857600,
+      "http_status": 413,
+      "rejected_before_save": true,
+      "saved_copy_exists": false
+    },
+    "site": {
+      "project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+      "existing_project_reused": true,
+      "page_url": "https://bereal493-apple-auth.a-yt.chatgpt.site",
+      "download_url": "https://bereal493-apple-auth.a-yt.chatgpt.site/download/BeReal493-CameraRoll-SIGNED.ipa",
+      "access": "owner_private",
+      "allowed_owner_count": 1,
+      "allowed_group_count": 0,
+      "editor_count": 0,
+      "external_viewer_count": 0,
+      "authorization": "Sites dispatch applies owner policy before every route, including static parts and Worker",
+      "unauthenticated_http_status": 403,
+      "forged_header_http_status": 403,
+      "redundant_worker_identity_gate_removed": true,
+      "credential_inputs_closed": true,
+      "private_source_commit": "2f2995cfcf107f028d0a780a2c5dbb105e62ad48",
+      "deployment_id": "appgdep_6acf0a8ae9c48191be36542152338005",
+      "deployment_status": "succeeded",
+      "deployment_updated_at": "2026-10-14T04:54:48.926Z",
+      "unauthenticated_part_http_status": 403,
+      "invalid_bearer_http_status": 401
+    },
+    "packaging": {
+      "private_source_parts": 7,
+      "maximum_part_bytes": 20971520,
+      "single_file_worker_stream": true,
+      "binary_parts_in_public_repository": false,
+      "apple_signing_assets_changed": false
+    },
+    "local_checks": {
+      "test_count": 7,
+      "passed": true,
+      "full_file_hash_passed": true,
+      "range_checks_passed": true
+    },
+    "live_https_validation": {
+      "status": "passed",
+      "checked_at": "2026-10-14T04:55:41Z",
+      "authorized_access": "existing Sites official owner-authorized dispatch; access token never printed or saved",
+      "complete_file_downloaded": true,
+      "downloaded_bytes": 140232681,
+      "sha256_verified": true,
+      "sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+      "head_status": 200,
+      "content_disposition_attachment": true,
+      "content_type": "application/octet-stream",
+      "content_length": 140232681,
+      "accept_ranges": "bytes",
+      "cross_part_range_status": 206,
+      "cross_part_range_bytes_verified": 16,
+      "unsatisfiable_range_status": 416,
+      "head_ignores_range_status": 200,
+      "iphone_download_verified": false,
+      "safe_receipt": "ci-handoff/https-delivery-verification.json",
+      "safe_receipt_sha256": "22301025fd3359a9a9790c53efb1cd2a844eb400ad47194d571dd0b32ee62dd2"
+    },
+    "usable_replacement_link_sent": false,
+    "signed_ipa_delivered": false,
+    "delivery_ready": true
+  }
 }
