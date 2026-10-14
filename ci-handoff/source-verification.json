@@ -19,5 +19,61 @@
   "signed_ipa_created": false,
   "signed_ipa_delivered": false,
   "device_installation": "not tested",
-  "posting": "not tested"
+  "posting": "not tested",
+  "follow_ups": [
+    {
+      "repository": "444yttt/Y3POSClient",
+      "source_commit": "9eba70fa96f924024a2b64b809ced5d7ad4ff7e2",
+      "change": "defensive exact-identifier filtering for signer GET responses",
+      "focused_tests": {
+        "count": 5,
+        "passed": true
+      },
+      "local_bereal_followup": {
+        "suite_count": 65,
+        "passed": true,
+        "source_commit": null,
+        "native_build_run": null,
+        "state": "source/test copy present locally; future public commit and native CI not recorded"
+      },
+      "current_auth_checkout_commit": "4b556155d6286f9c802891941d87f385be8e3c23",
+      "input_only_gate_present": true,
+      "provisioning_complete": false,
+      "signed_ipa_created": false,
+      "signed_ipa_delivered": false
+    }
+  ],
+  "auth_transport_observation": {
+    "run_id": 38496739496,
+    "phase": 1,
+    "approximate_received_at": "2026-10-14T01:47:00Z",
+    "chat_otp_explicitly_authorized": true,
+    "internal_encryption_input": "private no-echo TTY stdin; verified phase-1 public key and bound AAD",
+    "persistent_plaintext_file_created": false,
+    "public_transport": "ciphertext only",
+    "reply_commit": "f27d9b2ec211475888c506d023f5cd21aff01b8b",
+    "input_values_in_public_records": false,
+    "chat_message_deletion_established": false,
+    "next_step": "provisioning or safe result pending",
+    "five_exact_profiles_verified": false,
+    "signed_ipa_created": false,
+    "signed_ipa_delivered": false
+  },
+  "auth_historical_phase0_transport_observation": {
+    "run_id": 38496739496,
+    "phase": 0,
+    "approximate_received_at": "2026-10-14T01:44:00Z",
+    "user_input_voluntarily_supplied_under_existing_authorization": true,
+    "input_resubmission_required": false,
+    "internal_encryption_input": "private no-echo TTY stdin; verified phase-0 public key and bound AAD",
+    "persistent_plaintext_file_created": false,
+    "public_transport": "ciphertext only",
+    "reply_commit": "d230ed5f085b2d8ada5cb7769627ad57898edad3",
+    "input_values_in_public_records": false,
+    "chat_message_deletion_established": false,
+    "next_step": "Apple phase-1 challenge or safe result pending",
+    "authentication_or_provisioning_success_inferred": false,
+    "signed_ipa_created": false,
+    "signed_ipa_delivered": false
+  }
 }

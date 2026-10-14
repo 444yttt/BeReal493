@@ -491,7 +491,11 @@ def select_existing_wildcard_profile(api, der, team, device):
 
 def get_profile(api, certificate, der, team, identifier, device):
     if identifier not in {ROOT_ID + suffix for suffix in SAFE_SUFFIXES}: raise RuntimeError('Unapproved bundle scope')
-    bundles = api.collection('/v1/bundleIds', {'filter[platform]': 'IOS', 'filter[identifier]': identifier})
+    registrations = api.collection('/v1/bundleIds', {'filter[platform]': 'IOS', 'filter[identifier]': identifier})
+    # Apple may return broader or prefix-matching results even with filters.
+    # Count/select exact identifiers locally; retain exact wrong-platform
+    # registrations so the validation below fails before any resource write.
+    bundles = [item for item in registrations if item.get('attributes', {}).get('identifier') == identifier]
     if len(bundles) > 1: raise RuntimeError('Ambiguous bundle registration')
     bundle = bundles[0] if bundles else api.request('POST', '/v1/bundleIds', {'data': {'type': 'bundleIds', 'attributes': {'name': 'BeReal493 ' + identifier.rsplit('.', 1)[-1], 'identifier': identifier, 'platform': 'IOS'}}})['data']
     if bundle.get('attributes', {}).get('identifier') != identifier or bundle.get('attributes', {}).get('platform') != 'IOS': raise RuntimeError('Unexpected bundle registration')
