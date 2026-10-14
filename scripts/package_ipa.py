@@ -2,6 +2,7 @@
 """Inject the compiled adapter without changing payload offsets; output requires device signing."""
 import argparse
 import hashlib
+import importlib.util
 import json
 import plistlib
 import struct
@@ -10,6 +11,10 @@ from pathlib import Path, PurePosixPath
 
 ORIGINAL_SHA256 = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc'
 DYLIB_PATH = '@executable_path/Frameworks/CameraRollAdapter.dylib'
+
+_auth_spec = importlib.util.spec_from_file_location('bereal_auth_patch', Path(__file__).with_name('auth_keychain_patch.py'))
+AUTH_PATCH = importlib.util.module_from_spec(_auth_spec)
+_auth_spec.loader.exec_module(AUTH_PATCH)
 
 
 def load_commands(data):
@@ -102,7 +107,7 @@ def package(source, library, output):
         if (info.get('CFBundleIdentifier'), info.get('CFBundleShortVersionString'), info.get('CFBundleVersion')) != ('AlexisBarreyat.BeReal', '4.93.0', '23026'):
             raise ValueError('Unexpected application identity or version')
         main_path = 'Payload/BeReal.app/' + info['CFBundleExecutable']
-        main = rebuild(archive.read(main_path), DYLIB_PATH)
+        main = rebuild(AUTH_PATCH.patch_original_main(archive.read(main_path)), DYLIB_PATH)
         library_path = 'Payload/BeReal.app/Frameworks/CameraRollAdapter.dylib'
         if library_path in names:
             raise ValueError('Adapter already exists')
@@ -123,11 +128,13 @@ def package(source, library, output):
         dependency_count = sum(command == 0xC and DYLIB_PATH.encode() + b'\0' in raw for command, raw in commands)
         if dependency_count != 1 or any(command == 0x1D for command, _ in commands):
             raise ValueError('Output load-command verification failed')
+        AUTH_PATCH.verify_patched_main(archive.read(main_path))
         if archive.testzip() is not None:
             raise ValueError('Output ZIP verification failed')
     with output.open('rb') as stream:
         digest = hashlib.file_digest(stream, 'sha256').hexdigest()
     return {'file': output.name, 'sha256': digest, 'input_sha256': ORIGINAL_SHA256,
+            'auth_keychain_patch': AUTH_PATCH.public_receipt(),
             'signature': 'unsigned; full nested-code signing and device provisioning required',
             'adapter': 'implemented; compiled; no device execution or posting test performed'}
 

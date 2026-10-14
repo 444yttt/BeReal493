@@ -26,7 +26,7 @@ These findings establish real method metadata and image-data read call sites. Th
 
 ## Packaging evidence
 
-Original load-command table ends at file offset `19896`; the first text payload starts at `32768`, leaving `12872` bytes of header padding. The packager removes LC_CODE_SIGNATURE, adds one LC_LOAD_DYLIB pointing to `@executable_path/Frameworks/CameraRollAdapter.dylib`, checks padding, and verifies that all bytes from the first payload offset onward remain unchanged.
+Original load-command table ends at file offset `19896`; the first text payload starts at `32768`, leaving `12872` bytes of header padding. The packager first applies only the eight instruction bytes described below, then removes LC_CODE_SIGNATURE, adds one LC_LOAD_DYLIB pointing to `@executable_path/Frameworks/CameraRollAdapter.dylib`, checks padding, and preserves all other payload bytes and offsets.
 
 ## Front-camera orientation correction
 
@@ -45,3 +45,11 @@ The separate `CameraKitData.PhotoCaptureDelegate` callback `0x1f95dc4` bridges t
 The minimum correction is an inverse pixel transform only for a physical front-camera replacement sent to the two exact names of `CameraPhotoCaptureProcessor`. EXIF-5 transpose is self-inverse, so pre-transposing upright pixels compensates for the app's explicit orientation-6 construction. The encoded JPEG should remain orientation Up, with swapped raw dimensions. A non-square image with four distinct corner colors and an independent macOS ImageIO EXIF-5 rendering oracle can test the round trip. This is not an empirical on-device validation.
 
 This record contains no raw crash report, runtime address, device or user identifier, UUID, certificate subject or access URL.
+
+## Authentication token storage after signing
+
+`CoreAuthenticationData.KeychainTokenStorage` read, write and clear paths share the factory at relative/file offset `0x26d2754`. The original factory passes the original App Group as an explicit `KeychainAccess.Keychain` accessGroup, which the scoped Ad Hoc profiles do not grant. The initializer stores its optional Swift String from x2/x3; the query builder at `0x8d0614` skips `kSecAttrAccessGroup` when the high word is zero. The existing service-only initializer independently stores both words as zero at `0x8cebc8`.
+
+The exact original main is SHA256 `d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6`. Two four-byte instructions at `0x26d2784` and `0x26d2790` become `mov x2, #0` and `mov x3, #0`. This selects the app's permitted default keychain group. The service, initializer call and every other original byte remain intact. There is no Security API interception or grant to another app's items.
+
+The patcher requires the full original main SHA256, ARM64 executable identity, a single cryptid-zero command, both original argument writers and the complete 80-byte factory context. It rejects foreign, tampered, partial and repeated input. Packaging and independent signed-delivery verification require the exact patched context and both replacement instructions. Safe proof is in `ci-handoff/auth-keychain-evidence.json`. Device login persistence and live posting remain unverified.

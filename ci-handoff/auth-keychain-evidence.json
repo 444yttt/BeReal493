@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "purpose": "authentication_token_storage_own_app_keychain",
+  "policy": "Omit the explicit foreign App Group in the verified TokenStorage factory; use the permitted default app keychain group.",
+  "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+  "architecture": "ARM64",
+  "original_cryptid": 0,
+  "patch_instruction_count": 2,
+  "patch_span_bytes": 8,
+  "patches": [
+    {
+      "file_offset": 40707972,
+      "expected_hex": "42a8ecf2",
+      "replacement_hex": "020080d2",
+      "argument_register": "x2",
+      "replacement_operation": "mov x2, #0"
+    },
+    {
+      "file_offset": 40707984,
+      "expected_hex": "0380fdf2",
+      "replacement_hex": "030080d2",
+      "argument_register": "x3",
+      "replacement_operation": "mov x3, #0"
+    }
+  ],
+  "factory_context": {
+    "file_offset": 40707924,
+    "bytes": 80,
+    "original_sha256": "2123ac2ca5e05ae9fb1cefae62712ffdb82b83c04532c0e9c628be9056c09ebf",
+    "patched_sha256": "302b8c20305d7714d967af26ae82227bdffa6be46ca449a225af47d2e75b0d17"
+  },
+  "nil_encoding": "Swift.Optional<String>.none: x2=0 and x3=0; query builder skips kSecAttrAccessGroup when the high word is zero.",
+  "security_api_interception": false,
+  "foreign_keychain_access_granted": false,
+  "static_evidence": {
+    "original_input_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+    "original_main_image_base": "0x100000000",
+    "factory_relative_offset": "0x26d2754",
+    "initializer_call_relative_offset": "0x26d27a0",
+    "initializer_relative_offset": "0x8ceec0",
+    "original_argument_exactly_matches_original_app_group": true,
+    "access_group_type": "Swift.Optional<String> (SSSg)",
+    "initializer_access_group_field_offsets": [
+      "0x18",
+      "0x20"
+    ],
+    "query_group_nil_test_relative_offsets": [
+      "0x8d0610",
+      "0x8d0614"
+    ],
+    "query_group_attribute_insertion_relative_offsets": [
+      "0x8d0638",
+      "0x8d0678"
+    ],
+    "service_only_initializer_relative_offset": "0x8ceb70",
+    "service_only_initializer_zero_store_relative_offset": "0x8cebc8",
+    "service_only_initializer_zero_store_hex": "7ffe01a9",
+    "all_token_read_write_delete_share_same_factory": true,
+    "nil_constructor_runtime_execution_confirmed": false,
+    "actual_original_validated_and_patch_verified_in_memory": true,
+    "other_original_bytes_preserved": true,
+    "modified_main_written": false,
+    "device_login_persistence_test": "not tested"
+  }
+}
