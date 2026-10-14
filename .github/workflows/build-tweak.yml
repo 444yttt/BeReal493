@@ -11,6 +11,7 @@ on:
       - 'Tweak.m'
       - 'CameraRollAdapter.m'
       - 'BRPairState.*'
+      - 'BRBundleIdentity.h'
       - 'scripts/**'
       - 'tests/**'
       - '.github/workflows/build-tweak.yml'

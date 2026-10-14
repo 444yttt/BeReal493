@@ -3,6 +3,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <objc/runtime.h>
 #import "BRPairState.h"
+#import "BRBundleIdentity.h"
 
 static BRPairState *BRState;
 static const void *BRReplacementKey = &BRReplacementKey;
@@ -36,7 +37,7 @@ static BOOL BRMethodMatches(Method method, char returnType, unsigned int count) 
 static void BRInstallSandboxGroupFallback(void) {
     // The Ad Hoc variant cannot claim the original developer's App Group.
     // Keep root-app storage inside this app's sandbox; never grant cross-app access.
-    if (![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.ayato.bereal493"]) return;
+    if (!BRBundleIdentityAllowsSandboxFallback(NSBundle.mainBundle.bundleIdentifier.UTF8String)) return;
     SEL containerSelector=@selector(containerURLForSecurityApplicationGroupIdentifier:);
     Method containerMethod=class_getInstanceMethod(NSFileManager.class,containerSelector);
     if (BRMethodMatches(containerMethod,'@',3)) {
