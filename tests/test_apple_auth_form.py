@@ -1,9 +1,11 @@
 """Offline form protocol and actual browser WebCrypto interoperability checks."""
 import base64
 import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -32,7 +34,8 @@ const elements = {};
 const idNames = ['encrypted-output', 'status', 'encrypt-button', 'copy-button',
                  ...(challenge.phase === 0 ? ['apple-id', 'password'] : ['code'])];
 for (const name of idNames) elements[name] = {value: '', textContent: '', disabled: false,
-                                          focus() {}, select() {}};
+  focus() { this.focused = true; }, select() { this.selected = true; },
+  setSelectionRange(start, end) { this.selectionRange = [start, end]; }};
 const inputs = idNames.filter(name => ['apple-id', 'password', 'code'].includes(name))
                      .map(name => elements[name]);
 elements['auth-form'] = {
@@ -52,9 +55,13 @@ const context = {
   crypto: webcrypto, TextEncoder, Uint8Array, Date: Clock,
   atob(value) { return Buffer.from(value, 'base64').toString('binary'); },
   btoa(value) { return Buffer.from(value, 'binary').toString('base64'); },
-  navigator: {clipboard: {async writeText(value) { context.copied = value; }}},
+  navigator: {clipboard: {async writeText(value) {
+    if (mode === 'clipboard-blocked') throw new Error('NotAllowedError');
+    context.copied = value;
+  }}},
   setInterval(callback) { callbacks.timer = callback; }
 };
+if (mode === 'clipboard-absent') context.navigator = {};
 vm.runInNewContext(script, context, {timeout: 1000});
 const appleId = 'local-roundtrip@example.invalid';
 const password = 'local-test-only-&<secret>\\"';
@@ -105,7 +112,13 @@ if (['expired', 'insecure', 'bad-code'].includes(mode)) {
     name: 'AES-GCM', iv, additionalData: aad, tagLength: 128
   }, aes, badCipher));
   await callbacks['copy-click']();
-  assert.equal(context.copied, serialized);
+  if (['clipboard-blocked', 'clipboard-absent'].includes(mode)) {
+    assert.equal(context.copied, undefined);
+    assert.equal(elements['encrypted-output'].focused, true);
+    assert.equal(elements['encrypted-output'].selected, true);
+    assert.deepEqual(elements['encrypted-output'].selectionRange, [0, serialized.length]);
+    assert.match(elements.status.textContent, /手動でコピー/);
+  } else assert.equal(context.copied, serialized);
   populate();
   await callbacks['form-submit']({preventDefault() {}});
   const second = JSON.parse(elements['encrypted-output'].value);
@@ -120,6 +133,189 @@ if (['expired', 'insecure', 'bad-code'].includes(mode)) {
   console.log(JSON.stringify({decrypted: true, tamperingRejected: true,
                              freshKeys: true, fieldsCleared: true, expiryCleared: true}));
 }
+'''
+
+
+NODE_LIVE = r'''
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {webcrypto, privateDecrypt, constants} from 'node:crypto';
+const [htmlPath, keyPath, otpPath] = process.argv.slice(1);
+const html = fs.readFileSync(htmlPath, 'utf8');
+const script = html.match(/<script>\s*([\s\S]*?)\s*<\/script>/)[1];
+const initial = JSON.parse(script.match(/let CHALLENGE = (.*);/)[1]);
+const otp = JSON.parse(fs.readFileSync(otpPath, 'utf8'));
+const elements = {}, callbacks = {}, timers = {}, requests = [];
+function element() { return {value: '', textContent: '', disabled: false,
+  focus() { this.focused = true; }, select() { this.selected = true; },
+  setSelectionRange(start, end) { this.selectionRange = [start, end]; }}; }
+for (const name of ['encrypted-output', 'status', 'encrypt-button', 'copy-button',
+                   'apple-id', 'password', 'phase-display', 'expiry-display', 'phase-instruction',
+                   'encrypted-output-panel']) {
+  elements[name] = element();
+}
+let inputs = [elements['apple-id'], elements.password];
+elements['auth-fields'] = {};
+Object.defineProperty(elements['auth-fields'], 'innerHTML', {set(html) {
+  if (html === '') {
+    delete elements['apple-id']; delete elements.password; delete elements.code;
+    inputs = []; return;
+  }
+  assert.ok(html.includes('id="code"'));
+  delete elements['apple-id']; delete elements.password;
+  elements.code = element(); inputs = [elements.code];
+}});
+elements['auth-form'] = {querySelectorAll() { return inputs; },
+  addEventListener(name, callback) { callbacks[name] = callback; }};
+elements['copy-button'].addEventListener = (name, callback) => { callbacks['copy-' + name] = callback; };
+let responseText = JSON.stringify(initial), now = Date.now(), responseOkay = true, responseSameUrl = true;
+class Clock extends Date { static now() { return now; } }
+const sandbox = vm.createContext({
+  document: {getElementById(name) { assert.ok(elements[name], name); return elements[name]; }},
+  window: {isSecureContext: true, addEventListener() {}}, crypto: webcrypto,
+  TextEncoder, Uint8Array, Date: Clock, AbortController, setTimeout, clearTimeout,
+  atob(value) { return Buffer.from(value, 'base64').toString('binary'); },
+  btoa(value) { return Buffer.from(value, 'binary').toString('base64'); },
+  navigator: {clipboard: {async writeText() { throw new Error('denied'); }}},
+  setInterval(callback, period) { timers[period] = callback; },
+  async fetch(url, options) {
+    requests.push({url, options});
+    return {ok: responseOkay, url: responseSameUrl ? url : url + '-redirect',
+            async text() { return responseText; }};
+  }
+});
+vm.runInContext(script, sandbox, {timeout: 1000});
+async function settled() {
+  for (let i = 0; i < 100; i++) {
+    if (!vm.runInContext('refreshing', sandbox)) return;
+    await new Promise(resolve => setTimeout(resolve, 2));
+  }
+  throw new Error('refresh did not settle');
+}
+await settled();
+assert.equal(typeof timers[3000], 'function');
+const oldInputs = [...inputs];
+elements['apple-id'].value = 'synthetic-id@example.invalid';
+elements.password.value = 'synthetic-password-DO-NOT-SEND';
+elements['encrypted-output'].value = 'old-ciphertext';
+responseText = JSON.stringify(otp);
+await timers[3000](); await settled();
+assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), 1);
+assert.ok(oldInputs.every(input => input.value === ''));
+assert.equal(elements['encrypted-output'].value, '');
+assert.equal(elements['copy-button'].disabled, true);
+assert.equal(elements['phase-display'].textContent, '1');
+assert.ok(elements['expiry-display'].textContent.endsWith('UTC'));
+assert.equal(elements['encrypt-button'].disabled, false);
+elements.code.value = '123456';
+await callbacks.submit({preventDefault() {}});
+const packet = JSON.parse(elements['encrypted-output'].value);
+assert.equal(packet.phase, 1);
+const key = privateDecrypt({key: fs.readFileSync(keyPath), padding: constants.RSA_PKCS1_OAEP_PADDING,
+                           oaepHash: 'sha256'}, Buffer.from(packet.wrapped_key, 'base64'));
+const aes = await webcrypto.subtle.importKey('raw', key, {name: 'AES-GCM'}, false, ['decrypt']);
+const decoded = await webcrypto.subtle.decrypt({name: 'AES-GCM', tagLength: 128,
+  iv: Buffer.from(packet.iv, 'base64'), additionalData: Buffer.from(otp.context_b64, 'base64')},
+  aes, Buffer.from(packet.ciphertext, 'base64'));
+assert.deepEqual(JSON.parse(Buffer.from(decoded).toString()), {code: '123456'});
+await callbacks['copy-click']();
+assert.deepEqual(elements['encrypted-output'].selectionRange, [0, elements['encrypted-output'].value.length]);
+
+// Regressions, stale same-phase mutation, unavailable transport and invalid data
+// never replace the live challenge or erase valid current user input.
+elements.code.value = '654321';
+const previousOutput = elements['encrypted-output'].value;
+responseText = JSON.stringify(initial);
+await timers[3000](); await settled();
+assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), 1);
+assert.equal(elements.code.value, '654321');
+assert.equal(elements['encrypted-output'].value, previousOutput);
+for (const mutation of [{version: true}, {run_id: '38436216799'}, {phase: 4},
+  {purpose: 'other'}, {nonce: 'a'}, {allowed_payload: 'credentials'},
+  {expires_at: Math.floor(now / 1000)}, {expires_at: Math.floor(now / 1000) + 601},
+  {context_b64: 'Zm9yZ2Vk'}, {public_key_spki_pem: '-----BEGIN PRIVATE KEY-----'}, {extra: 'field'}]) {
+  responseText = JSON.stringify({...otp, ...mutation});
+  await timers[3000](); await settled();
+  assert.equal(vm.runInContext('CHALLENGE.nonce', sandbox), otp.nonce);
+  assert.equal(elements.code.value, '654321');
+}
+for (const text of ['{"version":1,' + JSON.stringify(otp).slice(1),
+                    JSON.stringify(otp).replace('"phase":1', '"phase":1.0'),
+                    JSON.stringify(otp) + ' trailing', ' '.repeat(16385)]) {
+  responseText = text;
+  await timers[3000](); await settled();
+  assert.equal(elements.code.value, '654321');
+}
+responseText = JSON.stringify(otp); responseSameUrl = false;
+await timers[3000](); await settled();
+assert.equal(elements.code.value, '654321');
+responseSameUrl = true; responseOkay = false;
+await timers[3000](); await settled();
+assert.equal(elements.code.value, '654321');
+responseOkay = true;
+
+// Change phase during async encryption: no old challenge packet may escape.
+const next = {...otp, phase: 2, nonce: 'ef'.repeat(32)};
+next.context_b64 = Buffer.from(`BeReal493AppleAuthRelayV1|${next.run_id}|2|${next.nonce}|${next.expires_at}`).toString('base64');
+responseText = JSON.stringify(next);
+const encrypting = callbacks.submit({preventDefault() {}});
+await timers[3000](); await settled(); await encrypting;
+assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), 2);
+assert.equal(elements['encrypted-output'].value, '');
+assert.equal(elements.code.value, '');
+assert.equal(elements['copy-button'].disabled, true);
+for (const request of requests) {
+  assert.match(request.url, new RegExp('^https://raw\\.githubusercontent\\.com/444yttt/Y3POSClient/bereal-auth-challenges-' + initial.run_id + '/ci-auth-challenge/current\\.json\\?refresh=[0-9]+$'));
+  assert.equal(request.options.method, 'GET'); assert.equal(request.options.credentials, 'omit');
+  assert.equal(request.options.redirect, 'error'); assert.equal(request.options.referrerPolicy, 'no-referrer');
+  assert.equal(request.options.body, undefined);
+  for (const secret of ['synthetic-id', 'synthetic-password', '123456', '654321']) {
+    assert.ok(!JSON.stringify(request).includes(secret));
+  }
+}
+now = next.expires_at * 1000;
+timers[1000]();
+assert.equal(elements['encrypt-button'].disabled, true);
+assert.equal(elements['encrypted-output'].value, '');
+console.log(JSON.stringify({transition: true, otpDecrypted: true, inputCleared: true,
+  strictSchema: true, regressionRejected: true, encryptionRaceRejected: true,
+  onlyFixedPublicGet: true, safariClipboardFallback: true, expiryCleared: true}));
+'''
+
+
+NODE_SMS = NODE_LIVE.split("assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), 1);", 1)[0] + r'''
+assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), 1);
+assert.ok(oldInputs.every(input => input.value === ''));
+assert.equal(elements['encrypted-output'].value, '');
+assert.equal(elements['auth-form'].hidden, true);
+assert.equal(elements['encrypted-output-panel'].hidden, true);
+assert.equal(elements['encrypt-button'].disabled, true);
+assert.equal(elements['copy-button'].disabled, true);
+assert.equal(elements.code, undefined);
+assert.equal(inputs.length, 0);
+assert.equal(elements.status.textContent, 'SMSの6桁確認コードを、このチャットにそのまま送ってください');
+await callbacks.submit({preventDefault() {}});
+assert.equal(elements['encrypted-output'].value, '');
+for (const phase of [2, 3]) {
+  const next = {...otp, phase, nonce: String(phase).repeat(64)};
+  next.context_b64 = Buffer.from(`BeReal493AppleAuthRelayV1|${next.run_id}|${phase}|${next.nonce}|${next.expires_at}`).toString('base64');
+  responseText = JSON.stringify(next);
+  await timers[3000](); await settled();
+  assert.equal(vm.runInContext('CHALLENGE.phase', sandbox), phase);
+  assert.equal(elements['auth-form'].hidden, true);
+  assert.equal(elements.code, undefined);
+  assert.equal(inputs.length, 0);
+}
+for (const request of requests) {
+  assert.equal(request.options.method, 'GET');
+  assert.equal(request.options.credentials, 'omit');
+  assert.equal(request.options.body, undefined);
+  assert.ok(!JSON.stringify(request).includes('synthetic-password'));
+  assert.ok(!JSON.stringify(request).includes('synthetic-id'));
+}
+console.log(JSON.stringify({credentialsCleared: true, smsInstruction: true,
+                           codeFormHiddenAllPhases: true, noOtpNetworking: true}));
 '''
 
 
@@ -202,6 +398,14 @@ class AppleAuthFormTest(unittest.TestCase):
         for html in (credentials, otp):
             self.assertIn('connect-src \'none\'', html)
             self.assertIn('form-action \'none\'', html)
+            self.assertIn('name="referrer" content="no-referrer"', html)
+            self.assertNotIn('unsafe-inline', html)
+            self.assertNotIn('保存した HTML', html)
+            self.assertIn('min-height: 44px', html)
+            for tag in ('script', 'style'):
+                content = re.search(rf'<{tag}>(.*?)</{tag}>', html, re.DOTALL).group(1)
+                digest = base64.b64encode(hashlib.sha256(content.encode('utf-8')).digest()).decode()
+                self.assertIn(f"{tag}-src 'sha256-{digest}'", html)
             self.assertIn('aria-live="polite"', html)
             self.assertIn(' UTC</time>', html)
             for prohibited in ('fetch(', 'XMLHttpRequest', 'sendBeacon', 'localStorage',
@@ -245,6 +449,63 @@ class AppleAuthFormTest(unittest.TestCase):
                                          str(html), str(self.private), mode],
                                         check=True, capture_output=True, text=True, timeout=15)
                 self.assertEqual(json.loads(result.stdout), {'rejected': True, 'outputEmpty': True})
+
+    @unittest.skipUnless(shutil.which('node'), 'Node WebCrypto is needed for browser clipboard fallback')
+    def test_copy_selects_encrypted_json_if_safari_denies_or_omits_clipboard(self):
+        for mode in ('clipboard-blocked', 'clipboard-absent'):
+            with self.subTest(mode=mode):
+                html = self.root / f'{mode}.html'
+                html.write_text(generator.render_html(self.challenge()))
+                result = subprocess.run(['node', '--input-type=module', '-e', NODE_BROWSER,
+                                         str(html), str(self.private), mode],
+                                        check=True, capture_output=True, text=True, timeout=15)
+                self.assertTrue(all(json.loads(result.stdout).values()))
+
+    @unittest.skipUnless(shutil.which('node'), 'Node WebCrypto is needed for live public updates')
+    def test_live_public_refresh_switches_to_otp_without_private_networking(self):
+        html, otp = self.root / 'live.html', self.root / 'public-otp.json'
+        challenge = self.challenge()
+        html.write_text(generator.render_html(challenge, live_challenge=True))
+        next_challenge = self.challenge(phase=1)
+        next_challenge['nonce'] = 'cd' * 32
+        context = f"BeReal493AppleAuthRelayV1|{next_challenge['run_id']}|1|{next_challenge['nonce']}|{next_challenge['expires_at']}"
+        next_challenge['context_b64'] = base64.b64encode(context.encode()).decode()
+        otp.write_text(json.dumps(next_challenge))
+        result = subprocess.run(['node', '--input-type=module', '-e', NODE_LIVE,
+                                 str(html), str(self.private), str(otp)],
+                                capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(all(json.loads(result.stdout).values()))
+        source = html.read_text()
+        self.assertIn('connect-src https://raw.githubusercontent.com;', source)
+        self.assertNotIn('unsafe-inline', source)
+        self.assertNotIn('localStorage', source)
+        self.assertNotIn('sessionStorage', source)
+        self.assertNotIn('document.cookie', source)
+        self.assertIn('setInterval(refreshPublicChallenge, 3000)', source)
+        for tag in ('script', 'style'):
+            content = re.search(rf'<{tag}>(.*?)</{tag}>', source, re.DOTALL).group(1)
+            digest = base64.b64encode(hashlib.sha256(content.encode()).digest()).decode()
+            self.assertIn(f"{tag}-src 'sha256-{digest}'", source)
+
+    @unittest.skipUnless(shutil.which('node'), 'Node WebCrypto is needed for SMS chat mode')
+    def test_sms_chat_mode_clears_credentials_and_hides_code_form_all_otp_phases(self):
+        html, otp = self.root / 'live-sms.html', self.root / 'public-sms-otp.json'
+        html.write_text(generator.render_html(self.challenge(), live_challenge=True, otp_in_chat=True))
+        otp.write_text(json.dumps(self.challenge(phase=1)))
+        result = subprocess.run(['node', '--input-type=module', '-e', NODE_SMS,
+                                 str(html), str(self.private), str(otp)],
+                                capture_output=True, text=True, timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(all(json.loads(result.stdout).values()))
+        source = html.read_text()
+        self.assertIn('id="apple-id"', source)
+        self.assertIn('id="password"', source)
+        self.assertNotIn('Apple ID・パスワード・確認コードをチャットに直接送らない', source)
+        initial_otp = generator.render_html(self.challenge(phase=1), live_challenge=True, otp_in_chat=True)
+        self.assertNotIn('id="code"', initial_otp.split('<script>')[0])
+        self.assertIn('id="auth-form" autocomplete="off" hidden', initial_otp)
+        with self.assertRaises(ValueError): generator.render_html(self.challenge(), otp_in_chat=True)
 
 
 if __name__ == '__main__':
