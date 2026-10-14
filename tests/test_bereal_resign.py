@@ -326,6 +326,8 @@ class SigningInputTest(unittest.TestCase):
             self.assertEqual(imports[0][2], str(alternate_p12))
             self.assertEqual(imports[0][imports[0].index('-P') + 1], 'alternate-test-password')
             self.assertEqual(captured['certificate_sha256'], module.hashlib.sha256(CERTIFICATE).hexdigest())
+            self.assertEqual(captured['input_source_commit'], module.INPUT_SOURCE_COMMIT)
+            self.assertEqual(captured['source_commit'], module.SOURCE_COMMIT)
             self.assertEqual(captured['input_recipient_certificate_sha256'], module.hashlib.sha256(b'current-certificate').hexdigest())
             self.assertEqual(captured['distinct_profile_count'], 1)
             self.assertEqual(captured['provisioned_bundle_count'], 5)

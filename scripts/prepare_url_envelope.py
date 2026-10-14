@@ -31,7 +31,7 @@ def make_envelope(url, public_key, allowed_hosts):
                             '-pkeyopt', 'rsa_mgf1_md:sha256'], keys)
     encode = lambda value: base64.b64encode(value).decode('ascii')
     return {'version': 2, 'mode': 'encrypted-https-url',
-            'input_sha256': contract.ORIGINAL_SHA, 'source_commit': contract.SOURCE_COMMIT,
+            'input_sha256': contract.ORIGINAL_SHA, 'source_commit': contract.INPUT_SOURCE_COMMIT,
             'wrapped_keys': encode(wrapped), 'iv': encode(iv), 'encrypted_url': encode(ciphertext),
             'hmac': encode(hmac.new(keys[32:], contract.URL_INPUT_HMAC_DOMAIN + iv + ciphertext, hashlib.sha256).digest())}
 

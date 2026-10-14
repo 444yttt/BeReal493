@@ -170,7 +170,8 @@ class SignedDeliveryTest(unittest.TestCase):
             if extra:
                 archive.writestr(*extra)
         receipt = {'file': self.ipa.name, 'sha256': module.digest_file(self.ipa),
-                   'source_commit': module.SOURCE_COMMIT, 'input_sha256': module.ORIGINAL_SHA,
+                   'source_commit': module.SOURCE_COMMIT, 'input_source_commit': module.INPUT_SOURCE_COMMIT,
+                   'input_sha256': module.ORIGINAL_SHA,
                    'bundle_identifier': module.ROOT_ID, 'distribution': 'IOS_APP_ADHOC',
                    'registered_device_count': 1, 'provisioned_bundle_count': 5,
                    'signature_verification': ('codesign deep strict passed; each app/extension matched '
@@ -242,6 +243,32 @@ class SignedDeliveryTest(unittest.TestCase):
         receipt['sha256'] = '0' * 64
         self.receipt.write_text(json.dumps(receipt))
         with self.assertRaisesRegex(ValueError, 'SHA256 differs'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_receipt_keeps_distinct_input_provenance_and_build_pins(self):
+        from unittest.mock import patch
+        build_commit = 'b' * 40
+        with patch.object(module, 'SOURCE_COMMIT', build_commit):
+            self.save_delivery()
+            result = module.verify(self.ipa, self.receipt)
+            self.assertEqual(result['source_commit'], build_commit)
+            self.assertEqual(result['input_source_commit'], module.INPUT_SOURCE_COMMIT)
+            receipt = json.loads(self.receipt.read_text())
+            receipt['input_source_commit'] = build_commit
+            self.receipt.write_text(json.dumps(receipt))
+            with self.assertRaisesRegex(ValueError, 'source/input differs'):
+                module.verify(self.ipa, self.receipt)
+
+    def test_receipt_missing_input_provenance_or_old_build_is_rejected(self):
+        from unittest.mock import patch
+        self.save_delivery()
+        with patch.object(module, 'SOURCE_COMMIT', 'b' * 40), self.assertRaisesRegex(ValueError, 'source/input differs'):
+            module.verify(self.ipa, self.receipt)
+        self.save_delivery()
+        receipt = json.loads(self.receipt.read_text())
+        receipt.pop('input_source_commit')
+        self.receipt.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'source/input differs'):
             module.verify(self.ipa, self.receipt)
 
     def test_shared_wildcard_profile_is_concretized_for_all_five_bundles(self):

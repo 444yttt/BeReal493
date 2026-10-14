@@ -168,6 +168,34 @@ class EnvelopeCryptoTest(unittest.TestCase):
             with patch.object(module, 'Path', side_effect=local_path), self.assertRaises(RuntimeError):
                 module.decrypt_input(root, self.key, envelope)
 
+    def test_existing_pinned_v3_artifact_survives_build_source_change(self):
+        content = b'unchanged encrypted original across adapter fix'
+        digest = hashlib.sha256(content).hexdigest()
+        with tempfile.TemporaryDirectory() as directory, patch.object(module, 'ORIGINAL_SHA', digest), redirect_stdout(io.StringIO()):
+            root = Path(directory); original = root / 'source.ipa'; original.write_bytes(content)
+            def local_path(value):
+                path = Path(value)
+                return root / path if str(path) == 'bereal-input-transfer' else path
+            with patch.object(module, 'Path', side_effect=local_path):
+                envelope = module.encrypt_persistent_input(root, original, self.der)
+            archive = root / 'existing-artifact.zip'
+            with zipfile.ZipFile(archive, 'w') as target:
+                for filename in ('input-encrypted.bin', 'input-metadata.json'):
+                    target.write(root / 'bereal-input-transfer' / filename, filename)
+            unchanged_archive = archive.read_bytes()
+            envelope['github_artifact'] = {'repository': '444yttt/Y3POSClient', 'artifact_id': 1,
+                'archive_sha256': hashlib.sha256(unchanged_archive).hexdigest()}
+            with patch.object(module, 'SOURCE_COMMIT', 'b' * 40), \
+                patch.object(module, 'fetch_artifact_archive', side_effect=lambda identifier, path: path.write_bytes(unchanged_archive)):
+                restored = module.decrypt_input(root, self.key, envelope)
+                self.assertEqual(restored.read_bytes(), content)
+                self.assertEqual(envelope['source_commit'], module.INPUT_SOURCE_COMMIT)
+                self.assertEqual(archive.read_bytes(), unchanged_archive)
+                mutated = copy.deepcopy(envelope); mutated['source_commit'] = module.SOURCE_COMMIT
+                with patch.object(module, 'fetch_artifact_archive') as fetch, self.assertRaisesRegex(RuntimeError, 'input contract'):
+                    module.decrypt_input(root, self.key, mutated)
+                fetch.assert_not_called()
+
     def test_github_artifact_input_is_pinned_and_decrypts_the_original(self):
         content = b'github artifact original bytes'; digest = hashlib.sha256(content).hexdigest()
         with tempfile.TemporaryDirectory() as directory, patch.object(module, 'ORIGINAL_SHA', digest), redirect_stdout(io.StringIO()):

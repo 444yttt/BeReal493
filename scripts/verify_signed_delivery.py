@@ -23,7 +23,8 @@ import uuid
 import zipfile
 
 ORIGINAL_SHA = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc'
-SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
+INPUT_SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
+SOURCE_COMMIT = '2ea872b3db210387ece0c5decf9d06543fe3be38'
 ROOT_ID = 'com.ayato.bereal493'
 SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension',
             '.NotificationServiceExtension', '.Widgets')
@@ -344,7 +345,9 @@ def verify(ipa, receipt_path):
     digest = digest_file(ipa)
     require(receipt.get('sha256') == digest, 'IPA SHA256 differs from CI receipt')
     require(receipt.get('file') == ipa.name, 'IPA filename differs from CI receipt')
-    require(receipt.get('source_commit') == SOURCE_COMMIT and receipt.get('input_sha256') == ORIGINAL_SHA,
+    require(receipt.get('source_commit') == SOURCE_COMMIT
+            and receipt.get('input_source_commit') == INPUT_SOURCE_COMMIT
+            and receipt.get('input_sha256') == ORIGINAL_SHA,
             'CI receipt source/input differs from authorized pins')
     require(receipt.get('bundle_identifier') == ROOT_ID and receipt.get('distribution') == 'IOS_APP_ADHOC'
             and receipt.get('registered_device_count') == 1 and receipt.get('provisioned_bundle_count') == 5,
@@ -489,6 +492,7 @@ def verify(ipa, receipt_path):
         require(archive.read(adapter_path)[:4] in MACH_MAGICS, 'Photo adapter is not Mach-O code')
     return {'file': ipa.name, 'sha256': digest, 'validated_at': iso(now),
             'ci_receipt_sha256': digest_file(receipt_path), 'source_commit': SOURCE_COMMIT,
+            'input_source_commit': INPUT_SOURCE_COMMIT,
             'input_sha256': ORIGINAL_SHA,
             'independently_verified': {'zip_crc_and_safe_unique_paths': True, 'ipa_hash_matches_ci_receipt': True,
                                       'inherited_outside_app_files_verified': inherited_files,

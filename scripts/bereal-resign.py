@@ -28,7 +28,10 @@ import zipfile
 from contextlib import contextmanager
 
 ORIGINAL_SHA = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc'
-SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
+# The existing encrypted original retains its original transfer provenance.
+# SOURCE_COMMIT independently pins the adapter/package source being rebuilt.
+INPUT_SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
+SOURCE_COMMIT = '2ea872b3db210387ece0c5decf9d06543fe3be38'
 ROOT_ID = 'com.ayato.bereal493'
 PREFIX = 'AlexisBarreyat.BeReal'
 SAFE_SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension', '.NotificationServiceExtension', '.Widgets')
@@ -304,7 +307,7 @@ def decrypt_url_input(root, key, envelope):
 
 
 def decrypt_input(root, key, envelope):
-    if envelope.get('input_sha256') != ORIGINAL_SHA or envelope.get('source_commit') != SOURCE_COMMIT:
+    if envelope.get('input_sha256') != ORIGINAL_SHA or envelope.get('source_commit') != INPUT_SOURCE_COMMIT:
         raise RuntimeError('Unexpected encrypted input contract')
     if envelope.get('version') == 2: return decrypt_url_input(root, key, envelope)
     if envelope.get('version') == 3: return decrypt_local_input(root, key, envelope)
@@ -450,7 +453,7 @@ def encrypt_persistent_input(root, original, der):
         for chunk in iter(lambda: stream.read(1048576), b''): authenticator.update(chunk)
     encode = lambda value: base64.b64encode(value).decode('ascii')
     metadata = {'version': 3, 'mode': 'encrypted-local-file', 'input_sha256': ORIGINAL_SHA,
-                'source_commit': SOURCE_COMMIT, 'encrypted_file': encrypted.name,
+                'source_commit': INPUT_SOURCE_COMMIT, 'encrypted_file': encrypted.name,
                 'encrypted_bytes': encrypted.stat().st_size, 'encrypted_sha256': sha256_file(encrypted),
                 'certificate_sha256': hashlib.sha256(der).hexdigest(),
                 'wrapped_keys': encode(wrapped), 'iv': encode(iv), 'hmac': encode(authenticator.digest())}
@@ -758,7 +761,8 @@ def prepare_input(root, original, der):
     source = root / 'source' / ('BeReal493-' + SOURCE_COMMIT)
     inspection = json.loads(run([sys.executable, str(source / 'scripts/inspect_ipa.py'), str(unsigned)]))
     verification = {'file': unsigned.name, 'sha256': sha256_file(unsigned),
-                    'input_sha256': ORIGINAL_SHA, 'source_commit': SOURCE_COMMIT,
+                    'input_sha256': ORIGINAL_SHA, 'input_source_commit': INPUT_SOURCE_COMMIT,
+                    'source_commit': SOURCE_COMMIT,
                     'certificate_sha256': hashlib.sha256(der).hexdigest(),
                     'adapter': 'implemented; rebuilt from pinned source; not device tested',
                     'archive_inspection': inspection, 'signature': 'unsigned',
@@ -815,7 +819,8 @@ def main(argv=None):
         if options.verify_input:
             output = Path('bereal-public'); output.mkdir(exist_ok=True)
             verification = {'mode': 'input_verification_only', 'input_sha256': ORIGINAL_SHA,
-                'input_bytes': original.stat().st_size, 'source_commit': SOURCE_COMMIT,
+                'input_bytes': original.stat().st_size, 'input_source_commit': INPUT_SOURCE_COMMIT,
+                'source_commit': SOURCE_COMMIT,
                 'envelope_version': envelope['version'], 'input_sha256_verified': True,
                 'input_recipient_certificate_sha256': hashlib.sha256(input_recipient_der).hexdigest(),
                 'apple_resources_created_or_modified': False, 'signed_ipa_created': False}
@@ -885,7 +890,7 @@ def main(argv=None):
         with zipfile.ZipFile(ipa) as archive:
             if archive.testzip() is not None: raise RuntimeError('Signed IPA archive verification failed')
         digest = sha256_file(ipa)
-        verification = {'file':ipa.name,'sha256':digest,'source_commit':SOURCE_COMMIT,'input_sha256':ORIGINAL_SHA,'bundle_identifier':ROOT_ID,'distribution':'IOS_APP_ADHOC','registered_device_count':1,'provisioned_bundle_count':len(targets),'distinct_profile_count':len({profile['UUID'] for bundle,info,profile,ent in targets}),'profile_selection':'existing_wildcard_read_only' if existing_profile else 'exact_scoped_profiles','signed_macho_count':macho_count,'certificate_sha256':hashlib.sha256(der).hexdigest(),'input_recipient_certificate_sha256':hashlib.sha256(input_recipient_der).hexdigest(),'profiles':[public_profile_receipt(info['CFBundleIdentifier'],profile,der,bool(existing_profile)) for bundle,info,profile,ent in targets],'signature_verification':'codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate','device_installation':'not tested','posting':'not tested'}
+        verification = {'file':ipa.name,'sha256':digest,'source_commit':SOURCE_COMMIT,'input_source_commit':INPUT_SOURCE_COMMIT,'input_sha256':ORIGINAL_SHA,'bundle_identifier':ROOT_ID,'distribution':'IOS_APP_ADHOC','registered_device_count':1,'provisioned_bundle_count':len(targets),'distinct_profile_count':len({profile['UUID'] for bundle,info,profile,ent in targets}),'profile_selection':'existing_wildcard_read_only' if existing_profile else 'exact_scoped_profiles','signed_macho_count':macho_count,'certificate_sha256':hashlib.sha256(der).hexdigest(),'input_recipient_certificate_sha256':hashlib.sha256(input_recipient_der).hexdigest(),'profiles':[public_profile_receipt(info['CFBundleIdentifier'],profile,der,bool(existing_profile)) for bundle,info,profile,ent in targets],'signature_verification':'codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate','device_installation':'not tested','posting':'not tested'}
         receipt = private(root / 'verification.json', (json.dumps(verification,indent=2)+'\n').encode())
         encrypt_delivery(root, [ipa, receipt], Path('bereal-output/BeReal493-signed-delivery.cms'))
         print('Signed IPA verified and encrypted for the recipient. SHA256: ' + digest)
