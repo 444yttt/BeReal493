@@ -1,0 +1,136 @@
+{
+  "file": "BeReal493-CameraRoll-SIGNED.ipa",
+  "sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+  "validated_at": "2026-10-14T03:10:34.307941Z",
+  "ci_receipt_sha256": "18d720f5b7cfc88a63525dd12a64c0e4305994b7fe78f336d07f62d90ceee7bc",
+  "source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "input_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "independently_verified": {
+    "zip_crc_and_safe_unique_paths": true,
+    "ipa_hash_matches_ci_receipt": true,
+    "inherited_outside_app_files_verified": [
+      {
+        "path": "Payload/decrypt.day",
+        "bytes": 9,
+        "sha256": "15218e74cef5d8df7e631ab2a31fdb8bde28976252f984231cf410630410696e"
+      }
+    ],
+    "bundle_count": 5,
+    "same_single_provisioned_device": true,
+    "distinct_profile_count": 5,
+    "distribution_profile_entitlements": "Ad Hoc; get-task-allow false",
+    "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+    "certificate_expiration_date": "2027-09-28T14:59:37Z",
+    "signed_macho_file_count": 90,
+    "signed_macho_slice_count": 90,
+    "cms_signature_and_code_page_hashes": true,
+    "xml_entitlement_and_resource_special_slot_hashes": true,
+    "adapter_dependency_injected_once": true,
+    "profiles": [
+      {
+        "bundle_identifier": "com.ayato.bereal493",
+        "profile_uuid": "2884849e-4a9d-49ef-9f7f-ba1d2d31dc59",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
+        "profile_uuid": "8300457d-b5a3-4a21-b2d7-172fbe51d455",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
+        "profile_uuid": "8cf669b8-2e7c-4044-bbe6-397f2c3a838a",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.Widgets",
+        "profile_uuid": "2d5d3ea0-d63f-442d-8073-8583c4f38bf2",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.iMessageExtension",
+        "profile_uuid": "9bc99fce-557d-4f0e-a6c6-6145d073105f",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      }
+    ],
+    "signed_macho_count_matches_ci": true,
+    "app_extension_adapter_executable_modes": true,
+    "macho_files_with_execute_permission": 6,
+    "actual_signed_keychain_token_grant_absent": true
+  },
+  "ci_evidence": {
+    "macos_codesign_verification": "codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate",
+    "registered_device_count": 1,
+    "profile_selection": "exact_scoped_profiles"
+  },
+  "limitations": [
+    "Apple certificate-chain trust and codesign are not independently checked on Linux.",
+    "Bundle resource manifests are hash-checked; their individual file seals rely on CI codesign.",
+    "DER entitlement blobs are present and hash-checked; XML entitlements are parsed and compared.",
+    "Device installation, launch, draft, posting, notifications and widgets were not tested."
+  ],
+  "delivery_artifact": {
+    "github_run_id": 38503871446,
+    "github_artifact_id": 11867270650,
+    "ci_commit": "7a82e8d69c8853e7ea4e85e1428af77c15c78230",
+    "archive_sha256": "75ae59e5c1006bc6b0620f7f2dccb8afd1d363a220c439c47ed0261ba951821f",
+    "archive_bytes": 140280096,
+    "exact_safe_outer_and_inner_members": true,
+    "cms_authenticated_aes_256_gcm_decryption": true
+  }
+}

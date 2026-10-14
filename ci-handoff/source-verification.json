@@ -14,9 +14,8 @@
     "platform": "macOS"
   },
   "signing_adapter_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
-  "apple_authentication_success_established": false,
-  "provisioning_complete": false,
-  "signed_ipa_created": false,
+  "provisioning_complete": true,
+  "signed_ipa_created": true,
   "signed_ipa_delivered": false,
   "device_installation": "not tested",
   "posting": "not tested",
@@ -62,9 +61,10 @@
       "local_bereal_followup": {
         "suite_count": 69,
         "passed": true,
-        "source_commit": null,
-        "native_build_run": null,
-        "state": "UNIVERSAL source/test copy present locally; no future BeReal commit or native result fabricated"
+        "source_commit": "3584214d999eb349d53061e0cd03cfcccdc835db",
+        "native_build_run": 38499454434,
+        "state": "UNIVERSAL source/test follow-up published; all 69 tests and native build succeeded",
+        "native_build_conclusion": "success"
       },
       "diagnostic_followup": {
         "commit": "499740073da9e530986176c57c8bf0094969dcb2",
@@ -77,22 +77,82 @@
       "provisioning_complete": false,
       "signed_ipa_created": false,
       "signed_ipa_delivered": false
+    },
+    {
+      "repository": "444yttt/Y3POSClient",
+      "source_commit": "7a82e8d69c8853e7ea4e85e1428af77c15c78230",
+      "change": "literal Apple-token rights subset; optional certificate-prefix CLI binding; safe eight-stage diagnostics; original keychain list capture/exact restoration/temporary cleanup",
+      "focused_tests": {
+        "count": 22,
+        "passed": true
+      },
+      "local_bereal_followup": {
+        "suite_count": 85,
+        "passed": true,
+        "source_commit": null,
+        "native_build_run": null,
+        "state": "current final helper/test copy verified locally; public BeReal commit/native result not yet recorded"
+      },
+      "keychain_regression_test_count": 5,
+      "actual_signed_ci_run": 38503871446,
+      "actual_signed_ci_conclusion": "success",
+      "input_only_gate_present": false,
+      "provisioning_complete": true,
+      "signed_ipa_created": true,
+      "signed_ipa_delivered": false
+    },
+    {
+      "repository": "444yttt/BeReal493",
+      "source_commit": "7d59780bc09a6d3535722637e524c24dee213447",
+      "change": "final signer helpers and exact original-marker allowlist in independent verifier; signed IPA bytes unchanged",
+      "local_tests": {
+        "count": 89,
+        "passed": true
+      },
+      "independent_code_review": "passed",
+      "native_build": {
+        "run_id": 38504938801,
+        "job_id": 115660164759,
+        "conclusion": "success"
+      },
+      "prior_pre_marker_local_checkpoint": 85,
+      "signed_ipa_sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+      "independent_delivery_validation_status": "passed",
+      "durable_final_file_saved_rehashed": true,
+      "signed_ipa_delivered": false
     }
   ],
   "auth_transport_observation": {
-    "run_id": 38498566044,
+    "run_id": 38500570296,
     "phase": 1,
-    "phase0_reply_commit": "e2666d2b294626e2056df9b56934ab5e8383b5ef",
+    "phase0_reply_commit": "7f19446fadfe328f3f27544a3d2ffe0356f77688",
     "existing_voluntary_login_input_reencrypted_under_authorization": true,
     "credential_resolicitation": false,
     "persistent_plaintext_file_created": false,
     "public_transport": "ciphertext only",
-    "otp_received": false,
-    "next_step": "current phase-1 user SMS requested and pending",
-    "five_exact_profiles_verified": false,
-    "signed_ipa_created": false,
-    "signed_ipa_delivered": false,
-    "chat_message_deletion_established": false
+    "user_requested_sms_resend": true,
+    "new_sms_request_accepted": true,
+    "otp_received": true,
+    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+    "chat_message_deletion_established": false,
+    "approximate_otp_received_at": "2026-10-14T02:26:00Z",
+    "internal_otp_input": "private no-echo TTY stdin; no plaintext files",
+    "otp_public_reply_commit": "9d2fc4d776766c7e5316083956fffad579540aeb",
+    "otp_values_in_public_records": false,
+    "status": "completed",
+    "ruby_provisioning_completed": true,
+    "ruby_worker_exit_code": 0,
+    "safe_result": "profiles_verification_failed",
+    "agreement_status_known": true,
+    "credentials_retained": false,
+    "private_session_retained": false,
+    "private_cleanup_succeeded": true,
+    "active_adhoc_profiles_exist_for_all_five": true,
+    "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
+    "next_step_at_observation": "completed Ruby provisioning; Python independent keychain-rights classification failed; narrow rights correction and five-profile readiness pending",
+    "five_exact_profiles_verified_at_observation": false,
+    "signed_ipa_created_at_observation": false,
+    "signed_ipa_delivered_at_observation": false
   },
   "auth_historical_phase0_transport_observation": {
     "run_id": 38496739496,
@@ -106,23 +166,12 @@
     "reply_commit": "d230ed5f085b2d8ada5cb7769627ad57898edad3",
     "input_values_in_public_records": false,
     "chat_message_deletion_established": false,
-    "next_step": "Apple phase-1 challenge or safe result pending",
+    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
     "authentication_or_provisioning_success_inferred": false,
-    "signed_ipa_created": false,
-    "signed_ipa_delivered": false
-  },
-  "latest_auth_result": {
-    "run_id": 38496739496,
-    "phase": 1,
-    "reason": "bundle_mismatch",
-    "auth_stage": "bundle_create",
-    "error_kind": "other",
-    "result_artifact_id": 11864607131,
-    "result_archive_sha256": "fa5e5c4e8fe3994ecbcfdae9b92ac945a93ff7bae72b5e6eeb1634f5aec44be0",
-    "creation_post_may_have_changed_resources": true,
-    "five_exact_profiles_verified": false,
-    "signed_ipa_created": false,
-    "signed_ipa_delivered": false
+    "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
+    "next_step_at_observation": "Apple phase-1 challenge or safe result pending",
+    "signed_ipa_created_at_observation": false,
+    "signed_ipa_delivered_at_observation": false
   },
   "completed_auth_transport_observation": {
     "run_id": 38496739496,
@@ -135,10 +184,7 @@
     "reply_commit": "f27d9b2ec211475888c506d023f5cd21aff01b8b",
     "input_values_in_public_records": false,
     "chat_message_deletion_established": false,
-    "next_step": "completed with bundle_create bundle_mismatch; GET-only platform evidence/correction pending before new session",
-    "five_exact_profiles_verified": false,
-    "signed_ipa_created": false,
-    "signed_ipa_delivered": false,
+    "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
     "status": "completed",
     "safe_result": "bundle_mismatch",
     "safe_stage": "bundle_create",
@@ -147,7 +193,12 @@
     "private_session_retained": false,
     "public_refs_get_status": 404,
     "creation_post_may_have_changed_resources": true,
-    "current_resource_state_verified": false
+    "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
+    "next_step_at_observation": "completed with bundle_create bundle_mismatch; GET-only platform evidence/correction pending before new session",
+    "five_exact_profiles_verified_at_observation": false,
+    "signed_ipa_created_at_observation": false,
+    "signed_ipa_delivered_at_observation": false,
+    "current_resource_state_verified_at_observation": false
   },
   "platform_evidence": {
     "run_id": 38498244379,
@@ -160,7 +211,112 @@
     "five_exact_ios_profiles_verified": false,
     "apple_resources_changed_by_audit": false
   },
-  "current_schema6_readiness_evidence": {
+  "completed_auth_transport_observations": [
+    {
+      "run_id": 38498566044,
+      "phase": 1,
+      "phase0_reply_commit": "e2666d2b294626e2056df9b56934ab5e8383b5ef",
+      "existing_voluntary_login_input_reencrypted_under_authorization": true,
+      "credential_resolicitation": false,
+      "persistent_plaintext_file_created": false,
+      "public_transport": "ciphertext only",
+      "otp_received": false,
+      "next_step": "none for this historical record; final delivery is verified/saved and ready for user link",
+      "chat_message_deletion_established": false,
+      "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
+      "next_step_at_observation": "current phase-1 user SMS requested and pending",
+      "five_exact_profiles_verified_at_observation": false,
+      "signed_ipa_created_at_observation": false,
+      "signed_ipa_delivered_at_observation": false
+    }
+  ],
+  "latest_completed_auth_result": {
+    "run_id": 38500570296,
+    "phase": 1,
+    "reason": "profiles_verification_failed",
+    "agreement_status_known": true,
+    "ruby_provisioning_completed": true,
+    "ruby_worker_exit_code": 0,
+    "credentials_retained": false,
+    "private_session_retained": false,
+    "private_cleanup_succeeded": true,
+    "result_artifact_id": 11866585002,
+    "result_archive_sha256": "fe3f843f32ae6dadc5734aae91e927dcfa46bdb9e6872509e78b183f6161b409",
+    "observation_role": "historical progression; superseded by successful current_five_profile_readiness and signed_ci_result",
+    "signed_ipa_created_at_observation": false
+  },
+  "original_source_check_authentication_proof": false,
+  "current_ruby_authenticated_provisioning_completed": true,
+  "current_overall_helper_success": false,
+  "independent_delivery_validation_status": "passed",
+  "current_five_profile_readiness": {
+    "run_id": 38502355511,
+    "commit": "2688517fa5b1af32be2acbcc6b62b4ffe1745228",
+    "artifact_id": 11866582062,
+    "archive_sha256": "5dd242b3f155fa32a3f4109b319b3631da0719f8cb6e927157afaadbcfc6e811",
+    "exact_ready_count": 5,
+    "strict_checks_passed": true,
+    "profile_mutation_for_token_omission": false,
+    "literal_token_omitted_only_from_claimed_rights": true,
+    "input_only_gate_removed_commit": "8411dee1441afa20dfe264ee4a694bbafcdbdb0c"
+  },
+  "signed_ci_result": {
+    "run_id": 38503871446,
+    "commit": "7a82e8d69c8853e7ea4e85e1428af77c15c78230",
+    "conclusion": "success",
+    "approximate_completed_at": "2026-10-14T03:00:00Z",
+    "macho_count": 90,
+    "deep_strict_codesign": true,
+    "exact_xml_profile_entitlement_bundle_count": 5,
+    "signing_leaf_der_match": true,
+    "zip_crc_passed": true,
+    "signed_ipa_sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+    "encrypted_artifact_id": 11867270650,
+    "artifact_zip_sha256": "75ae59e5c1006bc6b0620f7f2dccb8afd1d363a220c439c47ed0261ba951821f",
+    "artifact_zip_bytes": 140280096,
+    "artifact_downloaded": true,
+    "independent_delivery_validation_status": "passed",
+    "durable_final_file_complete": true,
+    "delivered": false,
+    "installation": "not tested",
+    "posting": "not tested",
+    "final_file_bytes": 140232681,
+    "final_copy_rehashed": true,
+    "delivery_ready": true,
+    "artifact_expires_at": "2026-11-13T03:00:17Z",
+    "artifact_expired": false
+  },
+  "historical_schema7_keychain_classification_evidence": {
+    "run_id": 38501943086,
+    "commit": "f0dc469a5a63715076d0838351ac86b0b6e49ebe",
+    "artifact_id": 11865922674,
+    "archive_sha256": "b78c5062d54ce3e11abc478c6db14d8f385aff698167d142ac5d78a8bff9909d",
+    "schema_version": 7,
+    "exact_registration_count": 5,
+    "missing_registration_count": 0,
+    "active_adhoc_profiles_per_target": 1,
+    "cms_certificate_team_device_expiry_uuid_checks_passed_before_rights_failure": true,
+    "only_failure": "unapproved_keychain_grant",
+    "failure_count": 5,
+    "available_keychain_categories": {
+      "team_wildcard": 5,
+      "apple_token": 5,
+      "other": 0
+    },
+    "strict_signed_rights_verified_for_all_five": false,
+    "apple_resources_changed_by_audit": false
+  },
+  "keychain_rights_fix_verified": {
+    "literal_available_apple_permission": "com.apple.token",
+    "omit_only_from_claimed_signing_rights": true,
+    "approved_app_or_root_group_required": true,
+    "token_only_foreign_unknown_rejected": true,
+    "profile_changes_needed": false,
+    "additional_mfa_needed": false,
+    "signed_delivery_created": false,
+    "strict_all_five_readiness_passed": true
+  },
+  "historical_schema6_readiness_evidence": {
     "run_id": 38498629408,
     "commit": "499740073da9e530986176c57c8bf0094969dcb2",
     "artifact_id": 11865175250,
@@ -175,6 +331,79 @@
     "matching_root_ios_profile_count": 0,
     "exact_ios_profile_ready_count": 0,
     "before_current_otp_reply": true,
-    "apple_resources_changed_by_audit": false
-  }
+    "apple_resources_changed_by_audit": false,
+    "observation_role": "historical before all-five provisioning and strict readiness pass"
+  },
+  "durable_final_file_saved_rehashed": true,
+  "delivery_ready": true,
+  "final_independent_validation": {
+    "status": "passed",
+    "ci_receipt": "ci-handoff/signed-verification.json",
+    "ci_receipt_sha256": "18d720f5b7cfc88a63525dd12a64c0e4305994b7fe78f336d07f62d90ceee7bc",
+    "independent_receipt": "ci-handoff/signed-delivery-validation.json",
+    "independent_receipt_sha256": "6d7eb1ba7dc5dfd55560e381744b992e3c97ee314f3889feeb0a12bf1ea0143a",
+    "signed_ipa_sha256": "fb759fff5d50d386bcc6f61b3043c89b5eb88262ec7b580097d939c605f2640e",
+    "final_ipa_bytes": 140232681,
+    "macho_cms_page_special_hash_verified_count": 90,
+    "exact_profile_rights_count": 5,
+    "same_single_device_verified": true,
+    "expected_certificate_verified": true,
+    "adapter_link_verified": true,
+    "executable_modes_verified_count": 6,
+    "earliest_certificate_profile_expiry": "2027-09-28T14:59:37Z",
+    "only_original_auxiliary_marker_allowed": {
+      "path": "Payload/decrypt.day",
+      "bytes": 9,
+      "sha256": "15218e74cef5d8df7e631ab2a31fdb8bde28976252f984231cf410630410696e"
+    },
+    "marker_identical_to_original": true,
+    "signed_ipa_bytes_changed_by_verifier_fix": false,
+    "durable_saved_copy_rehashed": true,
+    "user_link_handoff_pending": true,
+    "installation": "not tested",
+    "posting": "not tested"
+  },
+  "final_auth_cleanup_evidence": {
+    "approximate_checked_at": "2026-10-14T03:10:00Z",
+    "auth_run_id": 38500570296,
+    "challenge_ref_get_status": 404,
+    "reply_ref_get_status": 404,
+    "cleanup_job": 115646276539,
+    "cleanup_job_succeeded": true,
+    "safe_artifact_redownloaded_sha256": "fe3f843f32ae6dadc5734aae91e927dcfa46bdb9e6872509e78b183f6161b409",
+    "credentials_retained": false,
+    "private_session_retained": false,
+    "chat_message_deletion_established": false
+  },
+  "initial_60_test_source_check_apple_authentication_success_established": false,
+  "historical_auth_result_38496739496": {
+    "run_id": 38496739496,
+    "phase": 1,
+    "reason": "bundle_mismatch",
+    "auth_stage": "bundle_create",
+    "error_kind": "other",
+    "result_artifact_id": 11864607131,
+    "result_archive_sha256": "fa5e5c4e8fe3994ecbcfdae9b92ac945a93ff7bae72b5e6eeb1634f5aec44be0",
+    "creation_post_may_have_changed_resources": true,
+    "observation_role": "historical bundle-mismatch helper result; superseded by authenticated provisioning, GET readiness and signed/verified delivery",
+    "five_exact_profiles_verified_at_observation": false,
+    "signed_ipa_created_at_observation": false,
+    "signed_ipa_delivered_at_observation": false
+  },
+  "most_recent_auth_helper_safe_result_reference": {
+    "run_id": 38500570296,
+    "receipt": "ci-handoff/apple-auth-result.json",
+    "status": "failed",
+    "reason": "profiles_verification_failed",
+    "phase": 1,
+    "result_scope": "historical auth-helper independent-profile classification before the keychain correction; not the later signed delivery outcome",
+    "ruby_authenticated_provisioning_completed": true,
+    "ruby_worker_exit_code": 0,
+    "credentials_retained": false,
+    "private_session_retained": false,
+    "later_get_readiness_count": 5,
+    "later_signed_ci_succeeded": true,
+    "later_formal_independent_delivery_validation": "passed"
+  },
+  "current_overall_helper_success_scope": "completed auth helper result only; the later five-profile GET, real signing CI and independent delivery verifier passed"
 }
