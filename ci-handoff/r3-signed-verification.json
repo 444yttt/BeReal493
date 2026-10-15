@@ -1,0 +1,121 @@
+{
+  "file": "BeReal493-CameraRoll-SIGNED.ipa",
+  "sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+  "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+  "input_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "input_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "bundle_identifier": "com.ayato.bereal493",
+  "distribution": "IOS_APP_ADHOC",
+  "registered_device_count": 1,
+  "provisioned_bundle_count": 5,
+  "distinct_profile_count": 5,
+  "profile_selection": "exact_scoped_profiles",
+  "signed_macho_count": 90,
+  "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "input_recipient_certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+  "profiles": [
+    {
+      "bundle_identifier": "com.ayato.bereal493",
+      "profile_uuid": "2884849e-4a9d-49ef-9f7f-ba1d2d31dc59",
+      "expiration_date": "2027-09-28T14:59:37Z",
+      "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+      "provisioned_device_count": 1,
+      "entitlement_keys": [
+        "application-identifier",
+        "com.apple.developer.team-identifier",
+        "get-task-allow",
+        "keychain-access-groups"
+      ]
+    },
+    {
+      "bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
+      "profile_uuid": "8300457d-b5a3-4a21-b2d7-172fbe51d455",
+      "expiration_date": "2027-09-28T14:59:37Z",
+      "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+      "provisioned_device_count": 1,
+      "entitlement_keys": [
+        "application-identifier",
+        "com.apple.developer.team-identifier",
+        "get-task-allow",
+        "keychain-access-groups"
+      ]
+    },
+    {
+      "bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
+      "profile_uuid": "8cf669b8-2e7c-4044-bbe6-397f2c3a838a",
+      "expiration_date": "2027-09-28T14:59:37Z",
+      "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+      "provisioned_device_count": 1,
+      "entitlement_keys": [
+        "application-identifier",
+        "com.apple.developer.team-identifier",
+        "get-task-allow",
+        "keychain-access-groups"
+      ]
+    },
+    {
+      "bundle_identifier": "com.ayato.bereal493.Widgets",
+      "profile_uuid": "2d5d3ea0-d63f-442d-8073-8583c4f38bf2",
+      "expiration_date": "2027-09-28T14:59:37Z",
+      "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+      "provisioned_device_count": 1,
+      "entitlement_keys": [
+        "application-identifier",
+        "com.apple.developer.team-identifier",
+        "get-task-allow",
+        "keychain-access-groups"
+      ]
+    },
+    {
+      "bundle_identifier": "com.ayato.bereal493.iMessageExtension",
+      "profile_uuid": "9bc99fce-557d-4f0e-a6c6-6145d073105f",
+      "expiration_date": "2027-09-28T14:59:37Z",
+      "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+      "provisioned_device_count": 1,
+      "entitlement_keys": [
+        "application-identifier",
+        "com.apple.developer.team-identifier",
+        "get-task-allow",
+        "keychain-access-groups"
+      ]
+    }
+  ],
+  "signature_verification": "codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate",
+  "device_installation": "not tested",
+  "posting": "not tested",
+  "auth_keychain_patch": {
+    "version": 1,
+    "purpose": "authentication_token_storage_own_app_keychain",
+    "policy": "Omit the explicit foreign App Group in the verified TokenStorage factory; use the permitted default app keychain group.",
+    "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+    "architecture": "ARM64",
+    "original_cryptid": 0,
+    "patch_instruction_count": 2,
+    "patch_span_bytes": 8,
+    "patches": [
+      {
+        "file_offset": 40707972,
+        "expected_hex": "42a8ecf2",
+        "replacement_hex": "020080d2",
+        "argument_register": "x2",
+        "replacement_operation": "mov x2, #0"
+      },
+      {
+        "file_offset": 40707984,
+        "expected_hex": "0380fdf2",
+        "replacement_hex": "030080d2",
+        "argument_register": "x3",
+        "replacement_operation": "mov x3, #0"
+      }
+    ],
+    "factory_context": {
+      "file_offset": 40707924,
+      "bytes": 80,
+      "original_sha256": "2123ac2ca5e05ae9fb1cefae62712ffdb82b83c04532c0e9c628be9056c09ebf",
+      "patched_sha256": "302b8c20305d7714d967af26ae82227bdffa6be46ca449a225af47d2e75b0d17"
+    },
+    "nil_encoding": "Swift.Optional<String>.none: x2=0 and x3=0; query builder skips kSecAttrAccessGroup when the high word is zero.",
+    "security_api_interception": false,
+    "foreign_keychain_access_granted": false
+  }
+}

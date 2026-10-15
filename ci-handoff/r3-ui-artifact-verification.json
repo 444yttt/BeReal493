@@ -1,0 +1,18 @@
+{
+  "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+  "run_id": 38763871232,
+  "job_id": 116521891001,
+  "artifact_id": 11987261910,
+  "artifact_zip_bytes": 33322,
+  "artifact_zip_sha256": "90d8c99a7a7c410834f4cd6b4008db63a1ec6a20d6bc8ee04b824369265feef8",
+  "receipt_path": "/workspace/temporary-delivery/ui-lifecycle/91f13c2c783086a3a0c8f0997fe6e2e9c59657b0/ui-lifecycle-result.json",
+  "receipt_sha256": "dd6f5397879950cf5f90a9148e1d2697417f2e52be1f3b0197c98080242baa8b",
+  "assertion_count": 36,
+  "exact_expected_unique_checks": 28,
+  "all_passed": true,
+  "same_process_resume": "enforced by source-pinned driver; actual successful CI",
+  "limitations": [
+    "Synthetic UIKit app; no BeReal navigation, real camera, or HID-tap injection tested.",
+    "Hit testing is real UIKit; cross-scene disconnect/reconnect is not simulated."
+  ]
+}

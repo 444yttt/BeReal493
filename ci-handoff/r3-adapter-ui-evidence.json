@@ -1,0 +1,35 @@
+{
+  "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+  "signed_ipa_sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+  "adapter_bytes": 153792,
+  "adapter_sha256": "8b3d81f0dbf156cfa754ce9baed9eb7431cf5a056a079501131d965af1fe6de7",
+  "adapter_lc_uuid": [
+    "9301b47b-d8f1-3f37-830d-6fd5cd073ea7"
+  ],
+  "r2_adapter_sha256": "a454173904663a91c2a281541f134215fbb8823197526b004b8e04a9da3524e5",
+  "adapter_differs_from_r2": true,
+  "objc_classes": [
+    {
+      "name": "BRPhotoOverlayWindow",
+      "objc_classname_section_contains_name": true,
+      "objc_class_symbol_present": true
+    },
+    {
+      "name": "BRPhotoOverlayController",
+      "objc_classname_section_contains_name": true,
+      "objc_class_symbol_present": true
+    }
+  ],
+  "cancel_reading_label": {
+    "text": "読み込み中・タップで中止",
+    "detected_encodings": [
+      "utf-16-le"
+    ]
+  },
+  "accessibility_identifier": {
+    "text": "bereal493.photo-selection",
+    "ascii_constant_present": true
+  },
+  "scope": "Static inclusion evidence only; this does not prove dynamic overlay, cancellation, accessibility or device behavior.",
+  "uikit_release_gate": "Managed separately by root; not established by these static checks."
+}

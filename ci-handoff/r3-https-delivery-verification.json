@@ -1,0 +1,64 @@
+{
+  "filename": "BeReal493-CameraRoll-R3-SIGNED-382387cfe49e.ipa",
+  "expected_bytes": 140244155,
+  "expected_sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+  "chunk_size": 20971520,
+  "part_count": 7,
+  "download_path": "/download/BeReal493-CameraRoll-R3-SIGNED-382387cfe49e.ipa",
+  "unauthorized_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "unauthorized_part": {
+    "status": 403,
+    "rejected": true
+  },
+  "invalid_bearer_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "forged_identity_download": {
+    "status": 403,
+    "rejected": true
+  },
+  "authenticated_part_status": 200,
+  "static_assets_are_owner_gated": true,
+  "attachment_head_verified": true,
+  "head_content_length": "140244155",
+  "download_content_length": "140244155",
+  "complete_download_bytes": 140244155,
+  "sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+  "cross_part_range_verified": true,
+  "single_byte_range_verified": true,
+  "unsatisfiable_range_rejected": true,
+  "head_ignores_range": true,
+  "unauthorized_download_after_owner_cache": {
+    "status": 403,
+    "rejected": true
+  },
+  "unauthorized_part_after_owner_cache": {
+    "status": 403,
+    "rejected": true
+  },
+  "recorded_at": "2026-10-15T16:05:06.929598Z",
+  "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+  "site_source_commit": "3d4aa093df1920fda700c28488275169e710adcd",
+  "site_project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+  "site_version_number": 12,
+  "deployment_id": "appgdep_6ad0f89f2c348191837a6eb84ebaf853",
+  "site_saved_version_id": "appgprj_6acec7e34d248191bda5d2f848168847~appgver_e5a341c58fd88191bed8c34569739b69",
+  "deployment_status": "succeeded",
+  "deployment_succeeded_at": "2026-10-15T16:03:45.474256Z",
+  "origin": "https://bereal493-apple-auth.a-yt.chatgpt.site",
+  "landing_page_r3_filename_and_hash_verified": true,
+  "owner_policy_readback": {
+    "access_mode": "custom",
+    "allowed_account_user_count": 1,
+    "allowed_group_count": 0,
+    "external_visitor_count": 0,
+    "current_user_role": "owner"
+  },
+  "physical_device_runtime": "not tested",
+  "posting": "not tested",
+  "user_link_sent_at_recording": false
+}

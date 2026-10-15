@@ -1,0 +1,191 @@
+{
+  "file": "BeReal493-CameraRoll-SIGNED.ipa",
+  "sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+  "validated_at": "2026-10-15T15:56:27.970819Z",
+  "ci_receipt_sha256": "f9724fdaafa6cae3d85cdd7d4bee9c1cc69d6ce000b2a8c81f72629b65e31031",
+  "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+  "input_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+  "input_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "independently_verified": {
+    "zip_crc_and_safe_unique_paths": true,
+    "ipa_hash_matches_ci_receipt": true,
+    "inherited_outside_app_files_verified": [
+      {
+        "path": "Payload/decrypt.day",
+        "bytes": 9,
+        "sha256": "15218e74cef5d8df7e631ab2a31fdb8bde28976252f984231cf410630410696e"
+      }
+    ],
+    "bundle_count": 5,
+    "same_single_provisioned_device": true,
+    "distinct_profile_count": 5,
+    "distribution_profile_entitlements": "Ad Hoc; get-task-allow false",
+    "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+    "certificate_expiration_date": "2027-09-28T14:59:37Z",
+    "signed_macho_file_count": 90,
+    "signed_macho_slice_count": 90,
+    "cms_signature_and_code_page_hashes": true,
+    "xml_entitlement_and_resource_special_slot_hashes": true,
+    "adapter_dependency_injected_once": true,
+    "auth_keychain_patch": {
+      "version": 1,
+      "purpose": "authentication_token_storage_own_app_keychain",
+      "policy": "Omit the explicit foreign App Group in the verified TokenStorage factory; use the permitted default app keychain group.",
+      "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+      "architecture": "ARM64",
+      "original_cryptid": 0,
+      "patch_instruction_count": 2,
+      "patch_span_bytes": 8,
+      "patches": [
+        {
+          "file_offset": 40707972,
+          "expected_hex": "42a8ecf2",
+          "replacement_hex": "020080d2",
+          "argument_register": "x2",
+          "replacement_operation": "mov x2, #0"
+        },
+        {
+          "file_offset": 40707984,
+          "expected_hex": "0380fdf2",
+          "replacement_hex": "030080d2",
+          "argument_register": "x3",
+          "replacement_operation": "mov x3, #0"
+        }
+      ],
+      "factory_context": {
+        "file_offset": 40707924,
+        "bytes": 80,
+        "original_sha256": "2123ac2ca5e05ae9fb1cefae62712ffdb82b83c04532c0e9c628be9056c09ebf",
+        "patched_sha256": "302b8c20305d7714d967af26ae82227bdffa6be46ca449a225af47d2e75b0d17"
+      },
+      "nil_encoding": "Swift.Optional<String>.none: x2=0 and x3=0; query builder skips kSecAttrAccessGroup when the high word is zero.",
+      "security_api_interception": false,
+      "foreign_keychain_access_granted": false
+    },
+    "profiles": [
+      {
+        "bundle_identifier": "com.ayato.bereal493",
+        "profile_uuid": "2884849e-4a9d-49ef-9f7f-ba1d2d31dc59",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.NotificationServiceExtension",
+        "profile_uuid": "8300457d-b5a3-4a21-b2d7-172fbe51d455",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.RealMojiNotificationContentExtension",
+        "profile_uuid": "8cf669b8-2e7c-4044-bbe6-397f2c3a838a",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.Widgets",
+        "profile_uuid": "2d5d3ea0-d63f-442d-8073-8583c4f38bf2",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      },
+      {
+        "bundle_identifier": "com.ayato.bereal493.iMessageExtension",
+        "profile_uuid": "9bc99fce-557d-4f0e-a6c6-6145d073105f",
+        "application_identifier_kind": "explicit",
+        "expiration_date": "2027-09-28T14:59:37Z",
+        "provisioned_device_count": 1,
+        "certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+        "entitlement_keys": [
+          "application-identifier",
+          "com.apple.developer.team-identifier",
+          "get-task-allow",
+          "keychain-access-groups"
+        ],
+        "xml_entitlements_match_concrete_profile": true,
+        "der_entitlements_present": true
+      }
+    ],
+    "signed_macho_count_matches_ci": true,
+    "app_extension_adapter_executable_modes": true,
+    "adapter_sha256": "8b3d81f0dbf156cfa754ce9baed9eb7431cf5a056a079501131d965af1fe6de7",
+    "adapter_lc_uuid": [
+      "9301b47b-d8f1-3f37-830d-6fd5cd073ea7"
+    ],
+    "auth_patch_matches_ci_receipt": true,
+    "authentication_factory_actual_context_sha256": "302b8c20305d7714d967af26ae82227bdffa6be46ca449a225af47d2e75b0d17",
+    "authentication_argument_writers": [
+      {
+        "file_offset": 40707972,
+        "argument_register": "x2",
+        "actual_hex": "020080d2",
+        "replacement_matches": true
+      },
+      {
+        "file_offset": 40707984,
+        "argument_register": "x3",
+        "actual_hex": "030080d2",
+        "replacement_matches": true
+      }
+    ]
+  },
+  "ci_evidence": {
+    "macos_codesign_verification": "codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate",
+    "registered_device_count": 1,
+    "profile_selection": "exact_scoped_profiles"
+  },
+  "limitations": [
+    "Apple certificate-chain trust and codesign are not independently checked on Linux.",
+    "Bundle resource manifests are hash-checked; their individual file seals rely on CI codesign.",
+    "DER entitlement blobs are present and hash-checked; XML entitlements are parsed and compared.",
+    "Device installation, launch, draft, posting, notifications and widgets were not tested."
+  ],
+  "delivery_artifact": {
+    "github_run_id": 38764019319,
+    "github_artifact_id": 11988120311,
+    "ci_commit": "1ac5dd4da29c36cbce38c46ef58b0ded196d6b08",
+    "archive_sha256": "b71f356c6c643f1ce7c34185a9f185a30e40b3a55133a1dbdd6c9d9219e3c83a",
+    "archive_bytes": 140293029,
+    "exact_safe_outer_and_inner_members": true,
+    "cms_authenticated_aes_256_gcm_decryption": true,
+    "status": "Independent signed candidate verified; release gate and publication remain root-managed."
+  }
+}

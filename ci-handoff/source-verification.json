@@ -13,12 +13,12 @@
     "conclusion": "success",
     "platform": "macOS"
   },
-  "signing_adapter_source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
+  "signing_adapter_source_commit": null,
   "provisioning_complete": true,
   "signed_ipa_created": true,
   "signed_ipa_delivered": false,
-  "device_installation": "R2 not tested; initial R1 success user-reported after external re-signing",
-  "posting": "not tested for either revision",
+  "device_installation": "R3 not tested; initial R1 success user-reported after external re-signing; R2 device confirmation absent",
+  "posting": "not tested for any revision",
   "follow_ups": [
     {
       "repository": "444yttt/Y3POSClient",
@@ -142,7 +142,8 @@
       "posting": "not tested",
       "signed_ipa_delivered": false,
       "delivery_ready": true,
-      "user_link_sent": false
+      "user_link_sent": false,
+      "observation_role": "pre-handoff source/CI snapshot; later R2 link handoff is recorded in r2_revision"
     }
   ],
   "auth_transport_observation": {
@@ -271,7 +272,7 @@
   "original_source_check_authentication_proof": false,
   "current_ruby_authenticated_provisioning_completed": true,
   "current_overall_helper_success": false,
-  "independent_delivery_validation_status": "passed",
+  "independent_delivery_validation_status": "passed for R3",
   "current_five_profile_readiness": {
     "run_id": 38502355511,
     "commit": "2688517fa5b1af32be2acbcc6b62b4ffe1745228",
@@ -518,10 +519,10 @@
   },
   "initial_signing_adapter_source_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
   "input_adapter_provenance_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
-  "current_revision": "R2",
+  "current_revision": "R3",
   "r2_revision": {
     "revision": "R2",
-    "state": "signed/formally independently verified; full owner-private HTTPS verified; alias saved/rehashed; ready for final link handoff, user receipt pending",
+    "state": "signed/formally independently verified/full HTTPS verified; owner-private links handed off in prior final reply; user download/device confirmation absent",
     "source_commit": "8e4394e016639fd7e941148796ea0af38d1e8ad0",
     "input_adapter_provenance_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
     "original_input_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
@@ -628,9 +629,12 @@
       "safe_receipt": "ci-handoff/r2-https-delivery-verification.json",
       "safe_receipt_bytes": 1875,
       "safe_receipt_sha256": "5a2d230a799066bb67260424f663fa437b38fa4eb239c341d0d64471d6ae726b",
-      "user_link_sent": false,
+      "user_link_sent": true,
       "user_receipt_confirmed": false,
-      "iphone_download_verified": false
+      "iphone_download_verified": false,
+      "user_link_sent_at_observation": false,
+      "handoff_evidence": "prior assistant final reply supplied owner-private R2 page/file links",
+      "current_availability_scope": "historical R2 handoff URL/path and verification snapshot; same Site now serves current R3, so present R2 download availability is not asserted"
     },
     "device_validation": {
       "installation": "not tested",
@@ -640,12 +644,21 @@
       "posting": "not tested"
     },
     "delivery_ready": true,
-    "signed_ipa_delivered": false,
+    "signed_ipa_delivered": true,
     "safe_receipt_copy_hashes_checked": true,
     "final_file_alias": "BeReal493-CameraRoll-R2-SIGNED-ca5d073c1bbd.ipa",
     "final_alias_saved_rehashed": true,
-    "user_link_sent": false,
-    "user_receipt_confirmed": false
+    "user_link_sent": true,
+    "user_receipt_confirmed": false,
+    "handoff_snapshot_at_observation": {
+      "scope": "before prior R2 final reply; retain historical false flags",
+      "state": "signed/formally independently verified; full owner-private HTTPS verified; alias saved/rehashed; ready for final link handoff, user receipt pending",
+      "user_link_sent": false,
+      "signed_ipa_delivered": false,
+      "user_receipt_confirmed": false,
+      "https_user_link_sent": false
+    },
+    "delivery_semantics": "verified download link presented, not confirmed download or device operation"
   },
   "initial_revision_user_report": {
     "scope": "initial R1 after external re-signing with a sideloading tool",
@@ -659,5 +672,199 @@
     "login_retry_after_restart_reported": true,
     "ordinary_post_success_reported": false,
     "raw_device_or_account_identifiers_recorded": false
-  }
+  },
+  "r3_revision": {
+    "revision": "R3",
+    "state": "final source/UIKit/signatures/full HTTPS verified; alias saved/rehashed; ready for final link handoff, not sent at this record; user receipt/device operation unconfirmed",
+    "final_source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+    "input_adapter_provenance_commit": "1f749cd1b2433d2a32694d5c91849d22f84f429f",
+    "original_input_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+    "durable_encrypted_input_artifact_id": 11834521871,
+    "candidate": {
+      "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+      "is_final": true,
+      "source_frozen": true,
+      "native_run_id": 38763871232,
+      "native_status": "success",
+      "source_may_change_before_validation": false
+    },
+    "python_tests": {
+      "count": 109,
+      "passed": true
+    },
+    "ui_contract": {
+      "dedicated_scene_overlay": true,
+      "makes_overlay_key_window": false,
+      "outside_button_touch_passthrough": true,
+      "notification_refresh": true,
+      "refresh_interval_seconds": 0.5,
+      "refresh_run_loop_mode": "common modes",
+      "safe_area_layout_and_host_switch_handling": true,
+      "busy_covers_picker_and_assignment": true,
+      "cancellation_handling": true,
+      "loading_deadline_seconds": 45,
+      "presentation_deadline_seconds": 3,
+      "late_callback_generation_and_deadline_guards": true,
+      "background_foreground_restore": true
+    },
+    "native_validation": {
+      "status": "passed",
+      "run_id": 38763871232,
+      "job_id": 116521891001,
+      "source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+      "functional_verdict_established": true,
+      "scope": "controlled UIKit iOS Simulator harness, not real-device BeReal runtime",
+      "sdk_runtime": "18.5",
+      "assertions_passed": 36,
+      "assertions_total": 36,
+      "unique_checks": 28,
+      "same_pid_background_foreground_resume": true,
+      "pair_checks_passed": true,
+      "imageio_checks_passed": true,
+      "arm64_build_passed": true,
+      "macos_python_tests_run": 109,
+      "macos_python_existing_openssl3_skips": 1,
+      "macos_python_failures": 0,
+      "artifact_id": 11987261910,
+      "artifact_zip_bytes": 33322,
+      "artifact_zip_sha256": "90d8c99a7a7c410834f4cd6b4008db63a1ec6a20d6bc8ee04b824369265feef8",
+      "result_receipt": "ci-handoff/r3-ui-lifecycle-result.json",
+      "result_receipt_bytes": 3135,
+      "result_receipt_sha256": "dd6f5397879950cf5f90a9148e1d2697417f2e52be1f3b0197c98080242baa8b",
+      "independent_artifact_receipt": "ci-handoff/r3-ui-artifact-verification.json",
+      "independent_artifact_receipt_bytes": 857,
+      "independent_artifact_receipt_sha256": "003b8274787a6e732c38a062c0b53a70e5f980126e4819277eaf82b81e99cebd"
+    },
+    "signed_ci": {
+      "status": "completed",
+      "run_id": 38764019319,
+      "y3_commit": "1ac5dd4da29c36cbce38c46ef58b0ded196d6b08",
+      "verified_source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+      "validation_established": true,
+      "conclusion": "success",
+      "encrypted_artifact_id": 11988120311,
+      "artifact_zip_bytes": 140293029,
+      "artifact_zip_sha256": "b71f356c6c643f1ce7c34185a9f185a30e40b3a55133a1dbdd6c9d9219e3c83a",
+      "safe_receipt": "ci-handoff/r3-signed-verification.json",
+      "safe_receipt_bytes": 4923,
+      "safe_receipt_sha256": "f9724fdaafa6cae3d85cdd7d4bee9c1cc69d6ce000b2a8c81f72629b65e31031"
+    },
+    "formal_independent_validation": {
+      "status": "passed",
+      "safe_receipt": "ci-handoff/r3-signed-delivery-validation.json",
+      "safe_receipt_bytes": 8180,
+      "safe_receipt_sha256": "45a76b5781b9fa05ea950bd7b10bc6ff384461e7e4652ae01d73c641d692e5a4",
+      "macho_cms_page_special_hash_verified_count": 90,
+      "exact_profile_rights_count": 5,
+      "same_single_device_verified": true,
+      "executable_modes_verified_count": 6,
+      "auth_context_verified": true,
+      "signed_source_pin_verified": true,
+      "input_provenance_pin_verified": true
+    },
+    "https_delivery": {
+      "status": "passed",
+      "reuse_existing_owner_private_project": "appgprj_6acec7e34d248191bda5d2f848168847",
+      "deployment_status": "succeeded",
+      "site_source_commit": "3d4aa093df1920fda700c28488275169e710adcd",
+      "site_deployment_id": "appgdep_6ad0f89f2c348191837a6eb84ebaf853",
+      "saved_site_version": "appgprj_6acec7e34d248191bda5d2f848168847~appgver_e5a341c58fd88191bed8c34569739b69",
+      "site_deployed_at": "2026-10-15T16:03:45.474256Z",
+      "owner_only_policy_readback_version": 12,
+      "owner_policy_readback_matched": true,
+      "all_seven_parts_transferred": true,
+      "site_build_passed": true,
+      "site_test_count": 7,
+      "site_tests_passed": true,
+      "complete_live_https_verified": true,
+      "landing_verified": true,
+      "verified_at": "2026-10-15T16:05:06.929598Z",
+      "page_url": "https://bereal493-apple-auth.a-yt.chatgpt.site/?v=382387cfe49e",
+      "download_url": "https://bereal493-apple-auth.a-yt.chatgpt.site/download/BeReal493-CameraRoll-R3-SIGNED-382387cfe49e.ipa",
+      "download_path": "/download/BeReal493-CameraRoll-R3-SIGNED-382387cfe49e.ipa",
+      "landing_filename_full_sha_and_label_verified": true,
+      "complete_file_downloaded": true,
+      "downloaded_bytes": 140244155,
+      "sha256_verified": true,
+      "sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+      "attachment_head_verified": true,
+      "filename_verified": true,
+      "cross_part_range_passed": true,
+      "unsatisfiable_range_416_passed": true,
+      "head_range_ignore_passed": true,
+      "unauthenticated_download_status": 403,
+      "unauthenticated_part_status": 403,
+      "invalid_token_status": 401,
+      "forged_identity_status": 403,
+      "anonymous_cache_after_owner_download_denied": true,
+      "safe_receipt": "ci-handoff/r3-https-delivery-verification.json",
+      "safe_receipt_bytes": 2214,
+      "safe_receipt_sha256": "e69029a9f5f315e73b15d533ee2a7a86b1bb61213e0cdc9eb9c8b8f973306544",
+      "user_link_sent": false,
+      "user_receipt_confirmed": false,
+      "iphone_download_verified": false
+    },
+    "signed_ipa_created": true,
+    "signed_ipa_sha256": "382387cfe49eeec2b3af8954adc2b0ff8bc30181ab7db6fc5f19101467a511e4",
+    "signed_ipa_bytes": 140244155,
+    "delivery_ready": true,
+    "signed_ipa_delivered": false,
+    "user_link_sent": false,
+    "user_receipt_confirmed": false,
+    "device_validation": {
+      "installation": "not tested",
+      "launch": "not tested",
+      "button_visibility_and_interaction_recovery": "not tested",
+      "front_orientation": "not tested",
+      "login_persistence": "not tested",
+      "posting": "not tested"
+    },
+    "acceptance": "verified signed IPA handoff; runtime and live posting are not acceptance requirements",
+    "prior_candidate_snapshots": [
+      {
+        "short_commit": "331bfec",
+        "is_final": false,
+        "native_run_id": 38763336903,
+        "native_status": "success; actual UIKit test passed for this earlier candidate",
+        "further_ui_status_line_and_fixture_change_expected": true,
+        "functional_verdict_established": true
+      }
+    ],
+    "build_source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+    "canonical_signer_verifier_source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+    "focused_local_y3_tests": {
+      "resign": 22,
+      "access_diagnostics": 12,
+      "total": 34,
+      "passed": true,
+      "historical_r2_count_24_is_different_selection": true
+    },
+    "signed_source_commit": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+    "helper_bereal_commit": "0caf98fb29cd5be4da82ed2640d50e38f76d12c8",
+    "helper_post_pin_python_tests": {
+      "count": 109,
+      "passed": true
+    },
+    "signed_adapter_ui_evidence": {
+      "safe_receipt": "ci-handoff/r3-adapter-ui-evidence.json",
+      "safe_receipt_bytes": 1259,
+      "safe_receipt_sha256": "311c29327e69d1c462ac4861ef5b8d9e50c994474263c140e34242a880179f62",
+      "actual_new_classes_and_label_found": true,
+      "adapter_sha256": "8b3d81f0dbf156cfa754ce9baed9eb7431cf5a056a079501131d965af1fe6de7",
+      "scope": "actual signed binary contents; not a UIKit runtime test"
+    },
+    "safe_receipts_copied_and_hash_checked": true,
+    "helper_ci": {
+      "source_commit": "0caf98fb29cd5be4da82ed2640d50e38f76d12c8",
+      "run_id": 38764349620,
+      "job_id": 116523542028,
+      "conclusion": "success",
+      "scope": "post-pin existing Python suite plus UIKit and native checks"
+    },
+    "final_file_alias": "BeReal493-CameraRoll-R3-SIGNED-382387cfe49e.ipa",
+    "final_alias_saved_rehashed": true,
+    "final_alias_bytes": 140244155,
+    "handoff_planned_immediately_after_record": true
+  },
+  "current_status_scope": "current_revision/R3 and r3_revision are authoritative; older source/auth/signature fields remain historical evidence of R1/R2"
 }

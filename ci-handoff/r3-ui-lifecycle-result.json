@@ -1,0 +1,155 @@
+{
+  "nonce": "e7c86557edfa120ea1f4bc619129ed55",
+  "passed": true,
+  "suite": "bereal493-real-uikit-lifecycle-v1",
+  "checks": [
+    {
+      "name": "host_nonce_present",
+      "passed": true
+    },
+    {
+      "name": "visible_non_key_overlay",
+      "passed": true
+    },
+    {
+      "name": "inside_button_hit",
+      "passed": true
+    },
+    {
+      "name": "outside_button_passthrough",
+      "passed": true
+    },
+    {
+      "name": "app_subview_cannot_cover_overlay",
+      "passed": true
+    },
+    {
+      "name": "same_window_relayout",
+      "passed": true
+    },
+    {
+      "name": "safe_area_relayout",
+      "passed": true
+    },
+    {
+      "name": "root_controller_replacement",
+      "passed": true
+    },
+    {
+      "name": "key_window_switch",
+      "passed": true
+    },
+    {
+      "name": "single_visible_overlay",
+      "passed": true
+    },
+    {
+      "name": "detached_presenter_recovers",
+      "passed": true
+    },
+    {
+      "name": "nil_presenter_recovers",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "busy_key_window_switch_recovers",
+      "passed": true
+    },
+    {
+      "name": "unowned_modal_does_not_remove_button",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "picker_cancel_recovers",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "loading_cancel_resets_busy",
+      "passed": true
+    },
+    {
+      "name": "loading_cancel_ignores_late_results",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "loading_failure_recovers",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "loading_timeout_recovers",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "owned_assignment_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "assignment_has_no_loading_deadline",
+      "passed": true
+    },
+    {
+      "name": "assignment_cancel_recovers",
+      "passed": true
+    },
+    {
+      "name": "assignment_cancel_does_not_arm_pair",
+      "passed": true
+    },
+    {
+      "name": "owned_picker_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "owned_assignment_hides_overlay",
+      "passed": true
+    },
+    {
+      "name": "assignment_has_no_loading_deadline",
+      "passed": true
+    },
+    {
+      "name": "assignment_use_recovers",
+      "passed": true
+    },
+    {
+      "name": "assignment_use_arms_pair",
+      "passed": true
+    },
+    {
+      "name": "real_background_observed",
+      "passed": true
+    },
+    {
+      "name": "real_resume_recovers",
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Synthetic UIKit app; no BeReal navigation, real camera, or HID-tap injection tested.",
+    "Hit testing is real UIKit; cross-scene disconnect/reconnect is not simulated."
+  ]
+}
