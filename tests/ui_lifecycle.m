@@ -224,10 +224,11 @@ static NSString *const BRFixtureSuite = @"bereal493-real-uikit-lifecycle-v1";
     }];
 }
 - (void)pickerCancel {
+    self.ui.displayStatus=@"準備完了・撮影へ";
     [self withPicker:^(PHPickerViewController *picker) {
         [self.ui picker:picker didFinishPicking:@[]];
         [self wait:@"picker_cancel" until:^BOOL{ return !self.ui.busy && [self visible]; } next:^{
-            CHECK(!self.ui.picker && !self.ui.assignment, @"picker_cancel_recovers");
+            CHECK(!self.ui.picker && !self.ui.assignment && [self.ui.displayStatus isEqualToString:@"写真を選択"], @"picker_cancel_recovers");
             [self loadingCancel];
         }];
     }];

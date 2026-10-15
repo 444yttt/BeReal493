@@ -474,7 +474,7 @@ static NSData *BRJPEG(UIImage *image) {
     if (!host || !vc || vc.viewIfLoaded.window!=host || vc.isBeingPresented || vc.isBeingDismissed || vc.presentedViewController) {
         self.displayStatus=@"画面切替中・再試行"; [self attach]; return;
     }
-    [self resetSelection]; [BRState clear];
+    [self resetSelection]; [BRState clear]; self.displayStatus=@"写真を選択";
     PHPickerConfiguration *configuration=[[PHPickerConfiguration alloc] init]; configuration.filter=PHPickerFilter.imagesFilter;
     configuration.selectionLimit=2; configuration.selection=PHPickerConfigurationSelectionOrdered;
     PHPickerViewController *picker=[[PHPickerViewController alloc] initWithConfiguration:configuration]; picker.delegate=self;
