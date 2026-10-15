@@ -224,6 +224,7 @@ static NSData *BRJPEG(UIImage *image) {
 @property(nonatomic,strong) UIImageView *backView;
 @property(nonatomic,strong) UIImageView *frontView;
 @property(nonatomic) BOOL swapped;
+@property(nonatomic,copy) dispatch_block_t onDismiss;
 @end
 @implementation BRAssignmentController
 - (void)viewDidLoad {
@@ -245,73 +246,282 @@ static NSData *BRJPEG(UIImage *image) {
     [NSLayoutConstraint activateConstraints:@[[stack.topAnchor constraintEqualToAnchor:self.view.safeAreaLayoutGuide.topAnchor constant:20],[stack.leadingAnchor constraintEqualToAnchor:self.view.leadingAnchor constant:24],[stack.trailingAnchor constraintEqualToAnchor:self.view.trailingAnchor constant:-24]]];
 }
 - (void)swap { self.swapped=!self.swapped; self.backView.image=self.images[self.swapped?1:0]; self.frontView.image=self.images[self.swapped?0:1]; }
-- (void)cancel { [self dismissViewControllerAnimated:YES completion:nil]; }
+- (void)cancel { dispatch_block_t finished=self.onDismiss; self.onDismiss=nil; [self dismissViewControllerAnimated:YES completion:finished]; }
 - (void)use {
     NSData *back=BRJPEG(self.backView.image), *front=BRJPEG(self.frontView.image);
     BRSelectedPair *pair=[[BRSelectedPair alloc] initWithBack:back front:front expires:[NSDate dateWithTimeIntervalSinceNow:180]];
     if (!pair) { BRStatus(@"読み込み失敗"); return; }
     [BRState arm:pair]; BRStatus(@"準備完了・撮影へ");
-    [self dismissViewControllerAnimated:YES completion:nil];
+    dispatch_block_t finished=self.onDismiss; self.onDismiss=nil;
+    [self dismissViewControllerAnimated:YES completion:finished];
 }
 @end
 
-@interface BRCameraRollUI : NSObject <PHPickerViewControllerDelegate>
-@property(nonatomic,strong) UIButton *button;
-@property(nonatomic) BOOL busy;
-- (void)attach;
+@class BRCameraRollUI;
+@interface BRPhotoOverlayWindow : UIWindow
+@property(nonatomic,weak) UIButton *photoButton;
 @end
+@implementation BRPhotoOverlayWindow
+- (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
+    UIView *hit=[super hitTest:point withEvent:event];
+    return hit && self.photoButton && [hit isDescendantOfView:self.photoButton] ? hit : nil;
+}
+@end
+
+@interface BRPhotoOverlayController : UIViewController
+@property(nonatomic,weak) BRCameraRollUI *coordinator;
+@end
+
+@interface BRCameraRollUI : NSObject <PHPickerViewControllerDelegate,UIAdaptivePresentationControllerDelegate>
+@property(nonatomic,strong) UIButton *button;
+@property(nonatomic,strong) BRPhotoOverlayWindow *overlayWindow;
+@property(nonatomic,strong) PHPickerViewController *picker;
+@property(nonatomic,strong) BRAssignmentController *assignment;
+@property(nonatomic,weak) UIWindow *selectionWindow;
+@property(nonatomic,weak) UIWindowScene *selectionScene;
+@property(nonatomic,weak) UIViewController *selectionPresenter;
+@property(nonatomic,strong) NSDate *loadingDeadline;
+@property(nonatomic,strong) NSDate *presentationDeadline;
+@property(nonatomic,strong) NSMutableArray<NSProgress *> *pendingLoads;
+@property(nonatomic,strong) NSArray<UIImage *> *pendingImages;
+@property(nonatomic,strong) NSTimer *refreshTimer;
+@property(nonatomic,strong) NSMutableArray *observers;
+@property(nonatomic,copy) NSString *displayStatus;
+@property(nonatomic) NSUInteger selectionGeneration;
+@property(nonatomic) BOOL busy;
+@property(nonatomic) BOOL attaching;
+- (void)start;
+- (void)attach;
+- (UIWindow *)window;
+- (UIViewController *)presenter;
+- (void)layoutButton;
+- (void)resetSelection;
+- (void)abandonSelection;
+- (void)presentAssignmentIfReady;
+- (void)open;
+@end
+
+@implementation BRPhotoOverlayController
+- (void)loadView { self.view=[UIView new]; self.view.backgroundColor=UIColor.clearColor; }
+- (void)viewDidLayoutSubviews { [super viewDidLayoutSubviews]; [self.coordinator layoutButton]; }
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations { return UIInterfaceOrientationMaskAll; }
+@end
+
 @implementation BRCameraRollUI
+- (void)dealloc {
+    [self.refreshTimer invalidate];
+    for (id observer in self.observers) [[NSNotificationCenter defaultCenter] removeObserver:observer];
+}
+- (void)start {
+    if (self.refreshTimer) return;
+    self.observers=[NSMutableArray new];
+    __weak BRCameraRollUI *weakSelf=self;
+    NSArray *names=@[UIApplicationDidBecomeActiveNotification,UIApplicationWillEnterForegroundNotification,
+        UIApplicationWillResignActiveNotification,UIWindowDidBecomeKeyNotification,UIWindowDidBecomeVisibleNotification,
+        UIWindowDidBecomeHiddenNotification,UISceneDidActivateNotification,UISceneWillDeactivateNotification,UISceneDidDisconnectNotification];
+    for (NSString *name in names) {
+        id observer=[[NSNotificationCenter defaultCenter] addObserverForName:name object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
+            BRCameraRollUI *ui=weakSelf; if (!ui || note.object==ui.overlayWindow) return;
+            if ([note.name isEqualToString:UISceneDidDisconnectNotification]) {
+                if (note.object==ui.selectionScene) [ui abandonSelection];
+                if (note.object==ui.overlayWindow.windowScene) { ui.overlayWindow.hidden=YES; ui.overlayWindow.rootViewController=nil; ui.overlayWindow=nil; }
+            }
+            if ([note.name isEqualToString:UIApplicationWillResignActiveNotification] ||
+                ([note.name isEqualToString:UISceneWillDeactivateNotification] && note.object==ui.overlayWindow.windowScene)) {
+                ui.overlayWindow.hidden=YES;
+            } else [ui attach];
+        }];
+        [self.observers addObject:observer];
+    }
+    [self.observers addObject:[[NSNotificationCenter defaultCenter] addObserverForName:BRStatusNote object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) {
+        BRCameraRollUI *ui=weakSelf; ui.displayStatus=note.userInfo[@"message"]; [ui attach];
+    }]];
+    self.refreshTimer=[NSTimer timerWithTimeInterval:0.5 repeats:YES block:^(NSTimer *timer) { [weakSelf attach]; }];
+    [[NSRunLoop mainRunLoop] addTimer:self.refreshTimer forMode:NSRunLoopCommonModes];
+    [self attach];
+}
 - (UIWindow *)window {
+    if (UIApplication.sharedApplication.applicationState!=UIApplicationStateActive) return nil;
+    UIWindow *fallback=nil;
     for (UIScene *scene in UIApplication.sharedApplication.connectedScenes) {
         if (![scene isKindOfClass:UIWindowScene.class] || scene.activationState!=UISceneActivationStateForegroundActive) continue;
-        for (UIWindow *window in ((UIWindowScene *)scene).windows) if (window.isKeyWindow) return window;
+        for (UIWindow *window in ((UIWindowScene *)scene).windows) {
+            if ([window isKindOfClass:BRPhotoOverlayWindow.class] || window.hidden || window.alpha<0.01 ||
+                !window.rootViewController || window.windowLevel>=UIWindowLevelStatusBar) continue;
+            if (window.isKeyWindow) return window;
+            if (!fallback || window.windowLevel<fallback.windowLevel) fallback=window;
+        }
     }
-    return nil;
+    return fallback;
 }
 - (UIViewController *)presenter {
     UIViewController *vc=[self window].rootViewController;
     while (vc.presentedViewController && !vc.presentedViewController.isBeingDismissed) vc=vc.presentedViewController;
+    while (YES) {
+        UIViewController *child=nil;
+        if ([vc isKindOfClass:UINavigationController.class]) child=((UINavigationController *)vc).visibleViewController;
+        else if ([vc isKindOfClass:UITabBarController.class]) child=((UITabBarController *)vc).selectedViewController;
+        if (!child || child==vc) break;
+        vc=child;
+        while (vc.presentedViewController && !vc.presentedViewController.isBeingDismissed) vc=vc.presentedViewController;
+    }
     return vc;
 }
-- (void)attach {
-    UIWindow *window=[self window]; if (!window) return;
-    if (!self.button) {
-        self.button=[UIButton buttonWithType:UIButtonTypeSystem];
-        self.button.backgroundColor=[UIColor colorWithWhite:0.07 alpha:0.92]; self.button.layer.cornerRadius=14;
-        [self.button setTitle:@"写真を選択" forState:UIControlStateNormal]; [self.button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
-        self.button.titleLabel.font=[UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
-        [self.button addTarget:self action:@selector(open) forControlEvents:UIControlEventTouchUpInside];
-        UILongPressGestureRecognizer *press=[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(clear:)]; [self.button addGestureRecognizer:press];
-    }
-    if (self.button.superview!=window) { [window addSubview:self.button]; self.button.frame=CGRectMake(12,window.safeAreaInsets.top+72,142,44); }
-    [window bringSubviewToFront:self.button];
+- (void)resetSelection {
+    ++self.selectionGeneration;
+    for (NSProgress *progress in self.pendingLoads) [progress cancel];
+    self.pendingLoads=nil; self.pendingImages=nil; self.loadingDeadline=nil; self.presentationDeadline=nil;
+    self.picker=nil; self.assignment.onDismiss=nil; self.assignment=nil;
+    self.selectionWindow=nil; self.selectionScene=nil; self.selectionPresenter=nil; self.busy=NO;
 }
-- (void)clear:(UILongPressGestureRecognizer *)press { if (press.state==UIGestureRecognizerStateBegan) { [BRState clear]; [self.button setTitle:@"写真を選択" forState:UIControlStateNormal]; } }
+- (void)abandonSelection {
+    [self.picker dismissViewControllerAnimated:NO completion:nil];
+    self.assignment.onDismiss=nil; [self.assignment dismissViewControllerAnimated:NO completion:nil];
+    [self resetSelection];
+}
+- (void)layoutButton {
+    UIView *view=self.overlayWindow.rootViewController.viewIfLoaded;
+    if (!view || !self.button) return;
+    UIEdgeInsets insets=view.safeAreaInsets;
+    CGFloat width=MIN(190.0,MAX(0,CGRectGetWidth(view.bounds)-insets.left-insets.right-24));
+    CGFloat top=MAX(insets.top+12,MIN(insets.top+72,CGRectGetHeight(view.bounds)-insets.bottom-56));
+    self.button.frame=CGRectMake(insets.left+12,top,width,44);
+}
+- (void)presentAssignmentIfReady {
+    if (!self.pendingImages) return;
+    UIWindow *host=self.selectionWindow; UIViewController *presenter=self.selectionPresenter;
+    if (!host || host.hidden || host.windowScene!=self.selectionScene || !presenter || presenter.viewIfLoaded.window!=host) {
+        [self resetSelection]; BRStatus(@"画面変更・再選択"); return;
+    }
+    if (self.selectionScene.activationState!=UISceneActivationStateForegroundActive || UIApplication.sharedApplication.applicationState!=UIApplicationStateActive) return;
+    if (presenter.isBeingPresented || presenter.isBeingDismissed || presenter.presentedViewController) return;
+    BRAssignmentController *assignment=[BRAssignmentController new]; assignment.images=self.pendingImages;
+    assignment.modalPresentationStyle=UIModalPresentationFullScreen; self.pendingImages=nil; self.loadingDeadline=nil;
+    NSUInteger generation=self.selectionGeneration; __weak BRCameraRollUI *weakSelf=self;
+    assignment.onDismiss=^{ BRCameraRollUI *ui=weakSelf; if (ui.selectionGeneration!=generation) return; [ui resetSelection]; [ui attach]; };
+    self.assignment=assignment; self.presentationDeadline=[NSDate dateWithTimeIntervalSinceNow:3];
+    [presenter presentViewController:assignment animated:YES completion:^{
+        BRCameraRollUI *ui=weakSelf; if (ui.selectionGeneration!=generation) return;
+        ui.presentationDeadline=nil; assignment.presentationController.delegate=ui; [ui attach];
+    }];
+}
+- (void)attach {
+    if (self.attaching) return;
+    self.attaching=YES;
+    @try {
+        UIWindow *host=[self window];
+        if (self.busy && self.selectionScene && (self.selectionScene.activationState==UISceneActivationStateUnattached ||
+            !self.selectionWindow || self.selectionWindow.hidden || self.selectionWindow.windowScene!=self.selectionScene ||
+            (host && host!=self.selectionWindow))) {
+            [self abandonSelection]; self.displayStatus=@"画面変更・再選択";
+        }
+        if (self.loadingDeadline && [self.loadingDeadline compare:NSDate.date]!=NSOrderedDescending) {
+            [self resetSelection]; self.displayStatus=@"読み込み期限・再選択";
+        }
+        UIViewController *owned=self.picker ?: self.assignment;
+        if (self.busy && owned && !owned.presentingViewController && !owned.isBeingPresented && !owned.isBeingDismissed &&
+            (!self.presentationDeadline || [self.presentationDeadline compare:NSDate.date]!=NSOrderedDescending)) {
+            [self resetSelection]; self.displayStatus=@"写真を選択";
+        }
+        [self presentAssignmentIfReady];
+        if (!host) { self.overlayWindow.hidden=YES; return; }
+        if (self.overlayWindow && self.overlayWindow.windowScene!=host.windowScene) {
+            self.overlayWindow.hidden=YES; self.overlayWindow.rootViewController=nil; self.overlayWindow=nil;
+        }
+        if (!self.button) {
+            self.button=[UIButton buttonWithType:UIButtonTypeSystem];
+            self.button.backgroundColor=[UIColor colorWithWhite:0.07 alpha:0.92]; self.button.layer.cornerRadius=14;
+            [self.button setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+            self.button.titleLabel.font=[UIFont systemFontOfSize:12 weight:UIFontWeightSemibold];
+            self.button.titleLabel.adjustsFontSizeToFitWidth=YES; self.button.titleLabel.minimumScaleFactor=0.7;
+            self.button.accessibilityIdentifier=@"bereal493.photo-selection";
+            [self.button addTarget:self action:@selector(open) forControlEvents:UIControlEventTouchUpInside];
+            [self.button addGestureRecognizer:[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(clear:)]];
+        }
+        if (!self.overlayWindow) {
+            BRPhotoOverlayWindow *overlay=[[BRPhotoOverlayWindow alloc] initWithWindowScene:host.windowScene];
+            BRPhotoOverlayController *controller=[BRPhotoOverlayController new]; controller.coordinator=self;
+            overlay.backgroundColor=UIColor.clearColor; overlay.rootViewController=controller; overlay.photoButton=self.button;
+            self.overlayWindow=overlay; [controller.view addSubview:self.button];
+        }
+        CGFloat highest=host.windowLevel;
+        for (UIWindow *window in host.windowScene.windows) {
+            if (![window isKindOfClass:BRPhotoOverlayWindow.class] && !window.hidden && window.rootViewController && window.windowLevel<UIWindowLevelStatusBar)
+                highest=MAX(highest,window.windowLevel);
+        }
+        self.overlayWindow.windowLevel=MIN(UIWindowLevelStatusBar-1,highest+1);
+        self.overlayWindow.frame=host.windowScene.coordinateSpace.bounds;
+        self.overlayWindow.rootViewController.view.frame=self.overlayWindow.bounds;
+        BOOL loading=self.loadingDeadline!=nil || self.pendingImages!=nil;
+        [self.button setTitle:loading?@"読み込み中・タップで中止":(self.displayStatus?:@"写真を選択") forState:UIControlStateNormal];
+        self.button.hidden=NO; self.button.enabled=YES; self.button.alpha=1;
+        [self layoutButton];
+        // Visibility never makes this window key. All touches outside the button pass through.
+        self.overlayWindow.hidden=self.picker!=nil || self.assignment!=nil;
+    } @finally { self.attaching=NO; }
+}
+- (void)clear:(UILongPressGestureRecognizer *)press {
+    if (press.state!=UIGestureRecognizerStateBegan) return;
+    if (self.loadingDeadline || self.pendingImages) [self resetSelection];
+    [BRState clear]; self.displayStatus=@"写真を選択"; [self attach];
+}
 - (void)open {
-    if (self.busy) return; UIViewController *vc=[self presenter]; if (!vc) return;
-    [BRState clear];
+    if (self.loadingDeadline || self.pendingImages) {
+        [self resetSelection]; self.displayStatus=@"写真を選択"; [self attach]; return;
+    }
+    if (self.busy) return;
+    UIWindow *host=[self window]; UIViewController *vc=[self presenter];
+    if (!host || !vc || vc.viewIfLoaded.window!=host || vc.isBeingPresented || vc.isBeingDismissed || vc.presentedViewController) {
+        self.displayStatus=@"画面切替中・再試行"; [self attach]; return;
+    }
+    [self resetSelection]; [BRState clear];
     PHPickerConfiguration *configuration=[[PHPickerConfiguration alloc] init]; configuration.filter=PHPickerFilter.imagesFilter;
     configuration.selectionLimit=2; configuration.selection=PHPickerConfigurationSelectionOrdered;
     PHPickerViewController *picker=[[PHPickerViewController alloc] initWithConfiguration:configuration]; picker.delegate=self;
-    self.busy=YES; [vc presentViewController:picker animated:YES completion:nil];
+    self.busy=YES; self.picker=picker; self.selectionWindow=host; self.selectionScene=host.windowScene; self.selectionPresenter=vc;
+    self.presentationDeadline=[NSDate dateWithTimeIntervalSinceNow:3];
+    NSUInteger generation=self.selectionGeneration; __weak BRCameraRollUI *weakSelf=self;
+    [vc presentViewController:picker animated:YES completion:^{
+        BRCameraRollUI *ui=weakSelf; if (ui.selectionGeneration!=generation) return;
+        ui.presentationDeadline=nil; picker.presentationController.delegate=ui; [ui attach];
+    }];
+    [self attach];
+}
+- (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+    UIViewController *controller=presentationController.presentedViewController;
+    if (controller!=self.picker && controller!=self.assignment) return;
+    [self resetSelection]; self.displayStatus=@"写真を選択"; [self attach];
 }
 - (void)picker:(PHPickerViewController *)picker didFinishPicking:(NSArray<PHPickerResult *> *)results {
+    if (picker!=self.picker) return;
+    NSUInteger generation=self.selectionGeneration; __weak BRCameraRollUI *weakSelf=self;
     [picker dismissViewControllerAnimated:YES completion:^{
-        if (results.count!=2) { self.busy=NO; return; }
+        BRCameraRollUI *ui=weakSelf; if (!ui || ui.selectionGeneration!=generation) return;
+        ui.picker=nil; ui.presentationDeadline=nil;
+        if (results.count!=2) { [ui resetSelection]; [ui attach]; return; }
+        ui.loadingDeadline=[NSDate dateWithTimeIntervalSinceNow:45]; ui.pendingLoads=[NSMutableArray new]; [ui attach];
         dispatch_group_t group=dispatch_group_create(); NSMutableArray *slots=[NSMutableArray arrayWithObjects:NSNull.null,NSNull.null,nil];
         [results enumerateObjectsUsingBlock:^(PHPickerResult *result, NSUInteger index, BOOL *stop) {
             if (![result.itemProvider canLoadObjectOfClass:UIImage.class]) return;
-            dispatch_group_enter(group);
-            [result.itemProvider loadObjectOfClass:UIImage.class completionHandler:^(id<NSItemProviderReading> object, NSError *error) {
-                @synchronized(slots) { if ([object isKindOfClass:UIImage.class]) slots[index]=object; }
+            dispatch_group_enter(group); __block BOOL completed=NO;
+            NSProgress *progress=[result.itemProvider loadObjectOfClass:UIImage.class completionHandler:^(id<NSItemProviderReading> object, NSError *error) {
+                @synchronized(slots) {
+                    if (completed) return; completed=YES;
+                    if ([object isKindOfClass:UIImage.class]) slots[index]=object;
+                }
                 dispatch_group_leave(group);
             }];
+            if (progress) [ui.pendingLoads addObject:progress];
         }];
         dispatch_group_notify(group,dispatch_get_main_queue(),^{
-            self.busy=NO;
-            if (![slots[0] isKindOfClass:UIImage.class] || ![slots[1] isKindOfClass:UIImage.class]) { BRStatus(@"読み込み失敗"); return; }
-            BRAssignmentController *assignment=[BRAssignmentController new]; assignment.images=[slots copy]; assignment.modalPresentationStyle=UIModalPresentationFullScreen;
-            [[self presenter] presentViewController:assignment animated:YES completion:nil];
+            BRCameraRollUI *current=weakSelf; if (!current || current.selectionGeneration!=generation) return;
+            current.pendingLoads=nil;
+            if (![slots[0] isKindOfClass:UIImage.class] || ![slots[1] isKindOfClass:UIImage.class]) {
+                [current resetSelection]; BRStatus(@"読み込み失敗"); [current attach]; return;
+            }
+            current.pendingImages=[slots copy];
+            // Keep a deadline until the captured presenter can actually accept the assignment.
+            [current attach];
         });
     }];
 }
@@ -325,8 +535,6 @@ __attribute__((constructor)) static void BRCameraRollInit(void) {
     if (!BRInstallCaptureHook()) return;
     dispatch_async(dispatch_get_main_queue(),^{
         static BRCameraRollUI *ui; ui=[BRCameraRollUI new];
-        [[NSNotificationCenter defaultCenter] addObserverForName:UIApplicationDidBecomeActiveNotification object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) { [ui attach]; }];
-        [[NSNotificationCenter defaultCenter] addObserverForName:BRStatusNote object:nil queue:NSOperationQueue.mainQueue usingBlock:^(NSNotification *note) { [ui.button setTitle:note.userInfo[@"message"] forState:UIControlStateNormal]; }];
-        [ui attach];
+        [ui start];
     });
 }

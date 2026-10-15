@@ -35,6 +35,9 @@ jobs:
         run: python3 -m pip install --disable-pip-version-check -r scripts/requirements-auth-tools.txt
       - name: Run source and IPA-inspector tests
         run: python3 -m unittest discover -s tests -v
+      - name: Exercise photo button with UIKit Simulator
+        timeout-minutes: 10
+        run: bash scripts/ci-ui-lifecycle.sh
       - name: Build native library and analyze supplied IPA
         run: bash scripts/ci-native.sh
       - uses: actions/upload-artifact@v4
