@@ -53,6 +53,13 @@ def version(value):
     return tuple(int(part) for part in re.findall(r'\d+', str(value)))
 
 
+def launched_pid(value):
+    matches = re.findall(r'^' + re.escape(bundle_id) + r':\s*(\d+)\s*$', value, re.MULTILINE)
+    if len(matches) != 1:
+        raise RuntimeError('Fixture launch did not identify one process')
+    return int(matches[0])
+
+
 listing = json.loads(simctl('list', '--json'))
 runtimes = sorted((item for item in listing.get('runtimes', [])
                    if item.get('isAvailable') and '.iOS-' in item.get('identifier', '')),
@@ -119,7 +126,7 @@ command(['codesign', '--force', '--sign', '-', '--timestamp=none', str(app)])
 simctl('install', udid, str(app), timeout=120)
 container = Path(simctl('get_app_container', udid, bundle_id, 'data'))
 environment = dict(os.environ, SIMCTL_CHILD_BRUI_TEST_NONCE=nonce)
-simctl('launch', '--terminate-running-process', udid, bundle_id, env=environment)
+initial_pid = launched_pid(simctl('launch', '--terminate-running-process', udid, bundle_id, env=environment))
 print('UIKit fixture: launched actual UIKit scene', flush=True)
 result_path = container / 'Documents/ui-lifecycle-result.json'
 phase_path = container / 'Documents/ui-lifecycle-phase.json'
@@ -137,12 +144,14 @@ while time.monotonic() < deadline:
             'loading_cancel_ignores_late_results', 'loading_failure_recovers',
             'loading_timeout_recovers', 'assignment_has_no_loading_deadline', 'assignment_cancel_recovers',
             'assignment_use_recovers', 'real_background_observed', 'real_resume_recovers',
+            'host_nonce_present', 'owned_picker_hides_overlay', 'owned_assignment_hides_overlay',
+            'loading_cancel_resets_busy', 'assignment_cancel_does_not_arm_pair', 'assignment_use_arms_pair',
         }
         checks = result.get('checks', [])
         names = {item.get('name') for item in checks if item.get('passed') is True}
         valid = (result.get('suite') == 'bereal493-real-uikit-lifecycle-v1'
                  and result.get('nonce') == nonce and result.get('passed') is True
-                 and required <= names and all(item.get('passed') is True for item in checks)
+                 and names == required and all(item.get('passed') is True for item in checks)
                  and switched)
         (output / 'ui-lifecycle-result.json').write_text(json.dumps(result, indent=2) + '\n')
         if not valid:
@@ -169,7 +178,8 @@ while time.monotonic() < deadline:
                 raise SystemExit('UIKit fixture did not observe actual scene background')
             switched = True
             # Keep the same process and the same production UI object alive.
-            simctl('launch', udid, bundle_id, env=environment)
+            if launched_pid(simctl('launch', udid, bundle_id, env=environment)) != initial_pid:
+                raise SystemExit('UIKit fixture process restarted instead of resuming')
     time.sleep(0.1)
 else:
     raise SystemExit('UIKit lifecycle fixture timed out before a complete verdict')
