@@ -60,10 +60,20 @@ def launched_pid(value):
     return int(matches[0])
 
 
+print('UIKit fixture: resolving Simulator SDK before CoreSimulator startup (up to 180s per query)', flush=True)
+sdk = command(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-path'], timeout=180)
+sdk_version_text = command(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-version'], timeout=180)
+if not re.fullmatch(r'\d+\.\d+(?:\.\d+)?', sdk_version_text):
+    raise SystemExit('Simulator SDK did not report a valid numeric version')
+sdk_version = version(sdk_version_text)[:2]
+if sdk_version < (17, 0):
+    raise SystemExit('UIKit fixture requires a Simulator SDK of iOS 17 or newer')
+print('UIKit fixture: selected SDK ' + sdk_version_text + '; requiring installed iOS 17+ runtime no newer than its major/minor', flush=True)
 print('UIKit fixture: waiting for cold CoreSimulator inventory (up to 180s)', flush=True)
 listing = json.loads(simctl('list', '--json', timeout=180))
 runtimes = sorted((item for item in listing.get('runtimes', [])
-                   if item.get('isAvailable') and '.iOS-' in item.get('identifier', '')),
+                   if item.get('isAvailable') and '.iOS-' in item.get('identifier', '')
+                   and (17, 0) <= version(item.get('version', '0'))[:2] <= sdk_version),
                   key=lambda item: version(item.get('version', '0')), reverse=True)
 device_types = {item['identifier']: item for item in listing.get('devicetypes', [])}
 selected = None
@@ -81,7 +91,8 @@ for runtime in runtimes:
     if selected:
         break
 if not selected:
-    raise SystemExit('No available iOS Simulator runtime with an iPhone template; UIKit tests cannot be skipped.')
+    raise SystemExit('No available iPhone runtime in the supported range iOS 17.0 through SDK '
+                     + sdk_version_text + '; UIKit tests cannot be skipped and no runtime will be downloaded.')
 runtime, device_type = selected
 print('UIKit fixture: creating isolated simulator (up to 120s)', flush=True)
 udid = simctl('create', 'BeReal493-UI-' + nonce[:8], device_type, runtime['identifier'], timeout=120)
@@ -115,7 +126,6 @@ info = {
     },
 }
 (app / 'Info.plist').write_bytes(plistlib.dumps(info))
-sdk = command(['xcrun', '--sdk', 'iphonesimulator', '--show-sdk-path'])
 architecture = platform.machine()
 if architecture not in ('arm64', 'x86_64'):
     raise SystemExit('Unsupported Simulator host architecture')
