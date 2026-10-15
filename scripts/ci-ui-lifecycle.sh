@@ -60,7 +60,8 @@ def launched_pid(value):
     return int(matches[0])
 
 
-listing = json.loads(simctl('list', '--json'))
+print('UIKit fixture: waiting for cold CoreSimulator inventory (up to 180s)', flush=True)
+listing = json.loads(simctl('list', '--json', timeout=180))
 runtimes = sorted((item for item in listing.get('runtimes', [])
                    if item.get('isAvailable') and '.iOS-' in item.get('identifier', '')),
                   key=lambda item: version(item.get('version', '0')), reverse=True)
@@ -82,12 +83,14 @@ for runtime in runtimes:
 if not selected:
     raise SystemExit('No available iOS Simulator runtime with an iPhone template; UIKit tests cannot be skipped.')
 runtime, device_type = selected
-udid = simctl('create', 'BeReal493-UI-' + nonce[:8], device_type, runtime['identifier'])
+print('UIKit fixture: creating isolated simulator (up to 120s)', flush=True)
+udid = simctl('create', 'BeReal493-UI-' + nonce[:8], device_type, runtime['identifier'], timeout=120)
 if not re.fullmatch(r'[0-9A-Fa-f-]{36}', udid):
     raise SystemExit('Simulator creation did not return one UDID')
 (temporary / 'simulator-udid').write_text(udid + '\n')
 print('UIKit fixture: created isolated ' + runtime.get('name', 'iOS') + ' simulator', flush=True)
-simctl('boot', udid)
+print('UIKit fixture: booting isolated simulator (120s request; 240s boot readiness)', flush=True)
+simctl('boot', udid, timeout=120)
 simctl('bootstatus', udid, '-b', timeout=240)
 
 app = temporary / 'BeRealUIFixture.app'
