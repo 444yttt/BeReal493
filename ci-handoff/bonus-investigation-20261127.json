@@ -1,0 +1,74 @@
+{
+  "recorded_date": "2026-11-27",
+  "status": "blocked_pending_exact_input; no product repair or replacement IPA created",
+  "user_report": {
+    "first_post_late_label": false,
+    "additional_post_plus_visible": false,
+    "overlay_overlaps_expected_plus": false,
+    "official_app_comparison": "not installed or not checked",
+    "installed_revision_and_resigning": "not independently verified"
+  },
+  "source_review": {
+    "adapter_source": "91f13c2c783086a3a0c8f0997fe6e2e9c59657b0",
+    "daily_post_counter_in_added_code_found": false,
+    "selected_pair_consumption": "front/back capture roles only; reset by arm",
+    "bonus_native_gate_verified": false,
+    "missing_aps_entitlement_in_delivered_r3": true,
+    "missing_push_is_proven_cause_of_bonus_failure": false
+  },
+  "recovery": {
+    "repository": "444yttt/Y3POSClient",
+    "branch": "codex/bereal-public-input-recovery-20261127",
+    "commit": "00dd6c689b504036502f8d83243f571f8a6b8b09",
+    "run_id": 46017429395,
+    "job_id": 140568029875,
+    "result": "Apple public resolver returned NOT_FOUND in HTTP 200 response",
+    "original_downloaded": false,
+    "original_hash_verified": false,
+    "encrypted_input_created": false,
+    "safe_failure_artifact": 15206368535,
+    "safe_failure_zip_bytes": 460,
+    "safe_failure_zip_sha256": "9f7df1db97481165e1cad603244fc1d1c786311c1430035dd8491dfc308824ef",
+    "older_input_runs_listed_artifact_count": 0,
+    "historical_encrypted_parts_present": 87,
+    "historical_encrypted_parts_required": 190,
+    "partial_parts_are_complete": false,
+    "file_deletion_or_owner_account_state_established": false
+  },
+  "required_input": {
+    "file": "AlexisBarreyat.BeReal_4.93.0_und3fined.ipa",
+    "bytes": 142120475,
+    "sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+    "request": "A new accessible share URL is pending; do not fetch an untrusted replacement or weaken the exact-input checks."
+  },
+  "parser_preparation": {
+    "repository": "444yttt/Y3POSClient",
+    "branch": "codex/bereal-bonus-metadata-20261127",
+    "commit": "a5b4aa3c9b46adb233b3d6abfea545699f5c1366",
+    "run_id": 46018444524,
+    "ci_conclusion": "success",
+    "real_original_inspected": false,
+    "scope": "Bounded static declaration-name and offset candidates; not runtime eligibility evidence, callable ABI, or a repair.",
+    "synthetic_tests": 10,
+    "job_id": 140571536448,
+    "python_version": "3.11.18",
+    "skips": 0
+  },
+  "cloud_runtime": {
+    "environment_id": "ccarenv_b64_Y2NhcmVudl81M2Y2ZGVlNmY4NDg4MTkxYWJkNjVhODMxMWU4Njk3NQ",
+    "initial_start_result": "container_creation/container_service_failed/gateway_unavailable; HTTP 503",
+    "later_management_status": "running and connected",
+    "command_bridge_status": "No usable execution environment is available",
+    "prior_workspace_bytes_accessible": "not established"
+  },
+  "product_change": {
+    "repair_implemented": false,
+    "replacement_signed_ipa_created": false,
+    "existing_r3_delivery_changed": false,
+    "r3_link_handoff": "completed in the prior final reply; older false flags are pre-handoff snapshots",
+    "apple_resources_changed": false,
+    "credentials_requested": false,
+    "live_post_performed": false
+  },
+  "next_step": "Recover the exact original, inspect the native moment/config/eligibility to additional-plus path, then implement and verify an evidence-based repair before creating a new signed IPA."
+}

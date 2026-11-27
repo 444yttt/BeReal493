@@ -1,5 +1,25 @@
 # Verified execution status (2026-10-15 16:05 UTC)
 
+## Active continuation — 2026-11-27: additional-post control missing
+
+The user reports a first post without a late label, no additional-post plus control, and no overlap with the adapter's floating control. The official app is not installed or has not been compared. The installed revision/re-signature is not independently verified.
+
+**The requested repair is not implemented. No replacement IPA has been built, signed or delivered.** R3's verified download link was already presented in the prior final reply; older link-sent/delivered false flags are historical pre-handoff snapshots. Keep the existing R3 delivery unchanged until a real repair is verified.
+
+- Source review found no daily-post counter in the added adapter. The selected front/back pair is consumed once per capture, which is distinct from additional-post eligibility. The native bonus/moment/config-to-UI gate has not been verified. Missing APNs rights in the delivered R3 explain its push-registration limitation, but are not proven to cause this bonus-control problem.
+- Exact-original recovery is blocked. The old input/signing runs currently list zero artifacts; the old transfer branch has only 87 of 190 parts. Recovery CI [46017429395](https://github.com/444yttt/Y3POSClient/actions/runs/46017429395), commit `00dd6c689b504036502f8d83243f571f8a6b8b09` on `codex/bereal-public-input-recovery-20261127`, received Apple public-resolver `NOT_FOUND` in an HTTP 200 response. No original was downloaded or hash-verified, and no new encrypted input was produced. Safe failure artifact `15206368535` is a diagnostic record, **not an input IPA or ciphertext**. Do not infer file deletion or owner-account state.
+- A fresh accessible original-IPA share URL has been requested in the conversation and is pending. Required input remains exactly 142120475 bytes/SHA256 `e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc`, BeReal 4.93.0/build 23026. Do not substitute the signed R3 for that input, weaken the guards, or treat partial encrypted parts as complete.
+- Static-analysis preparation is available on Y3 branch `codex/bereal-bonus-metadata-20261127`, commit `a5b4aa3c9b46adb233b3d6abfea545699f5c1366`. Its [CI 46018444524](https://github.com/444yttt/Y3POSClient/actions/runs/46018444524), job `140571536448`, passed Python compilation and all 10 synthetic tests on Python 3.11.18, with no skips. `scripts/inspect_bonus_metadata.py` enforces original IPA/Main hashes and extracts bounded, sanitized Swift declaration/field/string/symbol candidates and metadata locations. It has **not** inspected the real original yet; candidates are not callable ABI or proof of eligibility.
+- The cloud environment initially failed at container creation (`gateway_unavailable`, HTTP 503). Later management readback reported running/connected, but command execution still returned `No usable execution environment is available`. Prior workspace files/keys are inaccessible or unverified, not established as deleted. Actions provided the recovery probe and parser-test execution instead.
+- Y3 main remained `1575a21e3c874a540850767d117363d54edd5bfa`; the two preparation branches did not change main, Apple resources or credentials. No live post was performed.
+
+Next: recover the exact original from the new URL, inspect its native moment/config/eligibility-to-additional-control path, implement an evidence-based repair, then rebuild/sign/independently validate and replace the existing owner-private delivery. Preserve the already authorized public-repository/input-to-CI/signing-asset scope; do not repeat permission or Apple-login requests merely because of this continuation.
+
+Safe structured state: `ci-handoff/bonus-investigation-20261127.json`.
+
+## Previously recorded R3 verification snapshot
+
+
 **R3 repairs the disappearing/inoperable photo-selection button. Python suite: 109 passed. R3 signing and formal independent verification passed; final-source UIKit CI and full HTTPS/landing verification passed. R3 is ready for final link handoff; link sent/delivered remain false at this record. Real-device BeReal runtime and posting are unverified.**
 
 - Draft UI uses a dedicated non-key scene overlay with outside-button touch passthrough; notification/0.5-second common-mode refresh, safe-area/layout/host switching, and background restoration.
