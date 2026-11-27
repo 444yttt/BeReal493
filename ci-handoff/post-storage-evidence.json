@@ -1,0 +1,433 @@
+{
+  "purpose": "native_post_count_storage_signing_compatibility",
+  "original_ipa_sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
+  "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+  "post_storage_keychain_patch": {
+    "version": 1,
+    "purpose": "native_post_allowance_and_stable_device_storage_own_app_keychain",
+    "policy": "Omit the explicit foreign App Group only in the verified LocalStorage singleton factory; use the permitted default app keychain group.",
+    "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+    "auth_patched_input_main_sha256": "922e252e763e8061ab8a154f653ce0f390c332a17bebd49bd65237fc33db5a7e",
+    "architecture": "ARM64",
+    "original_cryptid": 0,
+    "patch_instruction_count": 2,
+    "patch_span_bytes": 8,
+    "patches": [
+      {
+        "file_offset": 9207756,
+        "expected_hex": "42a8ecf2",
+        "replacement_hex": "020080d2",
+        "argument_register": "x2",
+        "replacement_operation": "mov x2, #0"
+      },
+      {
+        "file_offset": 9207768,
+        "expected_hex": "0380fdf2",
+        "replacement_hex": "030080d2",
+        "argument_register": "x3",
+        "replacement_operation": "mov x3, #0"
+      }
+    ],
+    "factory_context": {
+      "file_offset": 9207708,
+      "bytes": 124,
+      "original_sha256": "d8c6f971527dc78e863cd2c044c9d611c7c3e6407c99b4f5e10702f834544e5e",
+      "patched_sha256": "a6d2908e2ae2c38d39d1f62c4b34a322ad733f15e3aa35bb814e7edbc2362c7a"
+    },
+    "nil_encoding": "Swift.Optional<String>.none: x2=0 and x3=0; the existing query builder omits kSecAttrAccessGroup.",
+    "security_api_interception": false,
+    "foreign_keychain_access_granted": false,
+    "quota_checks_bypassed": false,
+    "timing_checks_bypassed": false
+  },
+  "static_quota_path": {
+    "status": "passed_static_exact_original_quota_path",
+    "checks_passed": 47,
+    "main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+    "symbols": {
+      "0x3153ee0": "_$s9Protobufs33Public_Home_V2_GetMyStateResponseV14remainingPostss5Int32Vvg",
+      "0x31590ac": "_SecItemCopyMatching",
+      "0x3d3f610": "_kSecAttrAccessGroup"
+    },
+    "assertions": [
+      "posts_repo_type",
+      "field_record_stride_0x39483ac",
+      "posts_repo_fields",
+      "field_record_stride_0x3916e90",
+      "quota_wrapper_fields",
+      "field_record_stride_0x3918b30",
+      "keychain_options_fields",
+      "field_record_stride_0x393dc68",
+      "can_post_model_cases",
+      "posts_repo_conformance_type",
+      "posts_repo_witness",
+      "chained_rebase_0x3e17c00",
+      "posts_repo_getter_witness",
+      "chained_rebase_0x3e08590",
+      "remaining_service_witness",
+      "local_keychain_factory_context",
+      "instruction_0x1324e28",
+      "instruction_0x1324e40",
+      "instruction_0x1327960",
+      "instruction_0x1327964",
+      "instruction_0x13279a8",
+      "instruction_0x1329d14",
+      "instruction_0x28bc28",
+      "instruction_0x28bc38",
+      "instruction_0x28bc3c",
+      "instruction_0x28bc90",
+      "instruction_0x28bca0",
+      "instruction_0x11101cc",
+      "instruction_0x11111d4",
+      "instruction_0x11111e8",
+      "instruction_0x11111f0",
+      "instruction_0x11111f4",
+      "instruction_0x11111f8",
+      "instruction_0x8c7fcc",
+      "instruction_0x8c7fd8",
+      "instruction_0x8c7fe8",
+      "instruction_0x8cefd4",
+      "instruction_0x8d0610",
+      "instruction_0x8d0614",
+      "instruction_0x8d0618",
+      "instruction_0x8d03a8",
+      "instruction_0x8c82b0",
+      "instruction_0x8c8440",
+      "instruction_0x8c8450",
+      "server_quota_symbol",
+      "keychain_read_symbol",
+      "keychain_access_group_symbol"
+    ],
+    "scope": "Static original evidence only; no patch applied, no device/account/server state inspected."
+  },
+  "static_ui_gate": {
+    "purpose": "read_only_original_native_extra_post_UI_gate",
+    "main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+    "verified_import_symbols": {
+      "0x314a3a0": "_$s15LocalisationKit8LokaliseO26draftsViewEmptyButtonTitleAC9LocalisedVvau",
+      "0x3148804": "_$s15LocalisationKit8LokaliseO12generalXMoreyAC9LocalisedVypFZ",
+      "0x31488ac": "_$s15LocalisationKit8LokaliseO13berealNoBonusAC9LocalisedVvau",
+      "0x3148d8c": "_$s15LocalisationKit8LokaliseO17berealNoRemainingAC9LocalisedVvau",
+      "0x314faa0": "_$s7SwiftUI17EnvironmentValuesV9isEnabledSbvg",
+      "0x314faac": "_$s7SwiftUI17EnvironmentValuesV9isEnabledSbvs"
+    },
+    "address_convention": "Unslid image offsets. __TEXT VM base 0x100000000; these text and metadata file offsets equal image offsets.",
+    "types": {
+      "can_post_model": {
+        "descriptor": "0x3596138",
+        "fieldmd": "0x393dc68",
+        "cases": [
+          {
+            "index": 0,
+            "name": "yes",
+            "type_hints": [
+              "Si9remaining_t"
+            ]
+          },
+          {
+            "index": 1,
+            "name": "no",
+            "type_hints": []
+          },
+          {
+            "index": 2,
+            "name": "memoriesOnly",
+            "type_hints": []
+          }
+        ]
+      },
+      "extra_card_state": {
+        "descriptor": "0x35a5c98",
+        "fieldmd": "0x394e408",
+        "cases": [
+          {
+            "index": 0,
+            "name": "canPost",
+            "type_hints": [
+              "SS9remaining_t"
+            ]
+          },
+          {
+            "index": 1,
+            "name": "noMore",
+            "type_hints": [
+              "SS4text_t"
+            ]
+          },
+          {
+            "index": 2,
+            "name": "late",
+            "type_hints": [
+              "SS4text_t"
+            ]
+          },
+          {
+            "index": 3,
+            "name": "memoriesOnly",
+            "type_hints": [
+              "SS4text_t"
+            ]
+          }
+        ]
+      },
+      "icon": {
+        "descriptor": "0x357baa4",
+        "fieldmd": "0x3924c48",
+        "empty_cases": 234,
+        "selected_cases": [
+          {
+            "index": 42,
+            "name": "checkmarkCircleFill",
+            "type_hints": []
+          },
+          {
+            "index": 109,
+            "name": "lockFill",
+            "type_hints": []
+          },
+          {
+            "index": 166,
+            "name": "plus",
+            "type_hints": []
+          }
+        ]
+      }
+    },
+    "home_feed_pager": {
+      "type": "FeedsFeaturePresentation.HomeFeedPagerViewModel",
+      "descriptor": "0x35bb420",
+      "fieldmd": "0x3963268",
+      "can_post_property": {
+        "getter": "0x1a53ddc",
+        "setter": "0x1a53f5c",
+        "field_offset_global": "0x423e3c8",
+        "representation": "Int payload + case byte at offset8; optional absence byte at offset9"
+      },
+      "builder_gate": {
+        "range": [
+          "0x1a5b618",
+          "0x1a5b6e4"
+        ],
+        "behavior": "Requires non-nil canPost model and at least one displayed post, calls model-to-extra-state and appends extra card."
+      },
+      "model_to_extra_state": {
+        "function": "0x1a5e710",
+        "checks": [
+          {
+            "image_offset": "0x1a5e724",
+            "mnemonic": "tbz",
+            "operands": "w1, #0, #0x101a5e744"
+          },
+          {
+            "image_offset": "0x1a5e728",
+            "mnemonic": "cbz",
+            "operands": "x0, #0x101a5e798"
+          },
+          {
+            "image_offset": "0x1a5e72c",
+            "mnemonic": "bl",
+            "operands": "#0x10314a3a0"
+          },
+          {
+            "image_offset": "0x1a5e73c",
+            "mnemonic": "mov",
+            "operands": "w2, #3"
+          },
+          {
+            "image_offset": "0x1a5e750",
+            "mnemonic": "str",
+            "operands": "x0, [sp]"
+          },
+          {
+            "image_offset": "0x1a5e758",
+            "mnemonic": "bl",
+            "operands": "#0x103148804"
+          },
+          {
+            "image_offset": "0x1a5e778",
+            "mnemonic": "mov",
+            "operands": "w2, #0"
+          },
+          {
+            "image_offset": "0x1a5e798",
+            "mnemonic": "bl",
+            "operands": "#0x101a54304"
+          },
+          {
+            "image_offset": "0x1a5e7a0",
+            "mnemonic": "bl",
+            "operands": "#0x1031488ac"
+          },
+          {
+            "image_offset": "0x1a5e7b0",
+            "mnemonic": "mov",
+            "operands": "w2, #2"
+          },
+          {
+            "image_offset": "0x1a5e7b8",
+            "mnemonic": "bl",
+            "operands": "#0x103148d8c"
+          },
+          {
+            "image_offset": "0x1a5e7c8",
+            "mnemonic": "mov",
+            "operands": "w2, #1"
+          }
+        ],
+        "imported_localization_symbols": {
+          "0x314a3a0": "LocalisationKit.Lokalise.draftsViewEmptyButtonTitle",
+          "0x3148804": "LocalisationKit.Lokalise.generalXMore",
+          "0x31488ac": "LocalisationKit.Lokalise.berealNoBonus",
+          "0x3148d8c": "LocalisationKit.Lokalise.berealNoRemaining"
+        },
+        "mapping": [
+          {
+            "input": "yes(remaining)",
+            "output_case": "canPost",
+            "output_tag": 0,
+            "label": "generalXMore(remaining)"
+          },
+          {
+            "input": "no",
+            "output_case": "late if local post predicate0x1a54304 is true, otherwise noMore",
+            "output_tag": [
+              2,
+              1
+            ],
+            "label": [
+              "berealNoBonus",
+              "berealNoRemaining"
+            ]
+          },
+          {
+            "input": "memoriesOnly",
+            "output_case": "memoriesOnly",
+            "output_tag": 3,
+            "label": "draftsViewEmptyButtonTitle"
+          }
+        ]
+      }
+    },
+    "extra_card_view": {
+      "type": "FeedsUIPresentation.ExtraCardView",
+      "descriptor": "0x35a5cb4",
+      "fieldmd": "0x394e448",
+      "body": "0x1542eb4",
+      "label": "0x1543154",
+      "glyph_switch": [
+        {
+          "image_offset": "0x1543290",
+          "mnemonic": "ldrb",
+          "operands": "w24, [x27, #0x10]"
+        },
+        {
+          "image_offset": "0x1543294",
+          "mnemonic": "cmp",
+          "operands": "w24, #1"
+        },
+        {
+          "image_offset": "0x1543298",
+          "mnemonic": "b.gt",
+          "operands": "#0x1015432a8"
+        },
+        {
+          "image_offset": "0x154329c",
+          "mnemonic": "cbz",
+          "operands": "w24, #0x1015432c0"
+        },
+        {
+          "image_offset": "0x15432a0",
+          "mnemonic": "mov",
+          "operands": "w25, #0x2a"
+        },
+        {
+          "image_offset": "0x15432a8",
+          "mnemonic": "cmp",
+          "operands": "w24, #2"
+        },
+        {
+          "image_offset": "0x15432ac",
+          "mnemonic": "b.ne",
+          "operands": "#0x1015432c0"
+        },
+        {
+          "image_offset": "0x15432b0",
+          "mnemonic": "mov",
+          "operands": "w25, #0x6d"
+        },
+        {
+          "image_offset": "0x15432c0",
+          "mnemonic": "mov",
+          "operands": "w25, #0xa6"
+        },
+        {
+          "image_offset": "0x15432d8",
+          "mnemonic": "mov",
+          "operands": "x0, x25"
+        },
+        {
+          "image_offset": "0x15432e4",
+          "mnemonic": "bl",
+          "operands": "#0x100b7c64c"
+        }
+      ],
+      "glyph_mapping": {
+        "canPost": "plus",
+        "noMore": "checkmarkCircleFill",
+        "late": "lockFill",
+        "memoriesOnly": "plus"
+      },
+      "enabled_switch": [
+        {
+          "image_offset": "0x1543010",
+          "mnemonic": "cmp",
+          "operands": "w22, #0"
+        },
+        {
+          "image_offset": "0x1543014",
+          "mnemonic": "ccmp",
+          "operands": "w22, #3, #4, ne"
+        },
+        {
+          "image_offset": "0x1543018",
+          "mnemonic": "cset",
+          "operands": "w19, ne"
+        },
+        {
+          "image_offset": "0x1543020",
+          "mnemonic": "add",
+          "operands": "x0, x0, #0x3c8"
+        },
+        {
+          "image_offset": "0x1543044",
+          "mnemonic": "strb",
+          "operands": "w19, [x0, #0x10]"
+        }
+      ],
+      "environment_keypath": "0x33373c8",
+      "environment_keypath_getter": "0x1543a9c -> SwiftUI.EnvironmentValues.isEnabled.get",
+      "environment_keypath_setter": "0x1543ac8 -> SwiftUI.EnvironmentValues.isEnabled.set",
+      "boolean_transform": "0x768c9c computes oldIsEnabled AND NOT disabled; disabled is state !=0 AND state !=3",
+      "enabled_mapping": {
+        "canPost": true,
+        "noMore": false,
+        "late": false,
+        "memoriesOnly": true
+      }
+    },
+    "conclusion": "The native canPost model controls both the actual plus icon and whether the extra-post button is enabled. A no model replaces plus with checkmark or lock and disables it. Names alone are not the basis: enum layout, imported API symbols and branch instructions were checked.",
+    "limits": [
+      "Static evidence only; does not prove which UI experiment/account state ran on the user device.",
+      "No eligibility values, server rules, timing flags or UI gates were changed.",
+      "Quota-storage evidence is recorded separately under native-gate/models; the UI mappings above do not alone establish user-device account state."
+    ]
+  },
+  "combined_pre_injection_main_sha256": "3e30150364fd1e128a27b22b189950d7e859e8549210338b70e10dae108e6ed0",
+  "native_rule_changes": false,
+  "notes": [
+    "The same LocalStorage singleton also persists stableDeviceID.",
+    "Remote remaining-post values, post counting, time checks, feature flags and UI branches remain unchanged.",
+    "Some native feature-dependent branches may still produce memoriesOnly; zero does not universally hide the icon under every setting.",
+    "This is static and controlled test evidence; account/device state and live posting were not tested."
+  ]
+}

@@ -16,6 +16,10 @@ _auth_spec = importlib.util.spec_from_file_location('bereal_auth_patch', Path(__
 AUTH_PATCH = importlib.util.module_from_spec(_auth_spec)
 _auth_spec.loader.exec_module(AUTH_PATCH)
 
+_post_spec = importlib.util.spec_from_file_location('bereal_post_storage_patch', Path(__file__).with_name('post_storage_patch.py'))
+POST_STORAGE_PATCH = importlib.util.module_from_spec(_post_spec)
+_post_spec.loader.exec_module(POST_STORAGE_PATCH)
+
 
 def load_commands(data):
     if len(data) < 32 or struct.unpack_from('<I', data)[0] != 0xFEEDFACF:
@@ -107,7 +111,8 @@ def package(source, library, output):
         if (info.get('CFBundleIdentifier'), info.get('CFBundleShortVersionString'), info.get('CFBundleVersion')) != ('AlexisBarreyat.BeReal', '4.93.0', '23026'):
             raise ValueError('Unexpected application identity or version')
         main_path = 'Payload/BeReal.app/' + info['CFBundleExecutable']
-        main = rebuild(AUTH_PATCH.patch_original_main(archive.read(main_path)), DYLIB_PATH)
+        authenticated_main = AUTH_PATCH.patch_original_main(archive.read(main_path))
+        main = rebuild(POST_STORAGE_PATCH.patch_after_auth_main(authenticated_main), DYLIB_PATH)
         library_path = 'Payload/BeReal.app/Frameworks/CameraRollAdapter.dylib'
         if library_path in names:
             raise ValueError('Adapter already exists')
@@ -129,12 +134,14 @@ def package(source, library, output):
         if dependency_count != 1 or any(command == 0x1D for command, _ in commands):
             raise ValueError('Output load-command verification failed')
         AUTH_PATCH.verify_patched_main(archive.read(main_path))
+        POST_STORAGE_PATCH.verify_patched_main(archive.read(main_path))
         if archive.testzip() is not None:
             raise ValueError('Output ZIP verification failed')
     with output.open('rb') as stream:
         digest = hashlib.file_digest(stream, 'sha256').hexdigest()
     return {'file': output.name, 'sha256': digest, 'input_sha256': ORIGINAL_SHA256,
             'auth_keychain_patch': AUTH_PATCH.public_receipt(),
+            'post_storage_keychain_patch': POST_STORAGE_PATCH.public_receipt(),
             'signature': 'unsigned; full nested-code signing and device provisioning required',
             'adapter': 'implemented; compiled; no device execution or posting test performed'}
 

@@ -56,6 +56,19 @@ class SignedDeliveryTest(unittest.TestCase):
                                ORIGINAL_CONTEXT_SHA256=hashlib.sha256(cls.auth_original_context).hexdigest(),
                                PATCHED_CONTEXT_SHA256=hashlib.sha256(cls.auth_patched_context).hexdigest())
         scope.start(); cls.addClassCleanup(scope.stop)
+        cls.post_original_context = bytearray(bytes.fromhex('1f2003d5') * 31)
+        cls.post_targets = tuple((768 + offset - module.POST_STORAGE_PATCH.FACTORY_CONTEXT_OFFSET,
+                                  expected, replacement, register)
+                                 for offset, expected, replacement, register in module.POST_STORAGE_PATCH.PATCHES)
+        for offset, expected, _, _ in cls.post_targets:
+            cls.post_original_context[offset - 768:offset - 764] = expected
+        cls.post_patched_context = bytearray(cls.post_original_context)
+        for offset, _, replacement, _ in cls.post_targets:
+            cls.post_patched_context[offset - 768:offset - 764] = replacement
+        post_scope = patch.multiple(module.POST_STORAGE_PATCH, FACTORY_CONTEXT_OFFSET=768, PATCHES=cls.post_targets,
+                                    ORIGINAL_CONTEXT_SHA256=hashlib.sha256(cls.post_original_context).hexdigest(),
+                                    PATCHED_CONTEXT_SHA256=hashlib.sha256(cls.post_patched_context).hexdigest())
+        post_scope.start(); cls.addClassCleanup(post_scope.stop)
         cls.payload, cls.profile_receipts = cls.make_payload()
 
     @classmethod
@@ -124,7 +137,7 @@ class SignedDeliveryTest(unittest.TestCase):
         return struct.pack('>II', magic, len(data) + 8) + data
 
     @classmethod
-    def executable(cls, identifier, entitlements=None, info=None, resources=None, adapter=False, auth_context=None):
+    def executable(cls, identifier, entitlements=None, info=None, resources=None, adapter=False, auth_context=None, post_context=None):
         """Create a minimal ARM64 image with CMS-bound page and metadata hashes.
 
         The DER blob deliberately has no entitlement semantics: the verifier
@@ -144,6 +157,8 @@ class SignedDeliveryTest(unittest.TestCase):
         if adapter:
             context = cls.auth_patched_context if auth_context is None else auth_context
             executable[512:512 + len(context)] = context
+            storage_context = cls.post_patched_context if post_context is None else post_context
+            executable[768:768 + len(storage_context)] = storage_context
 
         def signature():
             ident = identifier.encode() + b'\0'
@@ -192,6 +207,7 @@ class SignedDeliveryTest(unittest.TestCase):
                    'source_commit': module.SOURCE_COMMIT, 'input_source_commit': module.INPUT_SOURCE_COMMIT,
                    'input_sha256': module.ORIGINAL_SHA,
                    'auth_keychain_patch': module.AUTH_PATCH.public_receipt(),
+                   'post_storage_keychain_patch': module.POST_STORAGE_PATCH.public_receipt(),
                    'bundle_identifier': module.ROOT_ID, 'distribution': 'IOS_APP_ADHOC',
                    'registered_device_count': 1, 'provisioned_bundle_count': 5,
                    'signature_verification': ('codesign deep strict passed; each app/extension matched '
@@ -232,14 +248,42 @@ class SignedDeliveryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'authentication storage patch'):
             module.verify(self.ipa, self.receipt)
 
-    def resign_root_factory(self, context):
+    def resign_root_factory(self, context=None, post_context=None):
         root = 'Payload/BeReal.app/'
         old = self.payload[root + 'Executable']
         records = module.verify_macho(old, self.root, {}, dt.datetime.now(dt.timezone.utc))
         entitlements = records[0]['xml_entitlements']
         return self.executable(module.ROOT_ID, entitlements,
                                self.payload[root + 'Info.plist'], self.payload[root + '_CodeSignature/CodeResources'],
-                               adapter=True, auth_context=context)
+                               adapter=True, auth_context=context, post_context=post_context)
+
+    def test_missing_post_storage_patch_receipt_is_rejected(self):
+        self.save_delivery()
+        receipt = json.loads(self.receipt.read_text())
+        receipt.pop('post_storage_keychain_patch')
+        self.receipt.write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, 'post storage patch'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_validly_resigned_old_post_storage_is_rejected(self):
+        self.save_delivery(changed={'Payload/BeReal.app/Executable':
+                                   self.resign_root_factory(post_context=self.post_original_context)})
+        with self.assertRaisesRegex(ValueError, 'Post storage argument writer'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_validly_resigned_partial_post_storage_patch_is_rejected(self):
+        context = bytearray(self.post_patched_context)
+        offset, expected, _, _ = self.post_targets[0]
+        context[offset - 768:offset - 764] = expected
+        self.save_delivery(changed={'Payload/BeReal.app/Executable': self.resign_root_factory(post_context=context)})
+        with self.assertRaisesRegex(ValueError, 'Post storage argument writer'):
+            module.verify(self.ipa, self.receipt)
+
+    def test_validly_resigned_post_storage_context_change_is_rejected(self):
+        context = bytearray(self.post_patched_context); context[0] ^= 1
+        self.save_delivery(changed={'Payload/BeReal.app/Executable': self.resign_root_factory(post_context=context)})
+        with self.assertRaisesRegex(ValueError, 'Post storage factory context'):
+            module.verify(self.ipa, self.receipt)
 
     def test_validly_resigned_partial_auth_patch_is_rejected(self):
         context = bytearray(self.auth_patched_context)

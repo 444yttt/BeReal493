@@ -744,7 +744,12 @@ def build_adapter(root, original):
     if packaging.get('auth_keychain_patch') != contract.public_receipt():
         raise RuntimeError('Packaged authentication storage patch differs from the pinned contract')
     contract.verify_patched_main((payload / 'Payload/BeReal.app/BeReal').read_bytes())
-    return payload, contract.public_receipt()
+    storage_spec = importlib.util.spec_from_file_location('built_post_storage_patch', source / 'scripts/post_storage_patch.py')
+    storage_contract = importlib.util.module_from_spec(storage_spec); storage_spec.loader.exec_module(storage_contract)
+    if packaging.get('post_storage_keychain_patch') != storage_contract.public_receipt():
+        raise RuntimeError('Packaged post storage patch differs from the pinned contract')
+    storage_contract.verify_patched_main((payload / 'Payload/BeReal.app/BeReal').read_bytes())
+    return payload, contract.public_receipt(), storage_contract.public_receipt()
 
 
 def encrypt_delivery(root, files, output):
@@ -759,7 +764,7 @@ def prepare_input(root, original, der):
     # Persist the recovered input before compilation, so a toolchain failure
     # cannot force another download from an expiring access URL.
     encrypt_persistent_input(root, original, der)
-    payload, auth_patch_receipt = build_adapter(root, original)
+    payload, auth_patch_receipt, post_storage_patch_receipt = build_adapter(root, original)
     unsigned = root / 'unsigned.ipa'
     unsigned.rename(root / 'BeReal493-CameraRoll-UNSIGNED.ipa')
     unsigned = root / 'BeReal493-CameraRoll-UNSIGNED.ipa'
@@ -769,6 +774,7 @@ def prepare_input(root, original, der):
                     'input_sha256': ORIGINAL_SHA, 'input_source_commit': INPUT_SOURCE_COMMIT,
                     'source_commit': SOURCE_COMMIT,
                     'auth_keychain_patch': auth_patch_receipt,
+                    'post_storage_keychain_patch': post_storage_patch_receipt,
                     'certificate_sha256': hashlib.sha256(der).hexdigest(),
                     'adapter': 'implemented; rebuilt from pinned source; not device tested',
                     'archive_inspection': inspection, 'signature': 'unsigned',
@@ -836,7 +842,7 @@ def main(argv=None):
         if options.prepare_input:
             prepare_input(root, original, der)
             return
-        payload, auth_patch_receipt = build_adapter(root, original)
+        payload, auth_patch_receipt, post_storage_patch_receipt = build_adapter(root, original)
         app = payload / 'Payload/BeReal.app'
         bundles = [app] + sorted((app / 'PlugIns').glob('*.appex'))
         mappings = {}; targets = []
@@ -898,6 +904,7 @@ def main(argv=None):
         digest = sha256_file(ipa)
         verification = {'file':ipa.name,'sha256':digest,'source_commit':SOURCE_COMMIT,'input_source_commit':INPUT_SOURCE_COMMIT,'input_sha256':ORIGINAL_SHA,'bundle_identifier':ROOT_ID,'distribution':'IOS_APP_ADHOC','registered_device_count':1,'provisioned_bundle_count':len(targets),'distinct_profile_count':len({profile['UUID'] for bundle,info,profile,ent in targets}),'profile_selection':'existing_wildcard_read_only' if existing_profile else 'exact_scoped_profiles','signed_macho_count':macho_count,'certificate_sha256':hashlib.sha256(der).hexdigest(),'input_recipient_certificate_sha256':hashlib.sha256(input_recipient_der).hexdigest(),'profiles':[public_profile_receipt(info['CFBundleIdentifier'],profile,der,bool(existing_profile)) for bundle,info,profile,ent in targets],'signature_verification':'codesign deep strict passed; each app/extension matched concrete profile entitlements and the approved certificate','device_installation':'not tested','posting':'not tested'}
         verification['auth_keychain_patch'] = auth_patch_receipt
+        verification['post_storage_keychain_patch'] = post_storage_patch_receipt
         receipt = private(root / 'verification.json', (json.dumps(verification,indent=2)+'\n').encode())
         encrypt_delivery(root, [ipa, receipt], Path('bereal-output/BeReal493-signed-delivery.cms'))
         print('Signed IPA verified and encrypted for the recipient. SHA256: ' + digest)
