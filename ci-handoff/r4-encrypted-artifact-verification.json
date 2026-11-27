@@ -1,0 +1,40 @@
+{
+  "purpose": "encrypted_signed_artifact_acquisition_only",
+  "verified_at": "2026-11-27T15:21:17.205456+00:00",
+  "repository": "444yttt/Y3POSClient",
+  "signing_commit": "edf4c69f1e405aca77921f62a26d920b8b7f50d7",
+  "source_commit": "0e1f94e1f7bbf5bf05d5fe1f1197d382acdc1a6b",
+  "run_id": 46023681789,
+  "job_id": 140589477308,
+  "job_conclusion": "success",
+  "signed_artifact_id": 15211570699,
+  "archive_bytes": 140294646,
+  "archive_sha256": "98ffaa93333ba24a034685ada51cf76b808de895e787f5c3ee03f20ddfdc8a2b",
+  "archive_expires_at": "2026-12-27T15:19:32Z",
+  "exact_unique_members": [
+    "BeReal493-signed-delivery.cms"
+  ],
+  "zip_crc": "passed",
+  "cms": {
+    "bytes": 140251669,
+    "sha256": "694e9b0dd066a971761116646f524e7d42b5fcb7007c19ec5fc1845e950cae6a"
+  },
+  "decryption_performed": false,
+  "ci_log_signed_ipa_sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589",
+  "plaintext_ipa_hash_independently_verified": false,
+  "readiness": {
+    "artifact_id": 15211910657,
+    "archive_bytes": 2091,
+    "archive_sha256": "3d04f140e6e5c33346c63e1b728a53fad3ac8fdf0881b9f254994c6ba2014054",
+    "diagnostic_bytes": 15181,
+    "diagnostic_sha256": "9c4ab56282704bf01299133117eb2f3c20d18ab55d95c638ddcc2a0738f308d2",
+    "primary_certificate_sha256": "ffa75cd0e6ab13c541756f2eeb7768a685cae584bc50e653e63396b3c9a7e4d4",
+    "enabled_device_count": 1,
+    "exact_scoped_profiles_verified": 5,
+    "apple_resources_created_or_modified": false
+  },
+  "device_installation": "not tested",
+  "posting": "not tested",
+  "record_scope": "Artifact acquisition snapshot before decryption; later formal verification is r4-signed-delivery-validation.json.",
+  "subsequent_independent_plaintext_validation": "passed; see r4-signed-delivery-validation.json"
+}

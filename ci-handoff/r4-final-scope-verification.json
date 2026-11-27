@@ -1,0 +1,20 @@
+{
+  "independent_signature_verification": "passed",
+  "bytes": 140244174,
+  "sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589",
+  "macho_count": 90,
+  "slice_count": 90,
+  "profile_count": 5,
+  "same_single_device": true,
+  "executable_modes_count": 6,
+  "executable_paths": [
+    "Payload/BeReal.app/BeReal",
+    "Payload/BeReal.app/Frameworks/CameraRollAdapter.dylib",
+    "Payload/BeReal.app/PlugIns/NotificationServiceExtension.appex/NotificationServiceExtension",
+    "Payload/BeReal.app/PlugIns/RealMojiNotificationContentExtension.appex/RealMojiNotificationContentExtension",
+    "Payload/BeReal.app/PlugIns/WidgetsExtension.appex/WidgetsExtension",
+    "Payload/BeReal.app/PlugIns/iMessageExtension.appex/iMessageExtension"
+  ],
+  "primary_certificate_matches": true,
+  "auth_and_post_contexts_verified": true
+}

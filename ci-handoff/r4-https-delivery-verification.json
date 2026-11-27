@@ -1,0 +1,70 @@
+{
+  "filename": "BeReal493-CameraRoll-R4-SIGNED-c1759fc9853f.ipa",
+  "expected_bytes": 140244174,
+  "expected_sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589",
+  "chunk_size": 20971520,
+  "part_count": 7,
+  "download_path": "/download/BeReal493-CameraRoll-R4-SIGNED-c1759fc9853f.ipa",
+  "origin": "https://bereal493-apple-auth.a-yt.chatgpt.site",
+  "site_project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+  "owner_policy_readback": {
+    "access_mode": "custom",
+    "allowed_account_user_count": 1,
+    "allowed_group_count": 0,
+    "allowed_editor_count": 0,
+    "external_visitor_count": 0,
+    "current_user_role": "owner"
+  },
+  "unauthorized_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "unauthorized_part": {
+    "status": 401,
+    "rejected": true
+  },
+  "invalid_bearer_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "forged_identity_download": {
+    "status": 401,
+    "rejected": true
+  },
+  "attachment_head_verified": true,
+  "head_content_length": "140244174",
+  "private_cache_controls_verified": true,
+  "nosniff_verified": true,
+  "landing_page_r4_filename_and_hash_verified": true,
+  "download_content_length": "140244174",
+  "complete_download_bytes": 140244174,
+  "sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589",
+  "complete_download_matches_verified_local_ipa": true,
+  "cross_part_range_verified": true,
+  "single_byte_range_verified": true,
+  "unsatisfiable_range_rejected": true,
+  "head_ignores_range": true,
+  "authenticated_part_status": 200,
+  "authenticated_part_content_length": null,
+  "authenticated_part_transfer_encoding": "chunked",
+  "unauthorized_download_after_owner_cache": {
+    "status": 401,
+    "rejected": true
+  },
+  "unauthorized_part_after_owner_cache": {
+    "status": 401,
+    "rejected": true
+  },
+  "static_assets_are_owner_gated": true,
+  "source_commit": "0e1f94e1f7bbf5bf05d5fe1f1197d382acdc1a6b",
+  "site_source_commit": "bcd14a11b5e68fd99062679837f3ff6773a15b25",
+  "site_version_number": 13,
+  "deployment_id": "appgdep_6b09a16f72d0819184f81347c5c2d459",
+  "site_saved_version_id": "appgprj_6acec7e34d248191bda5d2f848168847~appgver_b6267b3ec03c81919080828791997a6b",
+  "deployment_status": "succeeded",
+  "deployment_succeeded_at": "2026-11-27T15:29:37.681275+00:00",
+  "recorded_at": "2026-11-27T15:33:06.766185Z",
+  "physical_device_runtime": "not tested",
+  "posting": "not tested",
+  "user_link_sent_at_recording": false
+}

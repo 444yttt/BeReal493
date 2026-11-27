@@ -1,0 +1,55 @@
+{
+  "project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+  "site_source_commit": "bcd14a11b5e68fd99062679837f3ff6773a15b25",
+  "site_version_number": 13,
+  "saved_version_id": "appgprj_6acec7e34d248191bda5d2f848168847~appgver_b6267b3ec03c81919080828791997a6b",
+  "successful_deployment": {
+    "id": "appgdep_6b09a16f72d0819184f81347c5c2d459",
+    "project_id": "appgprj_6acec7e34d248191bda5d2f848168847",
+    "title": "BeReal493 署名用の一時認証",
+    "version_id": "appgprj_6acec7e34d248191bda5d2f848168847~appgver_b6267b3ec03c81919080828791997a6b",
+    "type": "publish",
+    "status": "succeeded",
+    "url": "https://bereal493-apple-auth.a-yt.chatgpt.site",
+    "has_mcp": false,
+    "screenshot_asset_pointer": null,
+    "provider_deployment_id": "site---6acec7e34d248191bda5d2f848168847",
+    "failure_message": null,
+    "env_set_revision": 0,
+    "updated_at": "2026-11-27T15:29:37.681275+00:00"
+  },
+  "previous_failed_attempts": [
+    {
+      "id": "appgdep_6b09a09279c0819193e5b721a9fa18e9",
+      "status": "failed",
+      "failure_message": "We couldn't fetch the saved Site source. Retry publishing the Site.",
+      "updated_at": "2026-11-27T15:24:11.819760+00:00"
+    },
+    {
+      "id": "appgdep_6b09a0ce3d8081919f3708fbc58e91e5",
+      "status": "failed",
+      "failure_message": "Cloudflare Sandbox Worker response body was interrupted",
+      "updated_at": "2026-11-27T15:27:15.843530+00:00"
+    }
+  ],
+  "owner_policy": {
+    "access_mode": "custom",
+    "allowed_account_user_count": 1,
+    "allowed_group_count": 0,
+    "allowed_editor_count": 0,
+    "external_visitor_count": 0,
+    "current_user_role": "owner"
+  },
+  "source_only_remote_build_reason": "Verified build is 134 MiB, above the established 100 MiB archive transport limit.",
+  "local_delivery_build": {
+    "tests_passed": 7,
+    "part_count": 7,
+    "bytes": 140244174,
+    "sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589"
+  },
+  "audience_changed": false,
+  "apple_resources_modified": false,
+  "device_runtime": "not tested",
+  "posting": "not tested"
+}
+

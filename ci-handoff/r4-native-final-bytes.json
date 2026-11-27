@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "status": "passed_independent_actual_signed_native_repair_bytes",
+  "recorded_at_utc": "2026-11-27T15:24:00.106316+00:00",
+  "input": {
+    "ipa_bytes": 140244174,
+    "ipa_sha256": "c1759fc9853fcbe724a9041c4101affce99848d21c9302bbd79adba0532cb589",
+    "expected_source_revision": "0e1f94e1",
+    "original_main_sha256": "d64203bfef02feb41680a43224762e8e5be2f9723e6f62924d8d5bfc2d1b2cd6",
+    "actual_signed_main_sha256": "136b261e1d138ff7839c8af235f17e376fdf5ceb8fefd031fa0634cafcb42271"
+  },
+  "factory_contexts": [
+    {
+      "label": "auth",
+      "image_offset": "0x26d2754",
+      "signed_file_offset": "0x26d2754",
+      "bytes": 80,
+      "original_sha256": "2123ac2ca5e05ae9fb1cefae62712ffdb82b83c04532c0e9c628be9056c09ebf",
+      "expected_and_actual_signed_sha256": "302b8c20305d7714d967af26ae82227bdffa6be46ca449a225af47d2e75b0d17",
+      "entire_context_verified": true
+    },
+    {
+      "label": "post_storage",
+      "image_offset": "0x8c7f9c",
+      "signed_file_offset": "0x8c7f9c",
+      "bytes": 124,
+      "original_sha256": "d8c6f971527dc78e863cd2c044c9d611c7c3e6407c99b4f5e10702f834544e5e",
+      "expected_and_actual_signed_sha256": "a6d2908e2ae2c38d39d1f62c4b34a322ad733f15e3aa35bb814e7edbc2362c7a",
+      "entire_context_verified": true
+    }
+  ],
+  "argument_writers": [
+    {
+      "image_offset": "0x26d2784",
+      "signed_file_offset": "0x26d2784",
+      "factory": "auth",
+      "argument_register": "x2",
+      "operation": "mov x2, #0",
+      "verified": true
+    },
+    {
+      "image_offset": "0x26d2790",
+      "signed_file_offset": "0x26d2790",
+      "factory": "auth",
+      "argument_register": "x3",
+      "operation": "mov x3, #0",
+      "verified": true
+    },
+    {
+      "image_offset": "0x8c7fcc",
+      "signed_file_offset": "0x8c7fcc",
+      "factory": "post_storage",
+      "argument_register": "x2",
+      "operation": "mov x2, #0",
+      "verified": true
+    },
+    {
+      "image_offset": "0x8c7fd8",
+      "signed_file_offset": "0x8c7fd8",
+      "factory": "post_storage",
+      "argument_register": "x3",
+      "operation": "mov x3, #0",
+      "verified": true
+    }
+  ],
+  "unchanged_native_ranges": [
+    {
+      "label": "server_quota_response_write",
+      "start_image_offset": "0x1327928",
+      "end_exclusive_image_offset": "0x1327ad8",
+      "signed_file_offset": "0x1327928",
+      "bytes": 432,
+      "original_and_actual_signed_sha256": "7b80c1b38b2c671c28ad94642c039265b260d07cbb9086a82177723ec0d75607",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "quota_wrapper_default_zero_initializer",
+      "start_image_offset": "0x1324de4",
+      "end_exclusive_image_offset": "0x1324f5c",
+      "signed_file_offset": "0x1324de4",
+      "bytes": 376,
+      "original_and_actual_signed_sha256": "b1d1bf02e3b4e5008d08ee3ca8879cfb37055b1032361cd7f4a39354cdaf839a",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "quota_wrapper_generic_default_zero_initializer",
+      "start_image_offset": "0x132a6a4",
+      "end_exclusive_image_offset": "0x132a870",
+      "signed_file_offset": "0x132a6a4",
+      "bytes": 460,
+      "original_and_actual_signed_sha256": "5291d72b814770758b42caf2964ab9dca9958eebf4d131c81f09a851e8285b76",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "quota_repository_protocol_getter",
+      "start_image_offset": "0x1329c74",
+      "end_exclusive_image_offset": "0x1329d44",
+      "signed_file_offset": "0x1329c74",
+      "bytes": 208,
+      "original_and_actual_signed_sha256": "6ae7f755ebdb696556b5e8f8eaae1d6cbab78892551735f0a081051fcbb3f2ce",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "quota_repository_direct_getter",
+      "start_image_offset": "0x1324b5c",
+      "end_exclusive_image_offset": "0x1324c40",
+      "signed_file_offset": "0x1324b5c",
+      "bytes": 228,
+      "original_and_actual_signed_sha256": "eb1e347c744b43f10dbb43032c2ed0fd7e9da13d497a981586fa19ff930e34f6",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "keychain_storage_getter_with_default_fallback",
+      "start_image_offset": "0x8c8248",
+      "end_exclusive_image_offset": "0x8c84d0",
+      "signed_file_offset": "0x8c8248",
+      "bytes": 648,
+      "original_and_actual_signed_sha256": "4c586b809638b3bc0c9a944244eace4aba42f8d06497aeee8bd27f408860b751",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "keychain_storage_setter",
+      "start_image_offset": "0x8c84d0",
+      "end_exclusive_image_offset": "0x8c87c8",
+      "signed_file_offset": "0x8c84d0",
+      "bytes": 760,
+      "original_and_actual_signed_sha256": "cf06e25d81f3badc9abe88d170ccd7cde1e09248c9921bb46e60e032fe8fd97b",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "keychain_read",
+      "start_image_offset": "0x8d0178",
+      "end_exclusive_image_offset": "0x8d0508",
+      "signed_file_offset": "0x8d0178",
+      "bytes": 912,
+      "original_and_actual_signed_sha256": "d446d2f31908fee033b9ccbdbcd98cfaa8738cda437f11555c88bd10d20b1850",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "keychain_query_builder",
+      "start_image_offset": "0x8d0508",
+      "end_exclusive_image_offset": "0x8d0d1c",
+      "signed_file_offset": "0x8d0508",
+      "bytes": 2068,
+      "original_and_actual_signed_sha256": "af2d228f83398bd5d374cd1787192c70da209681df0d3c4f2c0bfd81d02707e0",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "remaining_posts_protocol_adapter",
+      "start_image_offset": "0x11101c4",
+      "end_exclusive_image_offset": "0x11101dc",
+      "signed_file_offset": "0x11101c4",
+      "bytes": 24,
+      "original_and_actual_signed_sha256": "b3614ee8868492522a31ae7afe015bf3567d217d41c49b4c50abfbb0c74b30e3",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "remaining_posts_calculator",
+      "start_image_offset": "0x11101dc",
+      "end_exclusive_image_offset": "0x1111240",
+      "signed_file_offset": "0x11101dc",
+      "bytes": 4196,
+      "original_and_actual_signed_sha256": "7d6f7c2f0257be4e3e30da7268005d418a96d82925114468c61d708aa561e773",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "native_can_post_async_entry",
+      "start_image_offset": "0x28b730",
+      "end_exclusive_image_offset": "0x28b82c",
+      "signed_file_offset": "0x28b730",
+      "bytes": 252,
+      "original_and_actual_signed_sha256": "07b1de5035ceba1249cd1be602da9080a941a62497ca2c1db00b25297c099d2b",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "native_can_post_quota_continuation",
+      "start_image_offset": "0x28b9c0",
+      "end_exclusive_image_offset": "0x28cbb0",
+      "signed_file_offset": "0x28b9c0",
+      "bytes": 4592,
+      "original_and_actual_signed_sha256": "23222151a2578938e6e08c20d4a45902684bd387aa81c5fc71dd4730b2286cdc",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; quota-path verification"
+    },
+    {
+      "label": "posts_repository_protocol_conformance",
+      "start_image_offset": "0x331ae20",
+      "end_exclusive_image_offset": "0x331ae30",
+      "signed_file_offset": "0x331ae20",
+      "bytes": 16,
+      "original_and_actual_signed_sha256": "0e4a7403a069bddd74135c6f5619bcf3537e60784106c0cd17733e3cf212d887",
+      "unchanged": true,
+      "boundary_basis": "Swift protocol conformance descriptor: four 32-bit fields; quota-path verification"
+    },
+    {
+      "label": "posts_repository_quota_getter_witness",
+      "start_image_offset": "0x3e17bf8",
+      "end_exclusive_image_offset": "0x3e17c08",
+      "signed_file_offset": "0x3e17bf8",
+      "bytes": 16,
+      "original_and_actual_signed_sha256": "7e5634ebe18531ad33429ab587ead6eaed49d40e5d79372b04f50097e9a11fb8",
+      "unchanged": true,
+      "boundary_basis": "Conformance pointer plus first method pointer; quota-path verification"
+    },
+    {
+      "label": "remaining_posts_service_protocol_conformance",
+      "start_image_offset": "0x3308880",
+      "end_exclusive_image_offset": "0x3308890",
+      "signed_file_offset": "0x3308880",
+      "bytes": 16,
+      "original_and_actual_signed_sha256": "8a20cc3e88f8ecd1cfbb6f8544a8b24ad6cc3ced4c29477492aadbc800650cc9",
+      "unchanged": true,
+      "boundary_basis": "Swift protocol conformance descriptor: four 32-bit fields; quota-path verification"
+    },
+    {
+      "label": "remaining_posts_service_calculator_witness",
+      "start_image_offset": "0x3e08588",
+      "end_exclusive_image_offset": "0x3e08598",
+      "signed_file_offset": "0x3e08588",
+      "bytes": 16,
+      "original_and_actual_signed_sha256": "609326b4c7bbe808a4b9831ccd08f321187028dc7342e363a5e0b0ccc296004d",
+      "unchanged": true,
+      "boundary_basis": "Conformance pointer plus first method pointer; quota-path verification"
+    },
+    {
+      "label": "native_can_post_property_getter",
+      "start_image_offset": "0x1a53ddc",
+      "end_exclusive_image_offset": "0x1a53e78",
+      "signed_file_offset": "0x1a53ddc",
+      "bytes": 156,
+      "original_and_actual_signed_sha256": "72422e898e5fb980822a942831853d132db30378851aa93b5d92ce8d504d901b",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_can_post_property_setter",
+      "start_image_offset": "0x1a53f5c",
+      "end_exclusive_image_offset": "0x1a540a0",
+      "signed_file_offset": "0x1a53f5c",
+      "bytes": 324,
+      "original_and_actual_signed_sha256": "07b2b17fd2f91f033155c71af84b10b6779f4d8ad1223e3db552d77ccdd9321c",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_model_to_extra_card_state",
+      "start_image_offset": "0x1a5e710",
+      "end_exclusive_image_offset": "0x1a5e7d0",
+      "signed_file_offset": "0x1a5e710",
+      "bytes": 192,
+      "original_and_actual_signed_sha256": "a70e9ee8bf241684e848afb6bbb7889a2ce38c06b3ad3222b83a20c3a769968c",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_button_body",
+      "start_image_offset": "0x1542eb4",
+      "end_exclusive_image_offset": "0x1543094",
+      "signed_file_offset": "0x1542eb4",
+      "bytes": 480,
+      "original_and_actual_signed_sha256": "fa18c95820abfb03e243d6d4e8ed3177e1426314dad8c1bd32ca9ec6ef06c171",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_plus_glyph_label",
+      "start_image_offset": "0x1543154",
+      "end_exclusive_image_offset": "0x15434d0",
+      "signed_file_offset": "0x1543154",
+      "bytes": 892,
+      "original_and_actual_signed_sha256": "063fa0169bba589f605a7eb3555eee27d444c7ea178247a315a7a5f0b0bff6a3",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_is_enabled_keypath_getter",
+      "start_image_offset": "0x1543a9c",
+      "end_exclusive_image_offset": "0x1543ac8",
+      "signed_file_offset": "0x1543a9c",
+      "bytes": 44,
+      "original_and_actual_signed_sha256": "d5f164b1cc95eb9379fe59dc8dc610a8a5019ee1a501b7777eae6532845d4088",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_is_enabled_keypath_setter",
+      "start_image_offset": "0x1543ac8",
+      "end_exclusive_image_offset": "0x1543aec",
+      "signed_file_offset": "0x1543ac8",
+      "bytes": 36,
+      "original_and_actual_signed_sha256": "60200474fd6d57d2a615c48d55478627aa29408149123c3d5d0edbfd4f55153d",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_is_enabled_transform",
+      "start_image_offset": "0x768c9c",
+      "end_exclusive_image_offset": "0x768cb4",
+      "signed_file_offset": "0x768c9c",
+      "bytes": 24,
+      "original_and_actual_signed_sha256": "4910cb819800c2dcf3699e83d22530523cde139eb5d69069ebe3cf5d335bdf84",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_no_bonus_local_post_predicate",
+      "start_image_offset": "0x1a54304",
+      "end_exclusive_image_offset": "0x1a544a8",
+      "signed_file_offset": "0x1a54304",
+      "bytes": 420,
+      "original_and_actual_signed_sha256": "12c2f37f06b99c06ebd2ca4cac1caa85b3fa943a9d8330a43ba9f80c86aec2a5",
+      "unchanged": true,
+      "boundary_basis": "Original LC_FUNCTION_STARTS; ui-gate-evidence.json"
+    },
+    {
+      "label": "native_extra_card_append_gate",
+      "start_image_offset": "0x1a5b618",
+      "end_exclusive_image_offset": "0x1a5b6e4",
+      "signed_file_offset": "0x1a5b618",
+      "bytes": 204,
+      "original_and_actual_signed_sha256": "938a0ecd31d44981a3c47538b1efd30de91046fabf54d07026c52a51a5469297",
+      "unchanged": true,
+      "boundary_basis": "Exact branch range already recorded in ui-gate-evidence.json"
+    },
+    {
+      "label": "can_post_model_field_records",
+      "start_image_offset": "0x393dc68",
+      "end_exclusive_image_offset": "0x393dc9c",
+      "signed_file_offset": "0x393dc68",
+      "bytes": 52,
+      "original_and_actual_signed_sha256": "4280dd2500fbf1ac7e72d5aed805c8f0baf2babd9a48d457ab67a558391da053",
+      "unchanged": true,
+      "boundary_basis": "Swift FieldDescriptor size/record count from exact original"
+    },
+    {
+      "label": "can_post_model_case_yes",
+      "start_image_offset": "0x38959bb",
+      "end_exclusive_image_offset": "0x38959bf",
+      "signed_file_offset": "0x38959bb",
+      "bytes": 4,
+      "original_and_actual_signed_sha256": "357c2320b43a6c0482a5da2f108e4de667fbf36fcb00d4a8a8c1e7b47f914dd7",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "can_post_model_case_no",
+      "start_image_offset": "0x38959bf",
+      "end_exclusive_image_offset": "0x38959c2",
+      "signed_file_offset": "0x38959bf",
+      "bytes": 3,
+      "original_and_actual_signed_sha256": "db907db790b1cdbb7c068ba83647f6599a0a182d649bb878905964a650e4f5cd",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "can_post_model_case_memoriesOnly",
+      "start_image_offset": "0x38959c2",
+      "end_exclusive_image_offset": "0x38959cf",
+      "signed_file_offset": "0x38959c2",
+      "bytes": 13,
+      "original_and_actual_signed_sha256": "211926344984544e642db091db6b237657b1c9e170d6e3c635aae36b7494aa3c",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "extra_card_state_field_records",
+      "start_image_offset": "0x394e408",
+      "end_exclusive_image_offset": "0x394e448",
+      "signed_file_offset": "0x394e408",
+      "bytes": 64,
+      "original_and_actual_signed_sha256": "aeafd167162348972451bfba46c4344e367d38672cfb316207475c6ec38b9240",
+      "unchanged": true,
+      "boundary_basis": "Swift FieldDescriptor size/record count from exact original"
+    },
+    {
+      "label": "extra_card_state_case_canPost",
+      "start_image_offset": "0x38a4496",
+      "end_exclusive_image_offset": "0x38a449e",
+      "signed_file_offset": "0x38a4496",
+      "bytes": 8,
+      "original_and_actual_signed_sha256": "fc5634b4981134c4d9107329074034cccae4ea427452955ef42ecc55474c15b9",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "extra_card_state_case_noMore",
+      "start_image_offset": "0x38a449e",
+      "end_exclusive_image_offset": "0x38a44a5",
+      "signed_file_offset": "0x38a449e",
+      "bytes": 7,
+      "original_and_actual_signed_sha256": "a681ceb0df655302080c530a45cb1244f1e170e73aa172022029229a44d974f1",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "extra_card_state_case_late",
+      "start_image_offset": "0x38a44a5",
+      "end_exclusive_image_offset": "0x38a44aa",
+      "signed_file_offset": "0x38a44a5",
+      "bytes": 5,
+      "original_and_actual_signed_sha256": "9a3e85ee1f0671971d67ad81699ca2a5253b0472451cb8877c21c40ec419843b",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "extra_card_state_case_memoriesOnly",
+      "start_image_offset": "0x38a44aa",
+      "end_exclusive_image_offset": "0x38a44b7",
+      "signed_file_offset": "0x38a44aa",
+      "bytes": 13,
+      "original_and_actual_signed_sha256": "211926344984544e642db091db6b237657b1c9e170d6e3c635aae36b7494aa3c",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "icon_field_records",
+      "start_image_offset": "0x3924c48",
+      "end_exclusive_image_offset": "0x3925750",
+      "signed_file_offset": "0x3924c48",
+      "bytes": 2824,
+      "original_and_actual_signed_sha256": "3dedf376a03f54091883e585b63fbb2c03319e88259596672739eceafe9f17f4",
+      "unchanged": true,
+      "boundary_basis": "Swift FieldDescriptor size/record count from exact original"
+    },
+    {
+      "label": "icon_case_checkmarkCircleFill",
+      "start_image_offset": "0x3884610",
+      "end_exclusive_image_offset": "0x3884624",
+      "signed_file_offset": "0x3884610",
+      "bytes": 20,
+      "original_and_actual_signed_sha256": "af37143fe7b766cb50f4a467e06cae951f70a70c7b40209ba04613bf3639a5a5",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "icon_case_lockFill",
+      "start_image_offset": "0x3884a4b",
+      "end_exclusive_image_offset": "0x3884a54",
+      "signed_file_offset": "0x3884a4b",
+      "bytes": 9,
+      "original_and_actual_signed_sha256": "eb3e4f3a98bba21ae114f58abec50e52633a3848b13320247f86f567e53aebc3",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    },
+    {
+      "label": "icon_case_plus",
+      "start_image_offset": "0x3884e55",
+      "end_exclusive_image_offset": "0x3884e5a",
+      "signed_file_offset": "0x3884e55",
+      "bytes": 5,
+      "original_and_actual_signed_sha256": "f2bcdd47b2b95fa641009276ad513d084459122952b4a83828e25bde9c811976",
+      "unchanged": true,
+      "boundary_basis": "Direct relative field name pointer; NUL-terminated exact enum case name"
+    }
+  ],
+  "unchanged_native_range_count": 40,
+  "whole_native_text": {
+    "start_image_offset": "0x8000",
+    "signed_file_offset": "0x8000",
+    "bytes": 51634628,
+    "exact_expected_patched_sha256": "f77a59a6a7b4d25fdd2628d366423b376c78f324c5dc01f51a8d9e817341e3ff",
+    "allowed_instruction_spans": 4,
+    "allowed_instruction_span_bytes": 16,
+    "actual_changed_bytes": 14,
+    "all_other_text_bytes_unchanged": true
+  },
+  "actual_adapter": {
+    "bytes": 153792,
+    "sha256": "3e000c89e6300f2181fdf5a23cffbdc065bd0d61a95dd0f727f8b1558c076846",
+    "r3_class_markers": {
+      "BRPhotoOverlayWindow": true,
+      "BRPhotoOverlayController": true,
+      "BRCameraRollUI": true
+    },
+    "r3_cancel_loading_label_present": true
+  },
+  "limits": [
+    "Read-only static final-byte verification; signatures/profiles require the separate formal verifier.",
+    "No device, account state, available server quota, installation, or live posting was tested.",
+    "Default keychain repair covers this singleton shared by remainingPostsCount and stableDeviceID."
+  ]
+}
