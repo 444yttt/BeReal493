@@ -33,13 +33,37 @@
     "historical_encrypted_parts_present": 87,
     "historical_encrypted_parts_required": 190,
     "partial_parts_are_complete": false,
-    "file_deletion_or_owner_account_state_established": false
+    "file_deletion_or_owner_account_state_established": false,
+    "new_shared_input": {
+      "run_id": 46019497789,
+      "job_id": 140575139910,
+      "commit": "a1b4b18eaa348691e3daab223a6e3fab930c54dc",
+      "public_file_resolved": true,
+      "download_http_status": 200,
+      "strict_original_probe_result": "original_size_exceeded",
+      "exact_original_verified": false,
+      "encrypted_input_created": false,
+      "safe_failure_artifact": 15207596857,
+      "safe_failure_zip_bytes": 445,
+      "safe_failure_zip_sha256": "8930682220a5cc4f5e0dfec4ce9c41f27bcc69ce9cbcd19e267c652634ee3548",
+      "bounded_local_inspection": {
+        "bytes": 216450563,
+        "sha256": "0b18338b5db68e39ba1de6f5e45c8c79d2211d25da58dc9d4ffa6783bb41773e",
+        "display_name": "Bump",
+        "bundle_identifier": "co.amo.ios.location",
+        "version": "2.135.0",
+        "build": "261126153935",
+        "executable": "Location",
+        "is_requested_bereal": false
+      },
+      "product_parser_run_on_other_app": false
+    }
   },
   "required_input": {
     "file": "AlexisBarreyat.BeReal_4.93.0_und3fined.ipa",
     "bytes": 142120475,
     "sha256": "e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc",
-    "request": "A new accessible share URL is pending; do not fetch an untrusted replacement or weaken the exact-input checks."
+    "request": "The new share contains a different application (Bump), not the requested BeReal. A correct BeReal 4.93.0 share URL is pending; exact-original guards remain unchanged."
   },
   "parser_preparation": {
     "repository": "444yttt/Y3POSClient",
@@ -58,8 +82,8 @@
     "environment_id": "ccarenv_b64_Y2NhcmVudl81M2Y2ZGVlNmY4NDg4MTkxYWJkNjVhODMxMWU4Njk3NQ",
     "initial_start_result": "container_creation/container_service_failed/gateway_unavailable; HTTP 503",
     "later_management_status": "running and connected",
-    "command_bridge_status": "No usable execution environment is available",
-    "prior_workspace_bytes_accessible": "not established"
+    "command_bridge_status": "Root command execution restored; older subagent command bindings still unavailable.",
+    "prior_workspace_bytes_accessible": "Prior project/input/key directories were not present; source checkouts recreated. No original IPA or old delivery private key recovered."
   },
   "product_change": {
     "repair_implemented": false,

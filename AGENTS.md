@@ -2,7 +2,7 @@
 
 ## Active continuation override (2026-11-27)
 - User reports on-time-looking first post, no additional-post plus, and no floating-button overlap; official-app comparison is unavailable. Investigate and repair that specific failure. No product repair or replacement signed IPA has been created for this report. Do not equate one-use photo-pair consumption with a daily posting quota or claim notification absence proves the eligibility cause.
-- The R3 link was handed off in the prior final reply. Old false delivery flags are historical snapshots. Exact-original recovery currently fails (Apple resolver NOT_FOUND; old artifacts unavailable), a new share URL is pending, and the cloud command bridge is unusable. Read the new active section of HANDOFF_CODEX.md and ci-handoff/bonus-investigation-20261127.json before resuming. Existing authorization remains in force; preserve original hashes, signing boundaries and owner-private delivery.
+- The R3 link was handed off in the prior final reply. Old false delivery flags are historical snapshots. The former source returns NOT_FOUND and old artifacts are unavailable. A new provided share contains Bump 2.135.0 rather than BeReal, so the correct original is still pending. Root command execution has recovered with a fresh workspace, while older subagent bindings remain unavailable. Read the new active section of HANDOFF_CODEX.md and ci-handoff/bonus-investigation-20261127.json before resuming. Existing authorization remains in force; preserve original hashes, signing boundaries and owner-private delivery.
 
 
 ## Current user overrides (2026-10-15)

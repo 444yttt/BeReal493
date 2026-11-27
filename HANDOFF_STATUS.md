@@ -2,6 +2,9 @@
 
 ## Active continuation — 2026-11-27: additional-post control missing
 
+- New-share follow-up: the provided link resolves and downloads, but bounded local metadata inspection identifies **Bump 2.135.0** (`co.amo.ios.location`, build `261126153935`, 216450563 bytes/SHA256 `0b18338b5db68e39ba1de6f5e45c8c79d2211d25da58dc9d4ffa6783bb41773e`), not BeReal. Recovery CI `46019497789` correctly stopped at `original_size_exceeded`; no new encrypted input was created. The bonus parser was not run on this unrelated app. A correct BeReal 4.93.0 source URL is pending; do not loosen identity/hash guards.
+- Root command execution has now recovered, but the previous project/input/key directories were absent; fresh source clones and separate preparation worktrees were created. Older subagents still report unavailable command bindings. No replacement signed IPA exists.
+
 The user reports a first post without a late label, no additional-post plus control, and no overlap with the adapter's floating control. The official app is not installed or has not been compared. The installed revision/re-signature is not independently verified.
 
 **The requested repair is not implemented. No replacement IPA has been built, signed or delivered.** R3's verified download link was already presented in the prior final reply; older link-sent/delivered false flags are historical pre-handoff snapshots. Keep the existing R3 delivery unchanged until a real repair is verified.
