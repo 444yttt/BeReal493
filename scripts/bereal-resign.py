@@ -31,7 +31,7 @@ ORIGINAL_SHA = 'e7d77665740c61f2b0d6eae21cb6052acd2add364db3f6b5fc9ef9198ac31cbc
 # The existing encrypted original retains its original transfer provenance.
 # SOURCE_COMMIT independently pins the adapter/package source being rebuilt.
 INPUT_SOURCE_COMMIT = '1f749cd1b2433d2a32694d5c91849d22f84f429f'
-SOURCE_COMMIT = '91f13c2c783086a3a0c8f0997fe6e2e9c59657b0'
+SOURCE_COMMIT = '0e1f94e1f7bbf5bf05d5fe1f1197d382acdc1a6b'
 ROOT_ID = 'com.ayato.bereal493'
 PREFIX = 'AlexisBarreyat.BeReal'
 SAFE_SUFFIXES = ('', '.iMessageExtension', '.RealMojiNotificationContentExtension', '.NotificationServiceExtension', '.Widgets')
